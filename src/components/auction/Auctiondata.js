@@ -457,7 +457,7 @@ export default function Auctiondata({location, match}){
                     <div className="Auction_Info_enddate_flex">
                         <div className="Auction_Info_enddate">
                             <span className="enddate_title">마감&nbsp; </span>
-                            <span className="enddate_content">{ enddate[1]}/{enddate[2]} ({enddate2}) 00:00 AM</span>
+                            <span className="enddate_content">{enddate[0]}/{enddate[1]}/{enddate[2]} ({enddate2}) 00:00 AM</span>
                         </div>
                         <div className="Auction_Info_countdown">
                             <span className="countdown_title">남은 시간&nbsp; </span>

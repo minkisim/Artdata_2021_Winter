@@ -189,7 +189,7 @@ function MyAuction(){
                         {/*이 데이터의 반복 */}
                         
                       
-                        {ongoing.map((data,index)=>{
+                        {ongoing != undefined && ongoing.map((data,index)=>{
                                return( <div key={index} className="collection_data_flex">
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture1">{data.artname}</p></div>
@@ -213,7 +213,7 @@ function MyAuction(){
                         </div>
                         {/*이 데이터의 반복 */}
 
-                        {complete.map((data,index)=>
+                        {complete != undefined && complete.map((data,index)=>
                                 <div key={index} className="collection_data_flex">
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture2">{data.artname}</p></div>

@@ -33,24 +33,6 @@ connection.connect((err)=>{
     
 })
 
-/*
-connection.query("select * from exhibition where exhibition_id = 150", (err, rows, fields)=>{
-    if(err)
-    {
-        console.log(err)
-    }
-    else{
-        rows.forEach((res,index)=>{
-            
-            console.log(res.Exhibition_name)
-        })
-
-        fields.forEach((res)=>{
-            //console.log(res)
-        })
-    }
-})
-*/
 //mysql추가사항 end
 
 
@@ -93,6 +75,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
+const { off } = require('process');
 //const nodedb = require('./models/nodedb');
 //const { connect } = require('http2');
 //const { IfFulfilled } = require('react-async');
@@ -165,8 +148,6 @@ var _storage = multer.diskStorage({
 
         else if(file.mimetype=='application/pdf')
             cb(null, 'public/pdf/')
-
-
         else
             cb(null,'public/text/')
     },
@@ -189,9 +170,6 @@ app.post('/api/fileupload', upload.single('file'), function(req, res){
     res.json({
         success:true
     })
-  
-
-
   });
 
 app.post('/api/artist_upload',(req,res) => {
@@ -326,41 +304,24 @@ app.post('/api/artist_upload',(req,res) => {
 app.post('/api/artist_upload/search',(req,res)=>{
     //작가 정보 작가 id로 찾아와서
     //관리자의 작가 수정하기에서 작가 정보 보여주기용
-    oracledb.fetchAsString = [oracledb.CLOB]
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
-        else
-        {
-            
-            var query = "select artist_name, life_term, Artist_info, Artist_career from artist where artist_id = :id"
 
-            connection.execute(query, {id : req.body.id},(err,result)=>{
+            var query = "select artist_name, life_term, Artist_info, Artist_career from artist where artist_id = ?"
+
+            connection.query(query, [req.body.id],(err,result)=>{
                 if(err)
                 {
                     console.log(err)
                 }
-                else if(result.rows!=undefined)
+                else if(result!=undefined && result[0]!= undefined)
                 {
                     res.json({
-                        artist: result.rows[0][0],
-                        life_term: result.rows[0][1],
-                        artist_info:result.rows[0][2],
-                        artistyearInfo:result.rows[0][3]
+                        artist: result[0].artist_name,
+                        life_term: result[0].life_term,
+                        artist_info: result[0].Artist_info,
+                        artistyearInfo: result[0].Artist_career
                     })
                 }
             })
-        }
-    })
-
 })
 
 app.post('/api/imgupload',(req,res) => {
@@ -564,45 +525,36 @@ app.post('/api/imgupload',(req,res) => {
 app.post('/api/imgupload/search',(req,res) => {
 //작품 id로 작품 정보 찾아서
 //관리자 작품 수정하기에서 작품 정보 보여주기용
-    oracledb.fetchAsString = [oracledb.CLOB]
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
+
         //입력된 작품 id로 작품정보 찾기
-        var query = "select artist_id, art_name, exhibition_id, Displaydate, Image_size, Image_type, KRW_lower, KRW_upper, USD_lower,USD_upper, Art_text from art where art_id = :1"
-        var result = await connection.execute(query,[Number(req.body.id)])
+        var query = "select artist_id, art_name, exhibition_id, Displaydate, Image_size, Image_type, KRW_lower, KRW_upper, USD_lower,USD_upper, Art_text from art where art_id = ?"
+        connection.query(query,[req.body.id],(err,result)=>{
+            if(err)
+            {
+                res.json({err:err})
+            }
+            if(result!=undefined && result[0]!=undefined)
+            {
+                
+                res.json({
+                    artist : result[0].artist_id,
+                    artname : result[0].art_name,
+                    exhibition : result[0].exhibition_id,
+                    artrelease_date : result[0].Displaydate,
+                    imagesize : result[0].Image_size,
+                    imagetype : result[0].Image_type,
+                    KRW_lower : result[0].KRW_lower,
+                    KRW_upper : result[0].KRW_upper,
+                    USD_lower : result[0].USD_lower,
+                    USD_upper : result[0].USD_upper,
+                    arttext : result[0].Art_text
     
-        if(result.rows!=undefined)
-        {
-            //console.log(result.rows)
-            res.json({
-                artist : result.rows[0][0],
-                artname : result.rows[0][1],
-                exhibition : result.rows[0][2],
-                artrelease_date : result.rows[0][3],
-                imagesize : result.rows[0][4],
-                imagetype : result.rows[0][5],
-                KRW_lower : result.rows[0][6],
-                KRW_upper : result.rows[0][7],
-                USD_lower : result.rows[0][8],
-                USD_upper : result.rows[0][9],
-                arttext : result.rows[0][10],
-
-            })
-        }
-        else{
-            res.json(null)
-        }
-    })
-
+                })
+            }
+            else{
+                res.json(null)
+            }
+        })
 })
 
 app.post('/api/auction_upload',(req,res) =>{
@@ -728,8 +680,6 @@ app.post('/api/auction_upload',(req,res) =>{
 
 })
 
-
-
 app.get('/img',(req,res)=>{
 
     console.log(__dirname+' 안됨? '+req.query.var1)
@@ -758,41 +708,27 @@ app.get('/img',(req,res)=>{
 app.post('/api/searchArtwork/search',(req,res) => {
     //관리자 페이지에서 작품명으로 작품 찾기
 
-    oracledb.fetchAsString=[oracledb.CLOB]
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
-
         //like 작품명%로 작품 찾기
-        var query = "select a.art_id, a.art_name, r.artist_name  from art a, artist r where a.art_name like :val and a.artist_id = r.artist_id"
-        var like = req.body.input+"%"
-        var result = await connection.execute(query, {val : like})
-
-        var jsondata = []
-        if(result.rows!=undefined)
-        {
-            result.rows.forEach((item)=>{
-                var data = {
-                    id : item[0],
-                    artname : item[1],
-                    artist : item[2]
-                }
-                //console.log(data)
-                jsondata.push(data)
-            })
-        }
-
-        res.json(jsondata)
-    })
-
+        var query = "select a.art_id, a.art_name, r.artist_name  from art a, artist r where a.art_name like ? and a.artist_id = r.artist_id"
+        connection.query(query, [req.body.input+"%"],(err,result)=>{
+            if(err)
+            {
+                res.json({err:err})
+            }
+            var jsondata = []
+            if(result!=undefined && result[0]!=undefined)
+            {
+                result.forEach((item)=>{
+                    var data = {
+                        id : item.art_id,
+                        artname : item.art_name,
+                        artist : item.artist_name
+                    }
+                    jsondata.push(data)
+                })
+            }
+            res.json(jsondata)
+        })
 })
 
 app.post('/api/searchArtwork/delete',(req,res) => {
@@ -861,44 +797,30 @@ app.post('/api/searchArtwork/delete',(req,res) => {
     })
 })
 
-
 app.post('/api/searchArtist/search',(req,res) => {
     //관리자 페이지에서 작가명으로 작가 찾기
-    oracledb.fetchAsString=[oracledb.CLOB]
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
-
         //like 작가명% 로 작가찾기 
-        var query = "select r.artist_id, r.artist_name, r.life_term  from artist r where r.artist_name like :val"
-        var like = req.body.input+"%"
-        var result = await connection.execute(query, {val : like})
-
-        var jsondata = []
-        if(result.rows!=undefined)
-        {
-            result.rows.forEach((item)=>{
-                var data = {
-                    id : item[0],
-                    artist : item[1],
-                    life_term : item[2]
-                }
-                jsondata.push(data)
-                //console.log(data)
-            })
-        }
-
-        res.json(jsondata)
-    })
-
+        var query = "select r.artist_id, r.artist_name, r.life_term  from artist r where r.artist_name like ?"
+        var like = 
+        connection.query(query, [req.body.input+"%"],(err,result)=>{
+            if(err)
+            {
+                res.json({err:err})
+            }
+            var jsondata = []
+            if(result!=undefined && result[0]!=undefined)
+            {
+                result.forEach((item)=>{
+                    var data = {
+                        id : item.artist_id,
+                        artist : item.artist_name,
+                        life_term : item.life_term
+                    }
+                    jsondata.push(data)
+                })
+            }
+            res.json(jsondata)
+        })
 })
 
 app.post('/api/searchArtist/delete',(req,res) => {
@@ -961,45 +883,22 @@ app.post('/api/searchArtist/delete',(req,res) => {
                     })
                 }
             })
-
-        
-
-
     })
 
 })
 
 
-
-
 app.post('/api/joinForm',(req,res)=>
 {
-    console.log('회원가입');
-
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
-
-
         //회원 정보 등록
-        let query = "INSERT INTO ARTUSER VALUES (:1, :2, :3, :4, :5, :6)"
-        connection.execute(query, [
+        let query = "INSERT INTO ARTUSER VALUES (?, ?, ?, ?, ?, ?)"
+        connection.query(query, [
             req.body.username,
             req.body.name,
             req.body.password,
             req.body.email,
             req.body.phone,
             "ROLE_USER"],
-            { autoCommit: true}
-            ,
              async (err,result) =>
         {
             if(err)
@@ -1012,15 +911,23 @@ app.post('/api/joinForm',(req,res)=>
             }
 
 
-
-            console.log("COMMIT 회원가입 성공")
-            return res.status(200).json({
-                success:true
-            })
+            if(result != undefined && result.affectedRows>=1)
+            {
+                console.log("COMMIT 회원가입 성공")
+                connection.commit()
+                return res.status(200).json({
+                    success:true
+                })
+            }
+            else{
+                connection.rollback()
+                return res.status(200).json({
+                    success:false
+                })
+            }
 
 
         })
-    })
 
 })
 
@@ -1052,14 +959,10 @@ app.post('/api/loginForm',(req,res)=>
                     success:false
                 })
             }
-            
             //로그인 성공
             else
             {
-                console.log('비밀번호 일치');
-                
                 var roles = null
-                
                 //사용자 세션 생성, 세션으로 이후 로그인 없이 사용자 정보 얻어올 수 있음
                 req.session.user =
                 {
@@ -1093,12 +996,8 @@ app.post('/api/loginForm',(req,res)=>
  
             }
 
-            
         })
-
-
 })
-
 
 app.get('/api/logout',(req,res)=>{
     //세션 제거함으로 로그아웃
@@ -1109,14 +1008,10 @@ app.get('/api/logout',(req,res)=>{
 })
 
 
-
-
 //여기서 부터 blog내용 적용
-
 app.get('/api/home1/about', (req, res) =>
 {
         //Home1 화면에 출력할 최근 등록한 작품 3개 정보 얻기
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
         connection.query(query,
             
@@ -1156,11 +1051,7 @@ app.get('/api/home1/about', (req, res) =>
             }
 
             return res.json(jsondata)
-
-
         })
-
-
 })
 
 app.get('/api/home1/about2', (req, res) =>
@@ -1168,8 +1059,6 @@ app.get('/api/home1/about2', (req, res) =>
     //HOME1 최근 등록된 작품3개의
     //하단 그래프용 정보 얻어오기
 
-
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select a.art_name, a.Remaintime, a.Audience_number  from  art a order by Remaintime, Audience_number desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
         connection.query(query,
             
@@ -1183,8 +1072,6 @@ app.get('/api/home1/about2', (req, res) =>
                     success:false
                 })
             }
-            
-            
 
             var jsondata = []
 
@@ -1213,10 +1100,6 @@ app.get('/api/home1/about2', (req, res) =>
 app.get('/api/home2',(req,res) => {
 
     //HOME2에서 보여줄 가장 최근에 등록된 작품의 정보 가져오기
-
-
-
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select  a.image_url, a.art_name, a.displaydate, r.artist_name, a.Art_text,  a.art_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
 
         connection.query(query,
@@ -1254,8 +1137,6 @@ app.get('/api/home2',(req,res) => {
 
 app.get('/api/home3/slider', function (req, res) {
     //HOME3 슬라이드에 사용되는 가장 최근에 등록된 작품 15개 보여주기
-
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 15"
         connection.query(query,
             
@@ -1294,9 +1175,6 @@ app.get('/api/home3/slider', function (req, res) {
 app.get('/api/home3/graph', function (req, res) {
  //HOME3의 그래프에 사용될
  //가장 최근에 등록한 작품 5개의 정보 가져오기
-
-
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from ( select art_name, Remaintime ,Audience_number  from art a order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
         connection.query(query,
             
@@ -1372,9 +1250,6 @@ app.get('/api/home3/date', function (req, res) {
 
 app.get('/api/home4/data', function (req, res) {
 //HOME4
-
-
-        //var binds = [[req.body.username]]
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_url, a.art_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
         connection.query(query,
             
@@ -1416,24 +1291,9 @@ app.get('/api/home4/data', function (req, res) {
 
     
 app.get('/api/exhibition1/data', function (req, res) {
-   
-
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     function(err, connection){
-        if(err)
-        {
-            
-            console.error(err.message);
-            return;
-        }
-
-        //var binds = [[req.body.username]]
-        let query = "select * from ( select r.artist_id, r.artist_name , a.art_id, a.art_name, a.image_url, e.exhibition_id, e.exhibition_name  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc )"
-        connection.execute(query,
+        //현재 작품들 정보 가져오기
+        let query = "select tmp.* from ( select r.artist_id, r.artist_name , a.art_id, a.art_name, a.image_url, e.exhibition_id, e.exhibition_name  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) tmp"
+        connection.query(query,
             
             async (err,result) =>
         {
@@ -1451,65 +1311,43 @@ app.get('/api/exhibition1/data', function (req, res) {
 
             var jsondata = []
 
-            if(result.rows != undefined)
+            //질의 결과가 존재할 때
+            if(result != undefined)
             {
-                result.rows.forEach((array)=>{
+                //각 질의의 정보들 json에 담기
+                result.forEach((array)=>{
 
                     var data = {
-                        artist_id : array[0],
-                        artist: array[1],
-                        art_id:array[2],
-                        artname: array[3],
-                        imgUrl: array[4],
+                        artist_id : array.artist_id,
+                        artist: array.artist_name,
+                        art_id:array.art_id,
+                        artname: array.art_name,
+                        imgUrl: array.image_url,
                         moreUrl:'#',
-                        exhibition_id : array[5],
-                        musium : array[6]
+                        exhibition_id : array.exhibition_id,
+                        musium : array.exhibition_name
                         
                     }
-    
-                    //console.log('\n')
-    
-    
+
                     jsondata.push(data)
                 })
             }
 
             return res.json(jsondata)
-
-
-        })
-
-        connection.close();
-    })
-    
+        })    
     });
 
 
     app.post('/api/exhibition2/exhibition', function (req, res) {
 
+        //전시관 id가 존재할 때
         if(req.body.exhibition != undefined && req.body.exhibition.length>=1)
         {
-            oracledb.fetchAsString = [oracledb.CLOB]
-            oracledb.getConnection({
-                user : dbConfig.user,
-                password : dbConfig.password,
-                connectString : dbConfig.connectString
-            },
-             async function(err, connection){
-                if(err)
-                {
-                    
-                    console.error(err.message);
-                    return;
-                }
-
-                let q = "select exhibition_name, exhibition_data from exhibition where exhibition_id = :1"
-                let result2 = await connection.execute(q,[Number(req.body.exhibition)])
-        
-                //var binds = [[req.body.username]]
-                let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data  from art a, artist r, exhibition e where e.exhibition_id = :id AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc"
-                connection.execute(query,
-                    {id : {dir: oracledb.BIND_IN, val : Number(req.body.exhibition), type : oracledb.NUMBER}},
+            
+                //전시관 id를 통해 전시관에 있는 작품들 찾기
+                let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data  from art a, artist r, exhibition e where e.exhibition_id = ? AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc"
+                connection.query(query,
+                    [req.body.exhibition],
                     async (err,result) =>
                 {
                     if(err)
@@ -1522,82 +1360,80 @@ app.get('/api/exhibition1/data', function (req, res) {
                     }
                     var jsondata = []
         
-                    if(result.rows != undefined && result.rows.length>=1)
+                    //전시관에 작품이 존재할 때
+                    if(result != undefined && result[0] != undefined )
                     {
-                        result.rows.forEach((rows,i) => {
+                        result.forEach((rows,i) => {
                             var data = {
-                                artist:rows[0],
+                                artist:rows.artist_name,
                                 day:'apr 10 - may 11, 2021',
-                                musium: rows[1],
-                                img:rows[2],
-                                artworkUrl: '/exhibition3/'+rows[4],
-                                textTitle: rows[3],
-                                textArea: rows[5],
+                                musium: rows.exhibition_name,
+                                img:rows.image_url,
+                                artworkUrl: '/exhibition3/'+rows.art_name,
+                                textTitle: rows.Art_id,
+                                textArea: rows.Exhibition_data,
                                 datenumber:351,
                                 totalnumber:'194:36:41',
                                 time:'2020. 02. 08 PM 14:00 기준'
                             
                             }
-            
-                            //console.log(data)
-            
-            
                             jsondata.push(data)
                         })
+
+                         return res.json(jsondata)
                     }
-        
+                    //전시관에 작품이 없을 때
                     else
                     {
-                        var data = {
-                            artist:'작품 없음',
-                            day:'apr 10 - may 11, 2021',
-                            musium: result2.rows[0][0],
-                            img:'notfoung.png',
-                            artworkUrl:'#',
-                            textTitle: '해당 전시관에 진행중인 내용이 없습니다',
-                            textArea: result2.rows[0][1],
-                            datenumber:351,
-                            totalnumber:'194:36:41',
-                            time:'2020. 02. 08 PM 14:00 기준'
                         
-                        }
+                        let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id = ?"
+                        connection.query(q,[req.body.exhibition], (err, result2) => {
+                            if(err)
+                            {
+                                console.error(err.message);
+                                
+                                return res.status(200).json({
+                                    success:false
+                                })
+                            }
+                            else{
+                                if(result2 != undefined && result2[0] != undefined)
+                                {
+                                    var data = {
+                                        artist:'작품 없음',
+                                        day:'apr 10 - may 11, 2021',
+                                        musium: result2[0].exhibition_name,
+                                        img:'notfoung.png',
+                                        artworkUrl:'#',
+                                        textTitle: '해당 전시관에 진행중인 내용이 없습니다',
+                                        textArea: result2[0].exhibition_data,
+                                        datenumber:351,
+                                        totalnumber:'194:36:41',
+                                        time:'2020. 02. 08 PM 14:00 기준'
+                                    
+                                    }
+            
+                                    jsondata.push(data)
+                                }
+                                else{
+                                    
+                                    jsondata.push({notuple:true})
+                                }
+                              }
+                              console.log(jsondata)
+                             return res.json(jsondata)
+                            })
 
-                        jsondata.push(data)
                     }
+                    
 
-
-                    return res.json(jsondata)
-        
-        
                 })
-        
-                connection.close();
-            })
 
         }
         else{
-            oracledb.fetchAsString = [oracledb.CLOB]
-            oracledb.getConnection({
-                user : dbConfig.user,
-                password : dbConfig.password,
-                connectString : dbConfig.connectString
-            },
-            async function(err, connection){
-                if(err)
-                {
-                    
-                    console.error(err.message);
-                    return;
-                }
-        
-                let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id in (select * from (select x.exhibition_id from exhibition x order by x.exhibition_id desc)  where rownum=1)"
-               
-                let result2 = await connection.execute(q)
-        
 
-                //var binds = [[req.body.username]]
-                let query = "select * from (select  r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id and e.exhibition_id in (select * from(select x.exhibition_id from exhibition x order by x.exhibition_id desc)  where rownum=1)) where rownum <= 10"
-                connection.execute(query,
+                let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select  r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id and e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp4) tmp3 where tmp3.rownum <= 1)) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 10"
+                connection.query(query,
                     async (err,result) =>
                 {
                     if(err)
@@ -1610,55 +1446,71 @@ app.get('/api/exhibition1/data', function (req, res) {
                     }
                     var jsondata = []
         
-                    if(result.rows != undefined && result.rows[0] !=undefined)
+                    
+                    if(result != undefined && result[0] != undefined )
                     {
-                        result.rows.forEach((rows,i) => {
+                        result.forEach((rows,i) => {
                             var data = {
-                                artist:rows[0],
+                                artist:rows.artist_name,
                                 day:'apr 10 - may 11, 2021',
-                                musium: rows[1],
-                                img:rows[2],
-                                artworkUrl: '/exhibition3/'+rows[4],
-                                textTitle: rows[3],
-                                textArea: rows[5],
+                                musium: rows.exhibition_name,
+                                img:rows.image_url,
+                                artworkUrl: '/exhibition3/'+rows.art_name,
+                                textTitle: rows.Art_id,
+                                textArea: rows.Exhibition_data,
                                 datenumber:351,
                                 totalnumber:'194:36:41',
                                 time:'2020. 02. 08 PM 14:00 기준'
                             
                             }
-            
-                            //console.log('\n')
-            
-            
+
                             jsondata.push(data)
                         })
+                        return res.json(jsondata)
                     }
                     else
                     {
-                        var data = {
-                            artist:'작품 없음',
-                            day:'apr 10 - may 11, 2021',
-                            musium: result2.rows[0][0],
-                            img:'notfoung.png',
-                            artworkUrl:'#',
-                            textTitle: '해당 전시관에 진행중인 내용이 없습니다',
-                            textArea: result2.rows[0][1],
-                            datenumber:351,
-                            totalnumber:'194:36:41',
-                            time:'2020. 02. 08 PM 14:00 기준'
-                        
-                        }
+                        let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
+                        connection.query(q, (err, result2) => {
+                            if(err)
+                            {
+                                console.error(err.message);
+                                
+                                return res.status(200).json({
+                                    success:false
+                                })
+                            }
+                            else{
+                                if(result2 != undefined && result2[0] != undefined)
+                                {
+                                    var data = {
+                                        artist:'작품 없음',
+                                        day:'apr 10 - may 11, 2021',
+                                        musium: result2[0].exhibition_name,
+                                        img:'notfoung.png',
+                                        artworkUrl:'#',
+                                        textTitle: '해당 전시관에 진행중인 내용이 없습니다',
+                                        textArea: result2[0].exhibition_data,
+                                        datenumber:351,
+                                        totalnumber:'194:36:41',
+                                        time:'2020. 02. 08 PM 14:00 기준'
+                                    
+                                    }
+            
+                                    jsondata.push(data)
+                                }
+                                else{
+                                    
+                                    jsondata.push({notuple:true})
+                                }
+                              }
+                             return res.json(jsondata)
 
-                        jsondata.push(data)
+                        })
+                        
                     }
         
-                    return res.json(jsondata)
-        
-        
                 })
-        
-                connection.close();
-            })
 
         }
 
@@ -1668,23 +1520,12 @@ app.get('/api/exhibition1/data', function (req, res) {
             
             if(req.body.exhibition != undefined && req.body.exhibition.length>=1)
             {
-                oracledb.getConnection({
-                    user : dbConfig.user,
-                    password : dbConfig.password,
-                    connectString : dbConfig.connectString
-                },
-                 function(err, connection){
-                    if(err)
-                    {
-                        
-                        console.error(err.message);
-                        return;
-                    }
+                
             
                     //var binds = [[req.body.username]]
-                    let query = "select * from (select r.artist_name, a.art_name, a.Art_id  from art a, artist r, exhibition e where e.exhibition_id = :id AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc) where rownum <= 6"
-                    connection.execute(query,
-                        {id : {dir: oracledb.BIND_IN, val : Number(req.body.exhibition), type : oracledb.NUMBER}},
+                    let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, a.Art_id  from art a, artist r, exhibition e where e.exhibition_id = ? AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 6"
+                    connection.query(query,
+                        [req.body.exhibition],
                         async (err,result) =>
                     {
                         if(err)
@@ -1697,20 +1538,17 @@ app.get('/api/exhibition1/data', function (req, res) {
                         }
                         var jsondata = []
             
-                        if(result.rows != undefined)
+                        if(result != undefined)
                         {
-                            result.rows.forEach((rows,i) => {
+                            result.forEach((rows,i) => {
                                 var data = {
                                     rank:i+1,
-                                    art: rows[0]+" : "+rows[1],
+                                    art: rows.artist_name+" : "+rows.art_name,
                                     looktime:'194:36:41',
-                                    id:rows[2]
+                                    id:rows.Art_id
                                 
                                 }
-                
-                                //console.log('\n')
-                
-                
+            
                                 jsondata.push(data)
                             })
                         }
@@ -1720,27 +1558,14 @@ app.get('/api/exhibition1/data', function (req, res) {
             
                     })
             
-                    connection.close();
-                })
 
             }
             else{
-                oracledb.getConnection({
-                    user : dbConfig.user,
-                    password : dbConfig.password,
-                    connectString : dbConfig.connectString
-                },
-                 function(err, connection){
-                    if(err)
-                    {
-                        
-                        console.error(err.message);
-                        return;
-                    }
+               
             
                     //var binds = [[req.body.username]]
-                    let query = "select * from (select r.artist_name, a.art_name, a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id and e.exhibition_id in (select * from (select x.exhibition_id from exhibition x order by x.exhibition_id desc)  where rownum=1) ) where rownum <= 6"
-                    connection.execute(query,
+                    let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, a.Art_id  from art a, artist r, exhibition e where e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp3) tmp4 where tmp4.rownum <= 1) AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 6"
+                    connection.query(query,
                       
                         async (err,result) =>
                     {
@@ -1754,20 +1579,17 @@ app.get('/api/exhibition1/data', function (req, res) {
                         }
                         var jsondata = []
             
-                        if(result.rows != undefined)
+                        if(result != undefined)
                         {
-                            result.rows.forEach((rows,i) => {
+                            result.forEach((rows,i) => {
                                 var data = {
                                     rank:i+1,
-                                    art: rows[0]+" : "+rows[1],
+                                    art: rows.artist_name+" : "+rows.art_name,
                                     looktime:'194:36:41',
-                                    id:rows[2]
+                                    id:rows.Art_id
                                 
                                 }
-                
-                                //console.log('\n')
-                
-                
+            
                                 jsondata.push(data)
                             })
                         }
@@ -1777,8 +1599,6 @@ app.get('/api/exhibition1/data', function (req, res) {
             
                     })
             
-                    connection.close();
-                })
 
             }
 
@@ -1847,27 +1667,11 @@ app.get('/api/exhibition1/data', function (req, res) {
                         if(req.body.id !=undefined && req.body.id.length>=1)
                         {
 
-
-
                             console.log("찾는 작품 번호 : "+Number(req.body.id))
 
-                            oracledb.getConnection({
-                                user : dbConfig.user,
-                                password : dbConfig.password,
-                                connectString : dbConfig.connectString
-                            },
-                             function(err, connection){
-                                if(err)
-                                {
-                                    
-                                    console.error(err.message);
-                                    return;
-                                }
-                                
-                                //var binds = [[req.body.username]]
-                                let query = "select r.artist_name , a.art_name, a.image_type, TO_CHAR(a.release_date,'YYYY-MM-DD'), a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where a.art_id = :id AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
-                                connection.execute(query,
-                                    {id:{dir : oracledb.BIND_IN,val:Number(req.body.id), type:oracledb.NUMBER}},
+                                let query = "select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where a.art_id = ? AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
+                                connection.query(query,
+                                    [req.body.id],
                                     async (err,result) =>
                                 {
                                     if(err)
@@ -1880,28 +1684,24 @@ app.get('/api/exhibition1/data', function (req, res) {
                                     }
                                     var jsondata = []
                         
-                                    if(result.rows != undefined)
+                                    if(result != undefined)
                                     {
-                                        result.rows.forEach((array) => {
+                                        result.forEach((array) => {
                                             
                                             var data = {
-                                                artist: array[0],
-                                                artname: array[1],
-                                                arttype: array[2],
-                                                artsize: array[3]+", " +array[4],
-                                                imgUrl: array[5],
-                                                musium: array[6],
+                                                artist: array.artist_name,
+                                                artname: array.art_name,
+                                                arttype: array.image_type,
+                                                artsize: array.getdate+", " +array.image_size,
+                                                imgUrl: array.image_url,
+                                                musium: array.exhibition_name,
                                                 people_number: 351,
                                                 total_people_number: 9510,
                                                 time : date +'기준',
                                                 totaltime: '283:36:41',
-                                                exhibition_id : array[7],
-                                                artist_id : array[8]
+                                                exhibition_id : array.exhibition_id,
+                                                artist_id : array.artist_id
                                             }
-                            
-                                            //console.log('\n')
-                            
-                            
                                             jsondata.push(data)
                                         })
                         
@@ -1912,29 +1712,14 @@ app.get('/api/exhibition1/data', function (req, res) {
                         
                                 })
                         
-                                connection.close();
-                            })
-
+                             
                         }
 
                         else
                         {
-                            oracledb.getConnection({
-                                user : dbConfig.user,
-                                password : dbConfig.password,
-                                connectString : dbConfig.connectString
-                            },
-                             function(err, connection){
-                                if(err)
-                                {
-                                    
-                                    console.error(err.message);
-                                    return;
-                                }
-                        
-                                //var binds = [[req.body.username]]
-                                let query = "select * from (select r.artist_name , a.art_name, a.image_type, TO_CHAR(a.release_date,'YYYY-MM-DD'), a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by a.art_id desc) where rownum=1"
-                                connection.execute(query,
+
+                                let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+                                connection.query(query,
                                     async (err,result) =>
                                 {
                                     if(err)
@@ -1948,28 +1733,24 @@ app.get('/api/exhibition1/data', function (req, res) {
                                    
                                     var jsondata = []
                         
-                                    if(result.rows != undefined)
+                                    if(result != undefined)
                                     {
-                                        result.rows.forEach((array) => {
+                                        result.forEach((array) => {
                                             
                                             var data = {
-                                                artist: array[0],
-                                                artname: array[1],
-                                                arttype: array[2],
-                                                artsize: array[3]+", " +array[4],
-                                                imgUrl: array[5],
-                                                musium: array[6],
+                                                artist: array.artist_name,
+                                                artname: array.art_name,
+                                                arttype: array.image_type,
+                                                artsize: array.getdate+", " +array.image_size,
+                                                imgUrl: array.image_url,
+                                                musium: array.exhibition_name,
                                                 people_number: 351,
                                                 total_people_number: 9510,
                                                 time : date +'기준',
                                                 totaltime: '283:36:41',
-                                                exhibition_id : array[7],
-                                                artist_id : array[8]
+                                                exhibition_id : array.exhibition_id,
+                                                artist_id : array.artist_id
                                             }
-                            
-                                            //console.log('\n')
-                            
-                            
                                             jsondata.push(data)
                                         })
                         
@@ -1980,17 +1761,8 @@ app.get('/api/exhibition1/data', function (req, res) {
                         
                                 })
                         
-                                connection.close();
-                            })
                         }
-
-                        
-                       
-
-
-
-
-                        });
+                    });
 
                         app.post('/api/exhibition3/chart05', function (req, res) {
                             console.log(req.body.date)
@@ -2156,155 +1928,140 @@ app.get('/api/exhibition1/data', function (req, res) {
                                               }
                                         ])
                             }
-
-                           
-                            });
-
-
+                        });
 
                                 app.post('/api/artist01/slider', function (req, res) {
-                                    oracledb.fetchAsString = [oracledb.CLOB]
-                                    oracledb.getConnection({
-                                        user : dbConfig.user,
-                                        password : dbConfig.password,
-                                        connectString : dbConfig.connectString
-                                    },
-                                    async function(err, connection){
-                                        if(err)
-                                        {
-                                            console.error(err.message);
-                                            
-                                        }
-                                        else{
-
+                                    
                                             if(req.body.id !=undefined && req.body.id.length>=1)
                                             {
-                                                var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id = :id"
+                                                var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id = ?"
 
-                                                var result = await connection.execute(query, {id : req.body.id})
+                                                connection.query(query, [req.body.id],(err,result)=>{
+                                                    if(err)
+                                                    {
 
-                                                var jsondata = []
+                                                    }
+                                                    
+                                                    var jsondata = []
 
-                                                if(result.rows !=undefined)
-                                                {
-                                                    result.rows.forEach((rows)=>{
-                                                        jsondata.push({
-                                                            artist: rows[0],
-                                                            type: rows[1],
-                                                            size:  rows[2],
-                                                            musium:  rows[3],
-                                                            imgUrl :  rows[4],
-                                                            artname:  rows[5],
-                                                            art_id:  rows[6]
+                                                    if(result !=undefined)
+                                                    {
+                                                        result.forEach((rows)=>{
+                                                            jsondata.push({
+                                                                artist: rows.artist_name,
+                                                                type: rows.image_type,
+                                                                size:  rows.image_size,
+                                                                musium:  rows.exhibition_name,
+                                                                imgUrl :  rows.image_url,
+                                                                artname:  rows.art_name,
+                                                                art_id:  rows.art_id
+                                                            })
                                                         })
-                                                    })
-                                                }
-                                                res.json(jsondata)
+                                                    }
+                                                    res.json(jsondata)
+                                                })
+
+                                                
                                                 
                                             }
                                             
                                             else
                                             {
-                                                var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id IN (select e.artist_id from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) e where rownum=1) "
+                                                var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1) "
 
-                                                var result = await connection.execute(query )
+                                                connection.query(query,(err,result)=>{
+                                                    if(err)
+                                                    {
+                                                        
+                                                    }
 
-                                                var jsondata = []
+                                                    var jsondata = []
 
-                                                if(result.rows !=undefined)
-                                                {
-                                                    result.rows.forEach((rows)=>{
-                                                        jsondata.push({
-                                                            artist: rows[0],
-                                                            type: rows[1],
-                                                            size:  rows[2],
-                                                            musium:  rows[3],
-                                                            imgUrl :  rows[4],
-                                                            artname:  rows[5],
-                                                            art_id:  rows[6]
+                                                    if(result !=undefined)
+                                                    {
+                                                        result.forEach((rows)=>{
+                                                            jsondata.push({
+                                                                artist: rows.artist_name,
+                                                                type: rows.image_type,
+                                                                size:  rows.image_size,
+                                                                musium:  rows.exhibition_name,
+                                                                imgUrl :  rows.image_url,
+                                                                artname:  rows.art_name,
+                                                                art_id:  rows.art_id
+                                                            })
                                                         })
-                                                    })
-                                                }
-                                                res.json(jsondata)
+                                                    }
+                                                    res.json(jsondata)
+                                                } )
+
                                             }
                                            
-                                        }
-                                    })
-
-
                                     });
                                    
                                     app.post('/api/artist01/artist', function (req, res) {
                                         
                                         console.log("작가번호 : "+ req.body.id)
 
-                                            oracledb.fetchAsString = [oracledb.CLOB]
-                                            oracledb.getConnection({
-                                                user : dbConfig.user,
-                                                password : dbConfig.password,
-                                                connectString : dbConfig.connectString
-                                            },
-                                            async function(err, connection){
-                                                if(err)
-                                                {
-                                                    console.error(err.message);
-                                                    
-                                                }
-                                                else{
+                                         
 
                                                     if(req.body.id !=undefined && req.body.id.length>=1)
                                                     {
-                                                        var query = "select artist_name, Artist_info from artist where artist_id = :id"
+                                                        var query = "select artist_name, Artist_info from artist where artist_id = ?"
 
-                                                        var result = await connection.execute(query, {id : req.body.id})
+                                                        connection.query(query,[req.body.id],(err,result)=>{
+                                                            if(err)
+                                                            {
+
+                                                            }
+
+                                                            var jsondata = []
     
-                                                        var jsondata = []
-    
-                                                        if(result.rows !=undefined)
-                                                        {
-                                                            result.rows.forEach((rows)=>{
-                                                                jsondata.push({
-                                                                    name: rows[0],
-                                                                    btnUrl: '#',
-                                                                    textArea: rows[1],
-                                                                    people_num: '35121',
-                                                                    totaltime: '1894:36:41',
-                                                                    timeline: '2021년 7월 20일 15시 30분 기준',
-                                                                    like: '60'
+                                                            if(result !=undefined)
+                                                            {
+                                                                result.forEach((rows)=>{
+                                                                    jsondata.push({
+                                                                        name: rows.artist_name,
+                                                                        btnUrl: '#',
+                                                                        textArea: rows.Artist_info,
+                                                                        people_num: '35121',
+                                                                        totaltime: '1894:36:41',
+                                                                        timeline: '2021년 7월 20일 15시 30분 기준',
+                                                                        like: '60'
+                                                                    })
                                                                 })
-                                                            })
-                                                        }
-                                                        res.json(jsondata)
-                                                        
+                                                            }
+                                                            res.json(jsondata)
+                                                        })
                                                     }
                                                     
                                                     else
                                                     {
-                                                        var query = "select t.artist_name, t.Artist_info from artist t where t.artist_id IN ( select e.artist_id from (select r.artist_id, COUNT(a.art_id) artnum from artist r, art a where r.artist_id = a.artist_id group by r.artist_id order by artnum desc) e where rownum=1)"
+                                                        var query = "select t.artist_name, t.Artist_info from artist t where t.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
 
-                                                        var result = await connection.execute(query)
-    
-                                                        var jsondata = []
-    
-                                                        if(result.rows !=undefined)
+                                                       connection.query(query, (err,result)=>{
+                                                        if(err)
                                                         {
-                                                            result.rows.forEach((rows)=>{
-                                                                jsondata.push({
-                                                                    name: rows[0],
-                                                                    btnUrl: '#',
-                                                                    textArea: rows[1],
-                                                                    people_num: '35121',
-                                                                    totaltime: '1894:36:41',
-                                                                    timeline: '2021년 7월 20일 15시 30분 기준',
-                                                                    like: '60'
-                                                                })
-                                                            })
+                                                            
                                                         }
-                                                        res.json(jsondata)
+                                                        var jsondata = []
+                                                        if(result !=undefined)
+                                                            {
+                                                                result.forEach((rows)=>{
+                                                                    jsondata.push({
+                                                                        name: rows.artist_name,
+                                                                        btnUrl: '#',
+                                                                        textArea: rows.Artist_info,
+                                                                        people_num: '35121',
+                                                                        totaltime: '1894:36:41',
+                                                                        timeline: '2021년 7월 20일 15시 30분 기준',
+                                                                        like: '60'
+                                                                    })
+                                                                })
+                                                            }
+                                                            res.json(jsondata)
+                                                       })
+    
                                                     }
-                                                   
-                                                }
-                                            })
 
                                     })
 
@@ -2322,33 +2079,18 @@ app.get('/api/exhibition1/data', function (req, res) {
             })
         }
 
-
-        oracledb.getConnection({
-            user : dbConfig.user,
-            password : dbConfig.password,
-            connectString : dbConfig.connectString
-        },
-        function(err, connection){
-            if(err)
-            {
-                console.error(err.message);
-                return;
-            }
-    
-            //var binds = [[req.body.username]]
-            let query = "select username from artuser where username = :queryText";
+            let query = "select username from artuser where username = ?";
             console.log("oracle질의 : "+query);
-            connection.execute(query, {queryText : {dir : oracledb.BIND_IN, val : req.body.username, type: oracledb.STRING}}, function(err,result)
+            connection.query(query, [req.body.username], function(err,result)
             {
                 if(err)
                 {
-                    console.error(err.message);
-                    doRelease(connection)
+                    console.error(err.message)
                     return;
                 }
 
     
-                if(result.rows!=undefined && result.rows[0] != undefined && result.rows[0][0] === req.body.username)
+                if(result !=undefined && result[0] != undefined && result[0].username === req.body.username)
                 {
                     console.log("이미 존재하는 아이디");
                     return res.json({
@@ -2365,35 +2107,14 @@ app.get('/api/exhibition1/data', function (req, res) {
                     return res.status(200).json({
                           success:true
                      })
-            
-                    //.render('/api/checkAdmin',{
-                    //    session : req.session
-                    //})
                 }
     
                 
             })
-    
-            connection.close();
-        })
-    
-        function doRelease(connection)
-        {
-            connection.release(
-                function(err) {
-                    if (err) {
-                        console.error(err.message);
-                    }
-                });
-        }
-
 
     })
 
     app.get('/api/checkAdmin', (req,res) => {
-        //console.log("받아온 토큰 : "+req.body.user)
-        //console.log(req.session)
-        //console.log("현재 세션 : "+req.session.user.username)
         
         /*세션 로그인 파트*/
         if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
@@ -2424,16 +2145,11 @@ app.get('/api/exhibition1/data', function (req, res) {
             }
             
             console.log('로그인 안됨')
-            
-            
-            
+    
             res.json({
                 success:false
             })
         }
-
- 
-    
     })
 
 
@@ -2483,25 +2199,10 @@ app.post('/api/myPagefindUser', (req,res) => {
         })
     }
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    function(err, connection){
-        if(err)
-        {
-            console.error(err.message);
-            return res.json({
-                name: false
-             })
-        }
 
-        var query = "select username, name, email from artuser where username = :use"
+        var query = "select username, name, email from artuser where username = ?"
         var str = req.body.username.trim()
-        connection.execute(query,
-             {use : {dir : oracledb.BIND_IN, val : str, type : oracledb.STRING}},
-             (err, result)=>
+        connection.query(query,[str],(err, result)=>
              {
                 if(err)
                 {
@@ -2512,17 +2213,15 @@ app.post('/api/myPagefindUser', (req,res) => {
                 }
 
                 
-                else if(result.rows!=undefined && result.rows[0] != undefined){
-                    //console.log(str)
-
+                else if(result !=undefined && result[0] != undefined){
                     var jsondata = []
-                    result.rows.forEach((rows)=>{
+                    result.forEach((rows)=>{
                         var data ={
-                            username: rows[0],
-                            id : rows[0],
-                            name : rows[1],
+                            username: rows.username,
+                            id : rows.username,
+                            name : rows.name,
                             idCode : '1001',
-                            email : rows[2]
+                            email : rows.email
                         }
                         //console.log(data)
                         return res.json(data)
@@ -2535,73 +2234,47 @@ app.post('/api/myPagefindUser', (req,res) => {
                     })
                 }
              })
-    })
+
 
 })
 
 app.get('/api/Transfer/artdata',(req,res) => {
-   
-    
-
     //console.log("세션 : "+req.session.user)
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     //&& req.session.user.id != undefined는 오라클에서 안쓰므로 username으로 바꿈
     {
             console.log('로그인 확인')
-            
-            oracledb.getConnection({
-                user : dbConfig.user,
-                password : dbConfig.password,
-                connectString : dbConfig.connectString
-            },
-             function(err, connection){
-        
-                if(err)
-                {
-                    
-                    console.error(err.message);
-                    return;
-                }
-        
+
                 //var binds = [[req.body.username]]
-                let query = "SELECT R.Artist_name, A.Art_name,  TO_CHAR(A.Expired,'YYYY-MM-DD'), A.Art_id FROM  ART A, ARTIST R, AUCTION U WHERE A.owner_username = :queryText  AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id"
-                connection.execute(query, {queryText : {dir : oracledb.BIND_IN, val : req.session.user.username, type: oracledb.STRING}},
-                    
-                    async (err,result) =>
+                let query = "SELECT R.Artist_name, A.Art_name,  DATE_FORMAT(A.Expired,'%Y-%m-%d') resdate, A.Art_id FROM  ART A, ARTIST R, AUCTION U WHERE A.owner_username = ?  AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id"
+                connection.query(query, [req.session.user.username],async (err,result) =>
                 {
                     if(err)
                     {
-                        console.error(err.message);
-                        doRelease(connection)
+                        console.error(err.message)
                         return res.status(200).json({
                             success:false
                         })
                     }
-        
-                    console.log(result.rows)
                     var jsondata = []
         
-                    if(result.rows!=undefined)
+                    if(result !=undefined && result[0]!=undefined)
                     {
-                        result.rows.forEach((array) => {
+                        result.forEach((array) => {
                             var data = {
-                                artist: array[0],
-                                artname: array[1],
-                                expired: array[2],
-                                id : array[3]//art_id
+                                artist: array.Artist_name,
+                                artname: array.Art_name,
+                                expired: array.resdate,
+                                id : array.Art_id//art_id
                             }
         
                             jsondata.push(data)
                         })
                     }
-
-                    //console.log(jsondata)
-        
                     return res.json(jsondata)
         
                 })
         
-            })
         
         }
         else
@@ -2704,30 +2377,12 @@ app.post('/api/Transfer/sendArt',(req,res) => {
 
 app.post('/api/AuctionMain/isStarted',(req,res)=>{
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            
-            console.error(err.message);
-            return res.json({
-                err:err,
-                //success:false
-            })
-        }
-
-        var query = "select TO_CHAR(u.begin_point,'YYYY-MM-DD'), TO_CHAR(u.end_point,'YYYY-MM-DD') from art a, auction u where a.art_id = :id and a.art_id = u.art_id"
-        connection.execute(query,
-             {id : {dir : oracledb.BIND_IN, val : Number(req.body.art_id), type : oracledb.NUMBER}},
+        var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point from art a, auction u where a.art_id = ? and a.art_id = u.art_id"
+        connection.query(query,[req.body.art_id],
              (err, result) => {
                 if(err)
                 {
-                    console.error(err.message);
+                    console.error(err);
                     return res.json({
                         err:err,
                         //success:false
@@ -2735,322 +2390,180 @@ app.post('/api/AuctionMain/isStarted',(req,res)=>{
                 }
 
                 var jsondata = []
-                if(result.rows != undefined)
+                if(result != undefined && result[0] != undefined)
                 {
-                    result.rows.forEach((rows)=>{
+                    result.forEach((rows)=>{
                         var data= {
-                            begin_point : rows[0],
-                            end_point : rows[1]
+                            begin_point : rows.begin_point,
+                            end_point : rows.end_point
                         }
-                        console.log(data)
-
                         res.json(data)
                     })
                 }
 
-                
+                else
+                {
+                    res.json(null)
+                }
 
              })
         
-
-    })
 })
 
 app.get('/api/AuctionMain/picturedata', function (req, res) {
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-
-        if(err)
-        {                
-            console.error(err.message);
-        }
         var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null order by u.end_point desc"
 
-                var result = await connection.execute(query)
+                connection.query(query, (err,result)=>{
+                    if(result !=undefined)
+                    {
+                        var jsondata = []
 
-                if(result.rows!=undefined)
-                {
-                    var jsondata = []
-                    result.rows.forEach((rows)=>{
-                        jsondata.push({
-                            img: rows[0],
-                            artist: rows[1],
-                            artwork: rows[2],
-                            size: rows[3],
-                            year:"1973",
-                            type: rows[4],
-                            KRWpriceStart: rows[5],
-                            KRWpriceEnd: rows[6],
-                            USDpriceStart: rows[7],
-                            USDpriceEnd: rows[8],
-                            id: rows[9],
-                            isauctioned:null
-    
+                        result.forEach((rows)=>{
+                            jsondata.push({
+                                img: rows.Image_url,
+                                artist: rows.artist_name,
+                                artwork: rows.art_name,
+                                size: rows.image_size,
+                                year:"1973",
+                                type: rows.image_type,
+                                KRWpriceStart: rows.krw_lower,
+                                KRWpriceEnd: rows.krw_upper,
+                                USDpriceStart: rows.usd_lower,
+                                USDpriceEnd: rows.usd_upper,
+                                id: rows.art_id,
+                                isauctioned:null
+        
+                            })
+
                         })
 
-                    })
-
-                    //console.log(jsondata)
-                    return res.json(jsondata)
-                }
-
-    })
+                        //console.log(jsondata)
+                        return res.json(jsondata)
+                    }
+                })
 
 });
 
 
 app.post('/api/search_auction',(req,res)=>{
-    
 
-    
-    console.log("하한 "+req.body.value)
-    console.log("상한 " +req.body.value2)
-
-    
-        //json 합성하기
-        let jsondata = {}
-
-        jsondata.isauctioned='yes'
-
-        
-
-        oracledb.fetchAsString = [ oracledb.CLOB ]
-        oracledb.getConnection({
-            user : dbConfig.user,
-            password : dbConfig.password,
-            connectString : dbConfig.connectString
-        },
-        async function(err, connection){
-
-            if(err)
-            {                
-                console.error(err.message);
-            }
-
-           
-            
-            if(req.body.num.length>=1)
-            {
-                var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.art_id = :num and a.owner_username is null"
-
-                var result = await connection.execute(query,{num : {dir : oracledb.BIND_IN, val :  Number(req.body.num), type: oracledb.NUMBER}})
-
-                if(result.rows!=undefined)
-                {
-                    var jsondata = []
-                    result.rows.forEach((rows)=>{
-                        jsondata.push({
-                            img: rows[0],
-                            artist: rows[1],
-                            artwork: rows[2],
-                            size: rows[3],
-                            year:"1973",
-                            type: rows[4],
-                            KRWpriceStart: rows[5],
-                            KRWpriceEnd: rows[6],
-                            USDpriceStart: rows[7],
-                            USDpriceEnd: rows[8],
-                            id: rows[9],
-                            isauctioned:null
-    
-                        })
-
-                    })
-
-                    console.log(jsondata)
-                    return res.json(jsondata)
-                }
-            }
-            else{
-                var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= :lower and a.krw_upper <= :upper"
-                var result
-                if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname != undefined && req.body.artname.length>=1)
-                {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like :artname AND r.artist_name like :artistname AND a.krw_lower >= :lower and a.krw_upper <= :upper"
-                    result = await connection.execute(query,{ artname : req.body.artname+"%", artistname : req.body.artist+"%", lower : req.body.value, upper : req.body.value2})
-                    if(result.rows!=undefined)
+        function putresult(result)
+        {
+            if(result !=undefined)
                     {
                         var jsondata = []
-                        result.rows.forEach((rows)=>{
+
+                        result.forEach((rows)=>{
                             jsondata.push({
-                                img: rows[0],
-                                artist: rows[1],
-                                artwork: rows[2],
-                                size: rows[3],
+                                img: rows.Image_url,
+                                artist: rows.artist_name,
+                                artwork: rows.art_name,
+                                size: rows.image_size,
                                 year:"1973",
-                                type: rows[4],
-                                KRWpriceStart: rows[5],
-                                KRWpriceEnd: rows[6],
-                                USDpriceStart: rows[7],
-                                USDpriceEnd: rows[8],
-                                id: rows[9],
+                                type: rows.image_type,
+                                KRWpriceStart: rows.krw_lower,
+                                KRWpriceEnd: rows.krw_upper,
+                                USDpriceStart: rows.usd_lower,
+                                USDpriceEnd: rows.usd_upper,
+                                id: rows.art_id,
                                 isauctioned:null
         
                             })
 
                         })
 
-                         //console.log(jsondata)
-                     return res.json(jsondata)
+                        //console.log(jsondata)
+                        return res.json(jsondata)
                     }
+        }
+
+        let jsondata = {}
+
+        jsondata.isauctioned='yes'
+
+            if(req.body.num.length>=1)
+            {
+                var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.art_id = ? and a.owner_username is null"
+
+                connection.query(query,[req.body.num], (err,result)=>{
+                    putresult(result)
+                })
+            }
+            else{
+                var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= :lower and a.krw_upper <= :upper"
+                if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname != undefined && req.body.artname.length>=1)
+                {
+                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                    connection.query(query,[req.body.artname+"%",req.body.artist+"%",req.body.value,req.body.value2],(err,result)=>{
+                        putresult(result)
+                    })
+                    
 
                 }
 
                 else if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname.length<1)
                 {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and r.artist_name like :artistname AND a.krw_lower >= :lower and a.krw_upper <= :upper"
-                    result = await connection.execute(query,{ artistname : req.body.artist+"%", lower : req.body.value, upper : req.body.value2})
-                    if(result.rows!=undefined)
-                    {
-                        var jsondata = []
-                        result.rows.forEach((rows)=>{
-                            jsondata.push({
-                                img: rows[0],
-                                artist: rows[1],
-                                artwork: rows[2],
-                                size: rows[3],
-                                year:"1973",
-                                type: rows[4],
-                                KRWpriceStart: rows[5],
-                                KRWpriceEnd: rows[6],
-                                USDpriceStart: rows[7],
-                                USDpriceEnd: rows[8],
-                                id: rows[9],
-                                isauctioned:null
-        
-                            })
-
-                        })
-
-                         //console.log(jsondata)
-                     return res.json(jsondata)
-                    }
+                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                    connection.query(query,[req.body.artist+"%", req.body.value, req.body.value2],(err,result)=>{
+                        putresult(result)
+                    })
+                    
                 }
                 else if( req.body.artname != undefined && req.body.artname.length>=1 && req.body.artist.length<1)
                 {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like :artname AND a.krw_lower >= :lower and a.krw_upper <= :upper"
-                    result = await connection.execute(query,{ artname : req.body.artname+"%", lower : req.body.value, upper : req.body.value2})
-                    if(result.rows!=undefined)
-                    {
-                        var jsondata = []
-                        result.rows.forEach((rows)=>{
-                            jsondata.push({
-                                img: rows[0],
-                                artist: rows[1],
-                                artwork: rows[2],
-                                size: rows[3],
-                                year:"1973",
-                                type: rows[4],
-                                KRWpriceStart: rows[5],
-                                KRWpriceEnd: rows[6],
-                                USDpriceStart: rows[7],
-                                USDpriceEnd: rows[8],
-                                id: rows[9],
-                                isauctioned:null
-        
-                            })
-
-                        })
-
-                         //console.log(jsondata)
-                     return res.json(jsondata)
-                    }
+                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                    connection.query(query,[req.body.artname+"%", req.body.value,req.body.value2],(err,result)=>{
+                        putresult(result)
+                    })
+                   
                 }
                 else if(req.body.artname.length<1 && req.body.artist.length<1)
                 {
-                    console.log("case 3")
-                    console.log(req.body.artist)
-                    console.log(req.body.artname)
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= :lower and a.krw_upper <= :upper"
-                    result = await connection.execute(query,{ lower : req.body.value, upper : req.body.value2})
-
-                    if(result.rows!=undefined)
-                    {
-                        var jsondata = []
-                        result.rows.forEach((rows)=>{
-                            jsondata.push({
-                                img: rows[0],
-                                artist: rows[1],
-                                artwork: rows[2],
-                                size: rows[3],
-                                year:"1973",
-                                type: rows[4],
-                                KRWpriceStart: rows[5],
-                                KRWpriceEnd: rows[6],
-                                USDpriceStart: rows[7],
-                                USDpriceEnd: rows[8],
-                                id: rows[9],
-                                isauctioned:null
-        
-                            })
-
-                        })
-
-                         //console.log(jsondata)
-                     return res.json(jsondata)
-                }
+                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= ? and a.krw_upper <= ?"
+                    connection.query(query,[req.body.value, req.body.value2],(err,result)=>{
+                        putresult(result)
+                    })
                 }
             }
 
-            
-        })
-    
 })
 
 
 app.post('/api/auctiondata',(req,res)=>{
-    
-    oracledb.fetchAsString = [ oracledb.CLOB ]
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
 
-        if(err)
-        {
-            
-            console.error(err.message);
-        }
+        var query = "select r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.Art_text, r.Artist_info, r.life_term, a.art_id, DATE_FORMAT(a.Release_date, '%Y-%m-%d') release_date, r.artist_id, a.image_url from artist r, art a, auction u where a.art_id = ? and a.artist_id = r.artist_id and a.art_id = u.art_id and a.owner_username is null"
 
-        var query = "select r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.Art_text, r.Artist_info, r.life_term, a.art_id, TO_CHAR(a.Release_date, 'YYYY-MM-DD'), r.artist_id, a.image_url from artist r, art a, auction u where a.art_id = :id and a.artist_id = r.artist_id and a.art_id = u.art_id and a.owner_username is null"
-
-        connection.execute(query, 
-            {id : {dir: oracledb.BIND_IN, val : Number(req.body.id), type : oracledb.NUMBER}},
+        connection.query(query,[req.body.id],
             (err, result)=>
             {
                 if(err)
                 {
                     console.log(err)
+                    return res.json(err)
                 }
 
-                else if(result.rows != undefined && result.rows[0]!=undefined)
+                else if(result!= undefined && result[0]!=undefined)
                 {
                     data = {
-                        artist: result.rows[0][0],
+                        artist: result[0].artist_name,
                         artistyear: '',
-                        artname: result.rows[0][1],
-                        size: result.rows[0][2],
+                        artname: result[0].art_name,
+                        size: result[0].image_size,
                         year:"",
                         imagesize: 100,
-                        type: result.rows[0][3],
-                        KRW_lower: result.rows[0][4],
-                        KRW_upper: result.rows[0][5],
-                        nowprice: result.rows[0][6],
-                        enddate: result.rows[0][7],
-                        arttext: result.rows[0][8],
-                        artist_info: result.rows[0][9],
-                        artistyearInfo: result.rows[0][10],
-                        art_id : result.rows[0][11],
-                        artrelease_date : result.rows[0][12],
-                        artist_id : result.rows[0][13],
-                        imageurl : result.rows[0][14]
+                        type: result[0].image_type,
+                        KRW_lower: result[0].krw_lower,
+                        KRW_upper: result[0].krw_upper,
+                        nowprice: result[0].usd_lower,
+                        enddate: result[0].usd_upper,
+                        arttext: result[0].Art_text,
+                        artist_info: result[0].Artist_info,
+                        artistyearInfo: result[0].life_term,
+                        art_id : result[0].art_id,
+                        artrelease_date : result[0].release_date,
+                        artist_id : result[0].artist_id,
+                        imageurl : result[0].image_url
                     }
                    // console.log(data)
                     return res.json(data)
@@ -3060,29 +2573,15 @@ app.post('/api/auctiondata',(req,res)=>{
                 }
 
             })
-    })
+
 
 })
 
 app.post('/api/auctiondata/search',(req,res)=>{
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
+        var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.username, u.user_price, u.bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = ? order by u.user_price desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
 
-        if(err)
-        {
-            
-            console.error(err.message);
-            return;
-        }
-
-        var query = "select * from (select r.username, u.user_price, u.bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = :id order by u.user_price desc) where rownum <= 5"
-
-        connection.execute(query,{id : req.body.id},(err, result)=>
+        connection.query(query,[req.body.id],(err, result)=>
         {
 
             if(err)
@@ -3090,21 +2589,21 @@ app.post('/api/auctiondata/search',(req,res)=>{
                 console.log(err)
             }
 
-            if(result.rows != undefined && result.rows.length >= 1)
+            if(result != undefined && result[0] != undefined)
             {
                 var jsondata = []
-                result.rows.forEach((rows)=>{
+                result.forEach((rows)=>{
                     jsondata.push({
-                        username : rows[0],
-                        userprice : rows[1],
-                        updateDate : rows[2]
+                        username : rows.username,
+                        userprice : rows.user_price,
+                        updateDate : rows.bid_date
 
                     })
                 })
 
                 res.json({
                     success: true,
-                    email : result.rows[0][3],
+                    email : result[0].email,
                     result : jsondata
                 })
             }
@@ -3116,218 +2615,152 @@ app.post('/api/auctiondata/search',(req,res)=>{
 
         })
 
-    })
-
 })
 
 app.post('/api/auctiondata/submit',(req,res)=>{
-    console.log(req.body.updateDate)
-    console.log(req.body.userprice)
-    console.log(req.body.username)
-    console.log(req.body.art_id)
 
-    
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            console.error(err.message);
-        }
-
-        var query = "select user_price from user_bid where art_id = :id order by user_price desc"
-        var result = await connection.execute(query,{id : {dir : oracledb.BIND_IN, val : Number(req.body.art_id), type: oracledb.NUMBER}})
-
-        console.log(result.rows)
-
-        if(result.rows[0]==undefined || result.rows[0][0] < req.body.userprice)
-        {
-
-            query = "select * from user_bid where username = :id and art_id = :art"
-
-            result = await connection.execute(query,{id: req.body.username, art:req.body.art_id})
-
-            if(result.rows != undefined && result.rows.length>0)
+        var query = "select user_price from user_bid where art_id = ? order by user_price desc"
+        connection.query(query,[req.body.art_id], (err,result)=>{
+            if(result != undefined && result[0]!=undefined && result[0].user_price >= req.body.userprice)
             {
-                query = "update user_bid set user_price = :1, bid_date = TO_DATE(:2,'YYYY-MM-DD')  where username = :3 and art_id = :4"
-               
-                try{
-                    
-                    var result2 = await connection.execute(query,[req.body.userprice, req.body.updateDate, req.body.username, req.body.art_id])
                 
-                        if(result2.rowsAffected>=1)
-                        {
-                            connection.commit()
-                            res.json({success : true})
-                        }
-                        else{
-                            connection.rollback()
-                            res.json({err : true})
-                        }
-                    }catch(err)
-                    {
-                        connection.rollback()
-                        console.log(err)
-                        res.json({err : true})
-                    }
-                            
-                        
-
-            
-
+                res.json({err : true})
             }
             else{
-                query = "insert into user_bid values (:1, :2, TO_DATE(:3, 'YYYY-MM-DD'), :4)"
-                connection.execute(query,[req.body.username, req.body.userprice, req.body.updateDate, req.body.art_id],
-                    (err,result)=>{
-                        if(err)
+                query = "select * from user_bid where username = ? and art_id = ?"
+    
+                connection.query(query,[req.body.username, req.body.art_id], (err,result1)=>{
+                if(result1 != undefined && result1[0] != undefined)
+                {
+                    query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"
+                   
+                    try{
+                        
+                         connection.query(query,[req.body.userprice, req.body.updateDate, req.body.username, req.body.art_id],(err,result2)=>{
+                            
+                            if(result2.affectedRows>=1)
+                            {
+                                connection.commit()
+                                res.json({success : true})
+                            }
+                            else{
+                                connection.rollback()
+                                res.json({err : true})
+                            }
+                         })
+
+                        }catch(err)
                         {
                             connection.rollback()
                             console.log(err)
                             res.json({err : true})
                         }
 
-                        else if(result.rowsAffected>=1)
-                        {
-                            connection.commit()
-                            res.json({success : true})
-                        }
-                        else{
-                            connection.rollback()
-                            res.json({err : true})
-                        }
-                    })
+                }
+                else{
+                   
+                    query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
+                    connection.query(query,[req.body.username, req.body.userprice, req.body.updateDate, req.body.art_id],
+                        (err,result2)=>{
+                            
+                            if(err)
+                            {
+                                connection.rollback()
+                                console.log(err)
+                                res.json({err : true})
+                            }
+                            
+                            else if(result2.affectedRows>=1)
+                            {
+                                connection.commit()
+                                res.json({success : true})
+                            }
+                            else{
+                                connection.rollback()
+                                res.json({err : true})
+                            }
+                        })
+                  }
+    
+                })
+    
                 
-
-
             }
-
-        }
-        else{
-            res.json({err : true})
-        }
-    })
+        })
 
 })
 
 app.post('/api/auctiondata/isStarted',(req,res)=>{
     console.log("찾는 auction id : "+req.body.artname)
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
 
-        if(err)
-        {
-            console.error(err.message);
-            return;
-        }
+        var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point, Auction_unit  from auction u where art_id = ?"
 
-        var query = "select TO_CHAR(begin_point,'YYYY-MM-DD'), TO_CHAR(end_point,'YYYY-MM-DD'), Auction_unit  from auction u where art_id = :id"
-
-        connection.execute(query,{id : req.body.artname}, (err, result)=>{
+        connection.query(query,[req.body.artname], (err, result)=>{
             if(err)
             {
                 console.log(err)
             }
-            else if(result.rows!=undefined)
+            else if(result!=undefined && result[0]!=undefined)
             {
                 res.json({
-                    begin_point : result.rows[0][0],
-                    end_point : result.rows[0][1],
-                    auction_unit : result.rows[0][2]
+                    begin_point : result[0].begin_point,
+                    end_point : result[0].end_point,
+                    auction_unit : result[0].Auction_unit
                 })
             }
         })
-    })
 
 })
-
 
 app.post('/api/myauction', (req,res)=>{
 
     var jsondata = []
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            
-            console.error(err.message);
-            return;
-        }
 
         //var binds = [[req.body.username]]
-        let query = "SELECT A.art_id, A.Art_name, R.Artist_name, TO_CHAR(U.End_point,'YYYY-MM-DD'), A.Owner_username FROM USER_BID S, ART A, ARTIST R, AUCTION U WHERE S.username = :queryText AND S.art_id = A.art_id AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id AND A.owner_username IS null"
-        var result = await connection.execute(query, {queryText : {dir : oracledb.BIND_IN, val : req.body.username, type: oracledb.STRING}})
-        
-
-        if(result.rows.length<1)
+        let query = "SELECT A.art_id, A.Art_name, R.Artist_name, DATE_FORMAT(U.End_point,'%Y-%m-%d') end_point, A.Owner_username FROM USER_BID S, ART A, ARTIST R, AUCTION U WHERE S.username = ? AND S.art_id = A.art_id AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id AND A.owner_username IS null"
+        connection.query(query, [req.body.username],(err,result)=>{
+        if(err)
         {
             console.log('존재하지 않습니다.')
             res.json({
                 //auction:user_auctiondata
             })
         }
-        else if(result.rows!=undefined)
+        else if(result!=undefined && result[0]!=undefined)
             {
-                result.rows.forEach((array) => {
+                result.forEach((array) => {
                     var data = {
-                        artwork_id: array[0],
-                        artname: array[1],
-                        artist: array[2],
-                        end_point: array[3],
-                        owner_id:array[4],
+                        artwork_id: array.art_id,
+                        artname: array.Art_name,
+                        artist: array.Artist_name,
+                        end_point: array.end_point,
+                        owner_id:array.Owner_username,
                         isfirst:null
                     }
-
                     jsondata.push(data)
                 })
             
-
-
-
-            // console.log("이전\n"+jsondata)
-            var jsize = jsondata.length-1
-            var jsondata2 = []
+                var jsize = jsondata.length-1
+                var jsondata2 = []
 
                 jsondata.forEach(async(item, index) =>{
                     
-                    query = "SELECT U.Username FROM USER_BID U WHERE U.Art_id = :artid AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM USER_BID S WHERE S.Art_id = U.Art_id)";
-                    var result2 = await connection.execute(query, {
-                        artid : {dir : oracledb.BIND_IN, val : Number(item.artwork_id), type: oracledb.NUMBER}    
-                    })
-
-                    if(result2.rows != undefined)
+                    query = "SELECT U.Username FROM USER_BID U WHERE U.Art_id = ? AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM USER_BID S WHERE S.Art_id = U.Art_id)";
+                    connection.query(query, [item.artwork_id],(err,result2)=>{
+                    if(result2 != undefined && result2[0]!=undefined)
                     {
-                        result2.rows.forEach((rows)=>{
+                        result2.forEach((rows)=>{
 
                             
-                            if(rows[0] === req.body.username)
+                            if(rows.Username === req.body.username)
                             {
                                 //console.log("일치")
                                 item.isfirst = 'yes'
-                                //item.replace("isfirst",'yes')
-
-                                //console.log("isfirst : "+item.isfirst)
                             } 
                         })
                     }
-
-                    
-
                     var data2 = {
                         artwork_id: item.artwork_id,
                         artname: item.artname,
@@ -3348,77 +2781,21 @@ app.post('/api/myauction', (req,res)=>{
                             //auction:user_auctiondata
                         })
                     }
+                    })
                 })
             }
-
-
-        //console.log("??? jsondata2 : "+jsondata2)
-
-    })
-    
-
-})
-
-
-app.post('/api/auctiondata/findbyid',(req,res)=>{
-    console.log("찾는 auction id : "+req.body.artwork_id)
-    Auctiondb.findOne({
-        where:{artwork_id:req.body.artwork_id}
-    })
-    .then(async (result)=>{
-      
-        let jsondata = {
-            artist:result.artist,
-            artname:result.artname,
-            end_point:result.end_point,
-            artwork_id:result.artwork_id,
-            auction_unit:result.auction_unit,
-            owner_id: result.owner_id
-        }
-
-        dib_result = await User_dib_db.findOne({
-            order : [['userprice','DESC']],
-            where:{artwork_id:result.artwork_id}
-        })
-            
-            if(dib_result.userid==req.body.my_id)
-            {
-                jsondata.isfirst='yes'   
-                
+            else{
+                res.json({
+                   
+                })
             }
-
-            console.log('isfirst : '+jsondata.isfirst+'\n\n')
-            res.json(jsondata)
-
-       
-
-        
-    })
-    .catch((err)=>{
-        res.json({
-            err:err,
-            //success:false
         })
-    })
 })
 
 app.post('/api/auction_submit',(req,res)=>{
-    
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
 
-        if(err)
-        {
-            console.error(err.message);
-        }
-        else{
-
-            var query = "update art set owner_username = :1, expired = :2 where art_id = :3"
-            connection.execute(query,[
+            var query = "update art set owner_username = ?, expired = ? where art_id = ?"
+            connection.query(query,[
                 req.body.username,
                 req.body.date,
                 req.body.art_id
@@ -3427,119 +2804,93 @@ app.post('/api/auction_submit',(req,res)=>{
                 {
                     console.log(err)
                 }
-                else if(result.rowsAffected>=1)
+                else if(result != undefined && result.affectedRows>=1)
                 {
+                    connection.commit()
                     res.json({
                         success:true
                     })
                 }
             })
-            connection.commit()
-        }
-     })
-
 })
 
 app.post('/api/deleteuser',(req,res)=>{
 
     req.session.destroy()
-
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            console.error(err.message);
-        }
-        else{
+            var query = "delete from user_bid where username = ?"
+            connection.query(query, [req.body.username],(err,result)=>{
+                if(result.affectedRows<0)
+                {
+                    connection.rollback()
+                    res.json({success: false})
+                }
+    
+                else
+                {
+                    query = "update art set owner_username = null, expired = null where owner_username = ?"
+                    result = connection.query(query, [req.body.username],(err, result2)=>{
+                        if(result2.affectedRows<0)
+                        {
+                            connection.rollback()
+                            res.json({success: false})
+                        }
             
-            
-            var query = "delete from user_bid where username = :1"
-            var result = connection.execute(query, [req.body.username])
-
-            query = "update art set owner_username = '', expired = '' where owner_username = :1"
-            result = connection.execute(query, [req.body.username])
-
-            query = "delete from artuser where username = :1"
-            result = connection.execute(query, [req.body.username])
-
-            if(result.rowsAffected<0)
-            {
-                connection.rollback()
-                res.json({success: false})
-            }
-
-            else
-            {
-                connection.commit()
-
-                res.json({success: true})
-            }
-           
-        }
-    })
-
+                        else
+                        {
+                            query = "delete from artuser where username = ?"
+                            result = connection.query(query, [req.body.username],(err,result3)=>{
+                                if(result3.affectedRows<0)
+                                {
+                                    connection.rollback()
+                                    res.json({success: false})
+                                }
+                    
+                                else
+                                {
+                                    connection.commit()
+                                    res.json({success: true})
+                                }
+                            })
+                        }
+                    })
+                }
+            })
 })
 
 app.post('/api/mainsearch',(req,res)=>{
 
     console.log(req.body.check)
-
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            console.error(err.message);
-        }
-        else{
             var query
             if(req.body.check==1)
             {
-                query = "select art_id from art where art_name like :val"
+                query = "select art_id id from art where art_name like ?"
             }
             
             else if(req.body.check==2)
             {
-                query = "select artist_id from artist where artist_name like :val"
+                query = "select artist_id id from artist where artist_name like ?"
             }
 
             else if(req.body.check==3)
             {
-                query = "select exhibition_id from exhibition where exhibition_name like :val"
+                query = "select exhibition_id id from exhibition where exhibition_name like ?"
             }
             console.log(query)
             
-            var result = await connection.execute(query, {val : req.body.name+"%"})
-
-          
-            if(result.rows != undefined && result.rows[0]!=undefined)
-            {
-                res.json({
-                    id:result.rows[0][0]
-                })
-            }
-            else{
-                res.json({
-                    err:true
-                })
-            }
-            
-           
-        }
-    })
-
+            connection.query(query, [req.body.name+"%"],(err,result)=>{
+                if(result != undefined && result[0]!=undefined)
+                {
+                    res.json({
+                        id:result[0].id
+                    })
+                }
+                else{
+                    res.json({
+                        err:true
+                    })
+                }
+            })
 })
-
-
 
 app.listen(PORT, () => {
     console.log(`Server run: http://localhost:${PORT}/`)

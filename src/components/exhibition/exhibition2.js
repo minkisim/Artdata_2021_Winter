@@ -68,8 +68,14 @@ function Exhibition2({match}){
         
         axios.post(`http://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
           
-            // console.log(res.data)
-            setexhibition(res.data);
+            console.log(res.data[0])
+            if(res.data[0].notuple)
+            {
+                alert("존재하지 않는 전시관입니다.")
+                window.location.replace("/")
+            }
+            else
+                setexhibition(res.data);
             
         })
         .catch(()=>{
