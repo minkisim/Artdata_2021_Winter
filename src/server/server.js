@@ -3,17 +3,10 @@ const app = express();
 //const db = require('./config/db');
 const cors = require("cors");
 
-//오라클 추가사항
-var oracledb = require('oracledb');
-var dbConfig = require('./config/dbConfig');
-
-//오라클 추가사항 end
-
-
 //mysql추가사항
-var mysql = require('mysql')
+var mysql = require('mysql2')
 //var mysql_dbConfig = require('./config/db') 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
     host : "localhost",
     user : "vane",
     password : "vane2021@@",
@@ -32,6 +25,16 @@ connection.connect((err)=>{
     }
     
 })
+
+const pool = mysql.createPool({
+    host : "localhost",
+    user : "vane",
+    password : "vane2021@@",
+    database : "nodedb",
+    port : "3306"
+})
+
+const promisePool = pool.promise()
 
 //mysql추가사항 end
 
@@ -78,13 +81,7 @@ var bodyParser_post = require('body-parser');       //post 방식 파서
 const { off } = require('process');
 //const nodedb = require('./models/nodedb');
 //const { connect } = require('http2');
-//const { IfFulfilled } = require('react-async');
-//const { connectionClass } = require('oracledb');
-
-
 //const FileStore = require('session-file-store') (session)
-
-
 
 //join은 __dirname : 현재 .js 파일의 path 와 public 을 합친다
 //이렇게 경로를 세팅하면 public 폴더 안에 있는것을 곧바로 쓸 수 있게된다
@@ -248,10 +245,7 @@ app.post('/api/artist_upload',(req,res) => {
                     }
                 })
 
-                
                 })
-
-                
             }
             //수정할 작가 id가 존재할 경우
             //작가 정보 업데이트
@@ -371,9 +365,6 @@ app.post('/api/imgupload',(req,res) => {
                         }
                     })
             })
-
-            
-
     }
     //입력된 작품 id가 존재할 경우
     //해당 작품 업데이트
@@ -632,7 +623,7 @@ app.post('/api/searchArtwork/search',(req,res) => {
     //관리자 페이지에서 작품명으로 작품 찾기
 
         //like 작품명%로 작품 찾기
-        var query = "select a.art_id, a.art_name, r.artist_name  from art a, artist r where a.art_name like ? and a.artist_id = r.artist_id"
+        var query = "select a.art_id, a.art_name, r.artist_name  from art a, artist r where a.art_name like ? and a.artist_id = r.artist_id order by a.art_name"
         connection.query(query, [req.body.input+"%"],(err,result)=>{
             if(err)
             {
@@ -654,7 +645,7 @@ app.post('/api/searchArtwork/search',(req,res) => {
         })
 })
 
-app.post('/api/searchArtwork/delete',(req,res) => {
+app.post('/api/searchArtwork/delete',async (req,res) => {
 //관리자 페이지에서 
 //선택한 작품 삭제하기
         var input = []
@@ -667,49 +658,41 @@ app.post('/api/searchArtwork/delete',(req,res) => {
 
         }
         //한번의 dbms요청으로 배열에 담긴 작품 id들을 삭제
-        var query = "delete from art where art_id = ?"
+        var query = "delete from art where art_id = ?;"
+        var sql = ""
 
-        for(let i=0; i<input.length; i++)
-        {
-            console.log(input[i])
-            var check = false
-            connection.query(query, input[i],
-            (err, result)=>{
-            
+        connection.beginTransaction((err)=>{
+            for(let i=0; i<input.length; i++)
+            {
+                sql += query
+            }
+            connection.query(sql,input,(err,result)=>{
                 if(err)
                 {
+                    connection.rollback()
                     console.log(err)
-                    check =true
-                                
+                    res.json({
+                        success:false
+                    })
                 }
-                else if(result!=undefined && result.affectedRows>=1)
+                else
                 {
-                            
+                    connection.commit()
+                    console.log(result)
+                    res.json({
+                        success:true
+                    })
                 }
-                else{
-                    check =true
-                }
             })
-        }
-
-        if(check === false)
-        {
-            res.json({
-                success:true
-            })
-        }
-        else{
-            res.json({
-                success:false
-            })
-        }
+    
+        })
 
 })
 
 app.post('/api/searchArtist/search',(req,res) => {
     //관리자 페이지에서 작가명으로 작가 찾기
         //like 작가명% 로 작가찾기 
-        var query = "select r.artist_id, r.artist_name, r.life_term  from artist r where r.artist_name like ?"
+        var query = "select r.artist_id, r.artist_name, r.life_term  from artist r where r.artist_name like ? order by r.artist_name"
         connection.query(query, [req.body.input+"%"],(err,result)=>{
             if(err)
             {
@@ -735,63 +718,46 @@ app.post('/api/searchArtist/delete',(req,res) => {
 //관리자 페이지 작가 삭제
     console.log(req.body.checkBoxId)
 
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-    async function(err, connection){
-
-        var option = {
-            autoCommit: true,
-                bindDefs: [
-                    { type: oracledb.NUMBER }
-                ]
-        }
-
-        if(err)
-        {
-            console.error(err.message);
-
-        }
-
-        console.log(req.body.checkBoxId)
         var input =[]
         //checkBoxId는 삭제할 작가의 id가 담긴 배열
         for(let i=0; i< req.body.checkBoxId.length; i++)
         {
             input.push([
-                Number(req.body.checkBoxId[i])
+               req.body.checkBoxId[i]
             ])
         }
         console.log(input)
 
         //작가id를 통해 작가 삭제
-        var query = "delete from artist where artist_id = :1"
-        await connection.executeMany(query, input, option,
-            (err, result)=>{
+        var query = "delete from artist where artist_id = ?;"
+        var sql = ""
 
+        connection.beginTransaction((err)=>{
+            for(let i=0; i<input.length; i++)
+            {
+                sql += query
+            }
+            connection.query(sql,input,(err,result)=>{
                 if(err)
                 {
+                    connection.rollback()
                     console.log(err)
-
                     res.json({
                         success:false
                     })
                 }
-                else if(result.rowsAffected>0)
+                else
                 {
+                    connection.commit()
+                    console.log(result)
                     res.json({
                         success:true
                     })
                 }
-                else{
-                    res.json({
-                        success:false
-                    })
-                }
             })
-    })
+    
+        })
+
 
 })
 
@@ -1868,11 +1834,7 @@ app.get('/api/exhibition1/data', function (req, res) {
                                     });
                                    
                                     app.post('/api/artist01/artist', function (req, res) {
-                                        
-                                        console.log("작가번호 : "+ req.body.id)
-
-                                         
-
+                                        var date = moment().format('YYYY-MM-DD HH:mm:ss')
                                                     if(req.body.id !=undefined && req.body.id.length>=1)
                                                     {
                                                         var query = "select artist_name, Artist_info from artist where artist_id = ?"
@@ -1894,7 +1856,7 @@ app.get('/api/exhibition1/data', function (req, res) {
                                                                         textArea: rows.Artist_info,
                                                                         people_num: '35121',
                                                                         totaltime: '1894:36:41',
-                                                                        timeline: '2021년 7월 20일 15시 30분 기준',
+                                                                        timeline: date+' 기준',
                                                                         like: '60'
                                                                     })
                                                                 })
@@ -1922,7 +1884,7 @@ app.get('/api/exhibition1/data', function (req, res) {
                                                                         textArea: rows.Artist_info,
                                                                         people_num: '35121',
                                                                         totaltime: '1894:36:41',
-                                                                        timeline: '2021년 7월 20일 15시 30분 기준',
+                                                                        timeline: date+' 기준',
                                                                         like: '60'
                                                                     })
                                                                 })
@@ -2156,85 +2118,49 @@ app.get('/api/Transfer/artdata',(req,res) => {
     
 })
 
-
 app.post('/api/Transfer/sendArt',(req,res) => {
     
     console.log(req.body.checkBoxValue + "\n" +req.body.username )
     var date = moment().format('YYYY-MM-DD');
     var input = []
-    var query = "update art set owner_username = :1, expired = TO_DATE(:2, 'YYYY-MM-DD') where art_id = :3 "
-    var option = {
-        autoCommit: true,
-            bindDefs: [
-                { type: oracledb.STRING, maxSize : 30 },
-                { type : oracledb.STRING, maxSize : 11},
-                { type: oracledb.NUMBER }
-                
-            ]
-    }
-
+    var query = "update art set owner_username = ?, expired = DATE_FORMAT(?, '%Y-%m-%d') where art_id = ?;"
+    var sql = ""
     for(let i=0; i< req.body.checkBoxValue.length ; i++)
     {
-        //console.log(req.body.checkBoxValue[i])
-        var data =[
-            req.body.username,
-            date,
-            Number(req.body.checkBoxValue[i])
-           
-        ]
-        //console.log(data)
-
-        input.push(data)
-
+        sql += query
+        input.push(req.body.username)
+        input.push(date)
+        input.push(req.body.checkBoxValue[i])
     }
-
-   
-
-    oracledb.getConnection({
-        user : dbConfig.user,
-        password : dbConfig.password,
-        connectString : dbConfig.connectString
-    },
-     async function(err, connection){
-
-        if(err)
-        {
-            
-            console.error(err.message);
-            
-        }
-        else{
-            try{
-            connection.executeMany(query,input, option, (err, result)=>{
-                if(err)
-                {
-                    
-                    console.error(err.message);
-                    
-                }
-
-                console.log(input)
-                //console.log("Result is ",result.rowsAffected)
-                return res.json({
-                    result: true
-                })
-                
-
-            })
-            
-            }
-            catch(err)
+        connection.beginTransaction((err)=>{
+            if(err)
             {
-                return res.json({
-                    result:false,
-                    //success:false
+                console.log(err)
+            }
+            else{
+
+                connection.query(sql,input,(err, result)=>{
+                    if(err)
+                    {
+                        connection.rollback()
+                        console.error(err);
+                        return res.json({
+                            success: false
+                        })
+                    }
+                    else
+                    {
+                        connection.commit()
+                        console.log(result)
+                        return res.json({
+                            success: true
+                        })
+                    }
                 })
             }
+        })
 
-        }
-    })
-
-    
+            
 })
 
 app.post('/api/AuctionMain/isStarted',(req,res)=>{

@@ -25,13 +25,11 @@ export default function SearchArtwork(){
 
     function findimg()
     {
+        setCheckList([])
+        setCheckList2([])
         axios.post(`http://${dev_ver}:4000/api/searchArtwork/search`,{input:input})
         .then((result) => {
 
-           
-
-
-            
             setInputlength(result.data.length)
             setInputdata(result.data);
         })

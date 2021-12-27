@@ -54,27 +54,6 @@ export const SidebarData = [
         cName: 'sub-nav'
       }    
     ]
-  },
-  {
-    title: 'Board',
-    icon: <BsIcons.BsCircleFill />,
-    iconClosed: <RiIcons.RiArrowDownSFill />,
-    iconOpened: <RiIcons.RiArrowUpSFill />,
-
-    subNav: [
-      {
-        title: 'Notice',
-        path: '/notice',
-        icon: <BsIcons.BsCircleFill/>,
-        cName: 'sub-nav'
-      },
-      {
-        title: 'CustomerService',
-        path: '/customerService',
-        icon: <BsIcons.BsCircleFill />,
-        cName: 'sub-nav'
-      }    
-    ]
   }
   
 ];

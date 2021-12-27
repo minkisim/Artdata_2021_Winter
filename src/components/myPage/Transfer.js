@@ -150,8 +150,15 @@ function Transfer({props, history}){
         })
         .then((result) => {
             
-            alert('성공적으로 전송하였습니다.')
-            history.push('/mypage')
+            if(result.data.success)
+            {
+                alert('성공적으로 전송하였습니다.')
+                history.push('/mypage')
+            }
+            else{
+                alert('전송에 실패하였습니다.')
+            }
+         
             
 
         })

@@ -17,18 +17,14 @@ export default function SearchArtist(){
 
     function findartist()
     {
+        setCheckList([])
+        setCheckList2([])
         axios.post(`http://${dev_ver}:4000/api/searchArtist/search`,{input:input})
         .then((result) => {
 
             console.log(result.data)
             setInputdata(result.data);
             setInputlength(result.data.length)
-
-
-           
-
-
-
         })
         .catch((err)=>{
             alert(err);
