@@ -1,10 +1,35 @@
+/* global history */
+/* global location */
+/* global window */
+
+/* eslint no-restricted-globals: ["off"] */
 import React, { PureComponent,useState, useEffect,useLayoutEffect }  from "react";
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
+import { func } from "prop-types";
 
 function CSEditor({isLogin, isAdmin}){
+    const selectList = ["서비스 종류", "전시관 관련", "작가 관련", "경매 진행 관련", "경매 결제 관련", "사이트 관련"]
+
+    const [title,setTitle] = useState()
+    const [boardtype, setBoardtype] = useState("서비스 종류")
+    const [bodytext, setBodytext] = useState("")
+
+
+    function upload()
+    {
+
+        alert("등록 되었습니다.")
+        alert(boardtype)
+    }
+
+    function cancel()
+    {
+        history.back()
+    }
+
     return(
         <>
         <div className="CSEditor_block">
@@ -13,13 +38,12 @@ function CSEditor({isLogin, isAdmin}){
                 </div>
                 <input className="CS_title_input" type='text' placeholder='제목을 입력해주세요.' />
                 <div className="CSEditor_mode">
-                    <select className="CSEditor_select">
-                        <option value="">서비스 종류</option>
-                        <option value="">전시관 관련</option>
-                        <option value="">작가 관련</option>
-                        <option value="">경매 진행 관련</option>
-                        <option value="">경매 결제 관련</option>
-                        <option value="">사이트 관련</option>
+                    <select className="CSEditor_select" onChange={(e)=>{setBoardtype(e.target.value)}} value={boardtype}>
+                       {
+                           selectList.map((item)=>(
+                               <option value = {item} key={item}>{item}</option>
+                           ))
+                       }
                     </select>
                 </div>
                 <div className="CS_Editor">
@@ -35,6 +59,7 @@ function CSEditor({isLogin, isAdmin}){
                             onChange={(event, editor) => {
                                 const data = editor.getData();
                                 console.log({ event, editor, data });
+                                setBodytext(editor.getData())
                             }}
                             onBlur={(event, editor) => {
                                 console.log('Blur.', editor);
@@ -46,8 +71,8 @@ function CSEditor({isLogin, isAdmin}){
                         </div>   
                 </div>
                 <div className="CSEditorFlex">
-                            <button className="submitButton">등록</button>
-                            <button className="submitButton">취소</button>
+                            <button onClick={upload} className="submitButton">등록</button>
+                            <button onClick={cancel} className="submitButton">취소</button>
                 </div>
         </div>
         </>

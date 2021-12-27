@@ -7,9 +7,25 @@ import CommonTableColumn from "./commontable/CommonTableCloumn";
 
 
 import axios from "axios";
+import {dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
 
 function NoticeBoard({isLogin, isAdmin}){
+
+    const [adminCheck, setAdminCheck] = useState()
+
+    useEffect(()=>{
+        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        .then((result)=>{
+            if(result.data.userrole == 'ROLE_ADMIN')
+            {
+                setAdminCheck('ROLE_ADMIN')
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+    },[])
 
     return(
     <>  
@@ -58,10 +74,10 @@ function NoticeBoard({isLogin, isAdmin}){
             <span className="NoticeSpan">4</span>
             <span className="NoticeSpan">5</span>
         </div>
-        <Link to="/noticeeditor"><div className="NoticeBtn">
+        {adminCheck != undefined && adminCheck == 'ROLE_ADMIN' && <Link to="/noticeeditor"><div className="NoticeBtn">
             <p>글쓰기</p>
         </div></Link>    
-        
+        }
     </div>
 
     </>  
