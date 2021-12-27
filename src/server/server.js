@@ -79,6 +79,7 @@ var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
 const { off } = require('process');
+const { elemIndices } = require('prelude-ls');
 //const nodedb = require('./models/nodedb');
 //const { connect } = require('http2');
 //const FileStore = require('session-file-store') (session)
@@ -2679,6 +2680,84 @@ app.post('/api/mainsearch',(req,res)=>{
                 }
             })
 })
+
+
+
+//게시판 페이징
+app.post('/api/board/showpage',(req,res)=>{
+    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
+    connection.query(query,(req.body.page-1)*5,(err,result)=>{
+        if(err)
+        {
+            console.log(err)
+            res.json({err:err})
+        }
+        else if(result != undefined && result[0] != undefined)
+        {
+            console.log(result)
+            res.json(result)
+        }
+    })
+
+})
+
+//게시판 등록
+app.post('/api/board/upload',(req,res)=>{
+    var date = moment().format('YYYY-MM-DD');
+    //사용자 세션 확인
+    if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
+    {
+        var query = "select tmp2.indices from (select t.*, @rownum := @rownum + 1 rownum  from (select indices from board where username = ? order by indices desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+        
+        connection.query(query, req.session.user.username,(err,result)=>{
+            if(err)
+            {
+                console.log(err)
+                res.json({db_error:true})
+            }
+            else
+            {
+                var indices
+                if(result!=undefined && result[0]!=undefined)
+                {
+                    indices = result[0].indices + 1
+                }
+                else{
+                    indices = 1
+                }
+
+                query = "insert into board values(?, ?, null, ?, ?, ?, DATE_FORMAT(?,'%Y-%m-%d'), null, null)"
+                var input = []
+                input.push(req.session.user.username)
+                input.push(indices)
+                input.push(req.body.boardtype)
+                input.push(req.body.title)
+                input.push(req.body.bodytext)
+                input.push(date)
+                console.log(input)
+
+                connection.query(query,input,(err,result)=>{
+                    if(err)
+                    {
+                        connection.rollback()
+                        res.json({db_error:true})
+                    }
+                    else if(result != undefined && result.affectedRows >= 1){
+                        connection.commit()
+                        res.json({result:true})
+                    }
+                })
+            }
+        })
+        
+    }
+    //로그인이 안되어 있을 때
+    else
+    {
+        res.json({login_required:true})
+    }
+})
+
 
 app.listen(PORT, () => {
     console.log(`Server run: http://localhost:${PORT}/`)

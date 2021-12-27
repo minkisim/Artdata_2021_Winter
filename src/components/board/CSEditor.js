@@ -10,19 +10,75 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
 import { func } from "prop-types";
 
-function CSEditor({isLogin, isAdmin}){
-    const selectList = ["서비스 종류", "전시관 관련", "작가 관련", "경매 진행 관련", "경매 결제 관련", "사이트 관련"]
 
-    const [title,setTitle] = useState()
+import { dev_ver } from '../../pages/global_const'
+import axios from "axios";
+
+function CSEditor({isLogin, isAdmin}){
+    const selectList = ["전시관 관련", "작가 관련", "경매 진행 관련", "경매 결제 관련", "사이트 관련"]
+
+    const [title,setTitle] = useState("")
     const [boardtype, setBoardtype] = useState("서비스 종류")
     const [bodytext, setBodytext] = useState("")
 
 
     function upload()
     {
+        var jsondata = {
+            boardtype:null,
+            title : null,
+            bodytext : null
+        }
 
-        alert("등록 되었습니다.")
-        alert(boardtype)
+        if(boardtype != undefined && boardtype.length>=1)
+        {
+            jsondata.boardtype = boardtype
+        }
+
+        if(title != undefined && title.length>=1)
+        {
+            jsondata.title = title
+        }
+        else
+        {
+            alert("제목을 입력하십시오.")
+            return false
+        }
+
+        if(bodytext!=undefined && bodytext.length>=1)
+        {
+            jsondata.bodytext = bodytext
+        }
+
+        else
+        {
+            alert("내용을 입력하십시오.")
+            return false
+        }
+
+        axios.post(`http://${dev_ver}:4000/api/board/upload`,jsondata)
+        .then((res)=>{
+            if(res.data.login_required)
+            {
+                alert("로그인이 필요합니다.")
+                window.location.href = '/loginPage'
+            }
+            else if(res.data.db_error){
+                alert("등록에 실패하였습니다.")
+            }
+            else if(res.data.result)
+            {
+                alert("등록 되었습니다.")
+                window.location.href = '/customerService'
+            }
+            
+            
+        })
+        .catch((err)=>{
+           
+            alert(err)
+        })
+        
     }
 
     function cancel()
@@ -36,7 +92,7 @@ function CSEditor({isLogin, isAdmin}){
                 <div className="CSEditor_title">
                     <p>고객센터 문의</p>
                 </div>
-                <input className="CS_title_input" type='text' placeholder='제목을 입력해주세요.' />
+                <input className="CS_title_input" type='text' placeholder='제목을 입력해주세요.' onChange={(e)=>{setTitle(e.target.value)}}/>
                 <div className="CSEditor_mode">
                     <select className="CSEditor_select" onChange={(e)=>{setBoardtype(e.target.value)}} value={boardtype}>
                        {
