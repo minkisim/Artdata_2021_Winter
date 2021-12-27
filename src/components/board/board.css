@@ -1,0 +1,184 @@
+/*  공지사항 css */
+.NoticeTable{
+    position: relative;
+}
+.NoticeSpan{
+    margin-right: 15px;
+    font-size: 20px;
+    font-family: Lato;
+}
+.NoticeSpan:hover{
+    background-color: #eceaea;
+    cursor: pointer;
+}
+.Notice{
+    position: absolute;
+    top:220px;
+    left:250px;
+    width:1200px;
+}
+.NoticeBtn{
+    position: relative;
+    float:right;
+    background-color: #181818;
+    padding: 0px 25px;
+    border-radius: 15px;
+}
+.NoticeBtn p{
+    font-size: 16px;
+    padding: 0px 0px;
+    font : Noto Sans KR;
+    color:#e0e0e0;
+}
+.NoticeTable_title{
+    position: absolute;
+    top:160px;
+    left:260px;
+}
+
+/* 공지사항 글쓰기 css */
+
+.NoticeEditor_block{
+    position: absolute;
+    top:150px;
+    left:260px;
+}
+.form-wrapper{
+    width: 100%;
+    
+    margin: 0 auto;
+  }
+.ck-editor__editable_inline {
+    min-height:700px;
+}
+
+
+.NoticeEditor_title{
+    position: absolute;
+    top:0px;
+    left:10px;
+    width:200px;
+}
+.NoticeEditor_title p {
+    font-size: 28px;
+    float: left;
+    font-weight: bold;
+    font-family: Noto Sans KR;
+}
+.NoticeTable_title p {
+    font-size: 28px;
+    float: left;
+    font-weight: bold;
+    font-family: Noto Sans KR;
+}
+
+.NoticeEditor{
+    position: absolute;
+    top:130px;
+    left:0px;
+    width:1200px;
+    height:800px;
+    float: left;
+}
+
+.title_input{
+    position:absolute;
+    top:80px;
+    width:800px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+.EditorFlex{
+    position:absolute;
+    top:890px;
+    left:1040px;
+    display: flex;
+    justify-content: space-between;
+    width:150px;
+    float: right;
+    
+}
+.submitButton{
+    width:70px;
+    height:40px;
+    padding: 0px 15px;
+    background-color: #181818;
+    color: #e0e0e0;
+    border :0px;
+    border-radius: 15px;
+}
+
+/*고객센터 문의글 작성*/
+.CSEditor_block{
+    position: absolute;
+    top:150px;
+    left:260px;
+}
+
+.CSEditor_title{
+    position: absolute;
+    top:0px;
+    left:10px;
+    width:300px;
+}
+.CSEditor_title p {
+    font-size: 28px;
+    float: left;
+    font-weight: bold;
+    font-family: Noto Sans KR;
+}
+.CSEditor_mode{
+    position: absolute;
+    top:80px;
+    left:0px;
+}
+.CSEditor_select{
+    font-size: 16px;
+    width:150px;
+    height:40px;
+    padding-left: 10px;
+    border-radius: 15px;
+    
+}
+
+.CS_Editor{
+    position: absolute;
+    top:180px;
+    left:0px;
+    width:1200px;
+    height:800px;
+    float: left;
+}
+
+.CS_title_input{
+    position:absolute;
+    top:130px;
+    width:800px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border : 1px solid #000000;
+}
+.CSEditorFlex{
+    position:absolute;
+    top:960px;
+    left:1040px;
+    display: flex;
+    justify-content: space-between;
+    width:150px;
+    float: right;
+    
+}
+.CSEditorFlex .submitButton{
+    width:70px;
+    height:40px;
+    padding: 0px 15px;
+    background-color: #181818;
+    color: #e0e0e0;
+    border :0px;
+    border-radius: 15px;
+}
+
+
+

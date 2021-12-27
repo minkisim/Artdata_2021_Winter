@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, { PureComponent,useState, useEffect,useLayoutEffect } from 'react';
-import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom'
+import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import '../App.css';
 
 /* vaneTitle and  SideBar Part*/
@@ -51,6 +51,11 @@ import  Error404  from './Error404';
 /*Title part */
 import TitlePage from '../components/home/TitlePage';
 
+/*Board part*/
+import NoticeBoard from '../components/board/NoticeBoard';
+import Editor from '../components/board/Editor';
+import CustomerService from '../components/board/CustomerService';
+import CSEditor from '../components/board/CSEditor';
 import {dev_ver} from './global_const';
 
 import axios from 'axios';
@@ -132,7 +137,12 @@ function MainPage({isLogin, isAdmin}){
     
                 {<Route  path="/loginPage" restricted={true} component={LoginPage} exact></Route>  }
                 {<Route  path="/signupPage" restricted={true} component={SignupPage} exact></Route>} 
-                
+
+                {<Route path="/notice" component={NoticeBoard} exact></Route>}
+                {<Route path="/noticeeditor" component={Editor} exact></Route>}
+
+                {<Route path="/customerService" component={CustomerService} exact></Route>}
+                {<Route path="/cseditor" component={CSEditor} exact></Route>}
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/myauction" component={MyAuction} exact></PrivateRoute>      }   
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
