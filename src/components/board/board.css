@@ -1,4 +1,5 @@
 /*  공지사항 css */
+
 .NoticeTable{
     position: relative;
 }
@@ -180,5 +181,128 @@
     border-radius: 15px;
 }
 
+/* 게시글 내용 보여주기 */
+.NoticeArticle_title{
+    position: absolute;
+    top:130px;
+    left:250px;
+}
+.NoticeArticle_title p {
+    font-size: 28px;
+    float: left;
+    font-weight: bold;
+    font-family: Noto Sans KR;
+}
+.NoticleArticle{
+    position: absolute;
+    top:200px;
+    left:250px;
+    width:1200px;
+}
+.NoticeArticle_userTitle{
+    position: absolute;
+    top:230px;
+    left:260px;
+}
 
+.NoticeArticle_userTitle p{
+    padding: 0px 10px;
+    margin-top: 0px;
+    font-size: 20px;
+    float: left;
+    font-weight: 700;
+    font-family: Noto Sans KR;
+}
+.NoticeArticle_body{
+    position: absolute;
+    overflow-y: scroll;
+    padding: 0px 25px;
+    top:270px;
+    left:250px;
+    width:1200px;
+    height:600px;
+    border: 1px solid #000000;
+    border-radius: 25px;
+    -ms-overflow-style: none;
+}
+.NoticeArticle_body::-webkit-scrollbar{
+    display: none;
+}
 
+.NoticeArticleBtn{
+    position: absolute;
+    top:890px;
+    left:1280px;
+    width:140px;
+    height:45px;
+    border-radius: 15px;
+    background-color: #181818;
+}
+.NoticeArticleBtn p{
+    margin-top: 13px;
+    color:#e0e0e0;
+    font-weight: bold;
+}
+
+.CSArticle_userbody{
+    position: absolute;
+    overflow-y: scroll;
+    padding: 0px 25px;
+    top:270px;
+    left:250px;
+    width:1200px;
+    height:400px;
+    border: 1px solid #000000;
+    border-radius: 25px;
+    -ms-overflow-style: none;
+}
+.CSArticle_userbody::-webkit-scrollbar{
+    display: none;
+}
+
+.CSArticle_AdminTitle{
+    position: absolute;
+    top:680px;
+    left:260px;
+    
+}
+
+.CSArticle_AdminTitle p{
+    padding: 0px 10px;
+    margin-top: 0px;
+    font-size: 20px;
+    float: left;
+    font-weight: 700;
+    font-family: Noto Sans KR;
+}
+
+.CSArticle_Adminbody{
+    position: absolute;
+    overflow-y: scroll;
+    padding: 0px 25px;
+    top:715px;
+    left:250px;
+    width:1200px;
+    height:400px;
+    border: 1px solid #000000;
+    border-radius: 25px;
+    -ms-overflow-style: none;
+}
+.CSArticle_Adminbody::-webkit-scrollbar{
+    display: none;
+}
+
+.CSArticleBtn{
+    position: absolute;
+    top:210px;
+    left:1330px;
+    width:140px;
+    height:45px;
+    border-radius: 15px;
+    background-color: #181818;
+}
+.CSArticleBtn p{
+    margin-top: 13px;
+    color:#e0e0e0;
+    font-weight: bold;
+}

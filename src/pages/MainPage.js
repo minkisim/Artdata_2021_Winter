@@ -56,6 +56,8 @@ import NoticeBoard from '../components/board/NoticeBoard';
 import Editor from '../components/board/Editor';
 import CustomerService from '../components/board/CustomerService';
 import CSEditor from '../components/board/CSEditor';
+import NoticeArticle from '../components/board/NoticeArticle';
+import CSArticle from '../components/board/CSArticle';
 import {dev_ver} from './global_const';
 
 import axios from 'axios';
@@ -143,6 +145,10 @@ function MainPage({isLogin, isAdmin}){
 
                 {<Route path="/customerService" component={CustomerService} exact></Route>}
                 {<Route path="/cseditor" component={CSEditor} exact></Route>}
+
+                {<Route path="/noticeArticle" component={NoticeArticle} exact></Route>}
+                {<Route path="/csArticle" component={CSArticle} exact></Route>}
+
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/myauction" component={MyAuction} exact></PrivateRoute>      }   
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
