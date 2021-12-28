@@ -169,13 +169,15 @@ function CustomerService({isLogin, isAdmin}){
     </div>
     <div className="Notice">
         <div className="NoticeTable">
-        <CommonTable  headersName={['글번호', '제목', '등록일', '답변', '답변일']}>
+        <CommonTable  headersName={['글번호','종류', '제목', '등록일', '답변', '답변일']}>
         
             {data!=undefined &&
                 data.map((item)=>(
                     <>
                     <CommonTableRow>
+
                         <CommonTableColumn><Link to={"/csArticle?username="+item.username+"&indices="+item.indices}>{item.rownum}</Link></CommonTableColumn>
+                        <CommonTableColumn><Link to={"/csArticle?username="+item.username+"&indices="+item.indices}>{item.boardtype}</Link></CommonTableColumn>
                         <CommonTableColumn><Link to={"/csArticle?username="+item.username+"&indices="+item.indices}>{item.title}</Link></CommonTableColumn> 
                         <CommonTableColumn><Link to={"/csArticle?username="+item.username+"&indices="+item.indices}>{item.uploaddate}</Link></CommonTableColumn>
                         <CommonTableColumn><Link to={"/csArticle?username="+item.username+"&indices="+item.indices}>{item.manager != undefined ? "답변 완료" : "접수 대기"}</Link></CommonTableColumn>

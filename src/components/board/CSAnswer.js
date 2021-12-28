@@ -10,7 +10,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
 import { func } from "prop-types";
 
-
+import queryString from 'query-string'
 import { dev_ver } from '../../pages/global_const'
 import axios from "axios";
 
@@ -19,7 +19,7 @@ function CSAnswer({isLogin, isAdmin}){
     const [bodytext, setBodytext] = useState("")
 
     useEffect(()=>{
-        
+
     },[])
 
     function upload()
@@ -27,22 +27,21 @@ function CSAnswer({isLogin, isAdmin}){
         var jsondata = {
             boardtype:null,
             title : null,
-            bodytext : null
+            bodytext : null,
+            username : null,
+            indices : null
         }
 
-        if(boardtype != undefined && boardtype.length>=1)
+        const query = queryString.parse(location.search)
+        if(query != undefined && query.username != undefined && query.indices != undefined)
         {
-            jsondata.boardtype = boardtype
-        }
-
-        if(title != undefined && title.length>=1)
-        {
-            jsondata.title = title
+           jsondata.username = query.username
+            jsondata.indices = query.indices
         }
         else
         {
-            alert("제목을 입력하십시오.")
-            return false
+            alert("잘못된 접근입니다.")
+            window.location.href = "/customerService"
         }
 
         if(bodytext!=undefined && bodytext.length>=1)
@@ -56,7 +55,7 @@ function CSAnswer({isLogin, isAdmin}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/board/upload`,jsondata)
+        axios.post(`http://${dev_ver}:4000/api/board/answer`,jsondata)
         .then((res)=>{
             if(res.data.login_required)
             {
@@ -92,15 +91,8 @@ function CSAnswer({isLogin, isAdmin}){
                 <div className="CSEditor_title">
                     <p>고객센터 답장</p>
                 </div>
-                <input className="CS_title_input" type='text' placeholder='제목을 입력해주세요.' onChange={(e)=>{setTitle(e.target.value)}}/>
-                <div className="CSEditor_mode">
-                    <select className="CSEditor_select" onChange={(e)=>{setBoardtype(e.target.value)}} value={boardtype}>
-                       {
-                           selectList.map((item)=>(
-                               <option value = {item} key={item}>{item}</option>
-                           ))
-                       }
-                    </select>
+                 <div className="CSEditor_mode">
+                   
                 </div>
                 <div className="CS_Editor">
                         <div className="form-wrapper">

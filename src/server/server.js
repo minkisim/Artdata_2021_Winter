@@ -2698,7 +2698,7 @@ app.get('/api/board/pagenum',(req,res)=>{
 
 //게시판 페이징
 app.post('/api/board/showpage',(req,res)=>{
-    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select username, indices, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
+    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select username, indices, boardtype, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
     connection.query(query,(req.body.page-1)*5,(err,result)=>{
         if(err)
         {
@@ -2784,6 +2784,28 @@ app.post('/api/board/upload',(req,res)=>{
         
     }
     //로그인이 안되어 있을 때
+    c
+})
+
+app.post('/api/board/answer',(req,res)=>{
+    var date = moment().format('YYYY-MM-DD');
+    //로그인 확인
+    if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
+    {
+        var query = "update board set manager = ?, answer = ?, answerdate = DATE_FORMAT(?,'%Y-%m-%d') where username = ? and indices = ?"
+        connection.query(query,
+            [req.session.user.username, req.body.bodytext, date, req.body.username, req.body.indices],
+            (err,result)=>{
+                if(err)
+                {
+                    res.json({db_error:true})
+                }
+                else if(result!=undefined && result.affectedRows>=1)
+                {
+                    res.json({result:true})
+                }
+            })
+    }
     else
     {
         res.json({login_required:true})

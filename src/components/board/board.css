@@ -306,3 +306,18 @@
     color:#e0e0e0;
     font-weight: bold;
 }
+
+.CSAnswerBtn{
+    position: absolute;
+    top:210px;
+    left:1130px;
+    width:140px;
+    height:45px;
+    border-radius: 15px;
+    background-color: #181818;
+}
+.CSAnswerBtn p{
+    margin-top: 13px;
+    color:#e0e0e0;
+    font-weight: bold;
+}

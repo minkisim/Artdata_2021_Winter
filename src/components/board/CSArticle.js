@@ -65,6 +65,10 @@ function CSArticle({isLogin, isAdmin}){
         <Link to="/customerService"><div className="CSArticleBtn">
             <p>게시글 목록</p>
         </div></Link>    
+        <Link to={"/csanswer?username="+queryString.parse(location.search).username+"&indices="+queryString.parse(location.search).indices}>
+            <div className="CSAnswerBtn">
+            <p>게시글 답변</p>
+        </div></Link>    
     </div>
 
     </>  
