@@ -187,11 +187,11 @@ function CustomerService({isLogin, isAdmin}){
         </CommonTable>
         </div>
         <div className="NoticeNumber">
-            {startnum > 1 && <div onClick={priorpage}>이전</div>}
+            {startnum > 1 && <span className="NoticeSpan" onClick={priorpage}>이전</span>}
             { pagenum !=undefined &&  pagenum.map((item,index)=>(
                 <a href={"/customerService?page="+item}><span className="NoticeSpan" >{item}</span></a>
             ))}
-            {lastnum < maxPage && <div onClick={nextpage}>다음</div>}
+            {lastnum < maxPage && <span className="NoticeSpan" onClick={nextpage}>다음</span>}
         </div>
         <Link to="/cseditor"><div className="NoticeBtn">
             <p>글쓰기</p>
