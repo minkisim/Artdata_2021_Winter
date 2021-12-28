@@ -18,7 +18,7 @@ function CSEditor({isLogin, isAdmin}){
     const selectList = ["전시관 관련", "작가 관련", "경매 진행 관련", "경매 결제 관련", "사이트 관련"]
 
     const [title,setTitle] = useState("")
-    const [boardtype, setBoardtype] = useState("서비스 종류")
+    const [boardtype, setBoardtype] = useState("전시관 관련")
     const [bodytext, setBodytext] = useState("")
 
 

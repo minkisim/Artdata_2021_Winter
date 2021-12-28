@@ -141,7 +141,7 @@ function MainPage({isLogin, isAdmin}){
                 {<Route  path="/signupPage" restricted={true} component={SignupPage} exact></Route>} 
 
                 {<Route path="/notice" component={NoticeBoard} exact></Route>}
-                {<Route path="/noticeeditor" component={Editor} exact></Route>}
+               
 
                 {<Route path="/customerService" component={CustomerService} exact></Route>}
                 {<Route path="/cseditor" component={CSEditor} exact></Route>}
@@ -154,13 +154,14 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }  
-
+                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/noticeeditor" component={Editor} exact></PrivateRoute>      }
 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/myauction" component={MyAuction} exact></PrivateRoute>      }   
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }   
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/noticeeditor" component={Editor} exact></PrivateRoute>      }   
                 {<Route  path="/auctionmain"  component={AuctionMain} exact></Route> }   
                 {console.log("isLogin : "+isLogin)}
                 

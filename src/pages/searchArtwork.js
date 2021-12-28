@@ -155,9 +155,6 @@ export default function SearchArtwork(){
                         {inputdata != '' && inputdata.map( (part,index) => <Search_artwork_list data={part} id={index} />)}
 
 
-
-
-
                         <div className="search_artist_btn_flex">
                             <div className="search_artist_btn" onClick={updateArtwork}><p>수정</p></div>
                             <div className="search_artist_btn" onClick={deleteartwork}><p>삭제</p></div>

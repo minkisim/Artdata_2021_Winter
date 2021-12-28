@@ -1,3 +1,8 @@
+/* global history */
+/* global location */
+/* global window */
+
+/* eslint no-restricted-globals: ["off"] */
 import React, { PureComponent,useState, useEffect,useLayoutEffect }  from "react";
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import "./board.css";
@@ -5,11 +10,41 @@ import CommonTable from "./commontable/CommonTable";
 import CommonTableRow from "./commontable/CommonTableRow";
 import CommonTableColumn from "./commontable/CommonTableCloumn";
 
-
+import queryString from 'query-string'
 import axios from "axios";
+import {dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
 
 function NoticeArticle({isLogin, isAdmin}){
+    const [results, setResults] = useState()
+    useEffect(()=>{
+        var id
+        const query = queryString.parse(location.search)
+        if(query != undefined && query.id != undefined)
+        {
+            id=query.id
+        }       
+        else{
+            alert("잘못된 접근입니다.")
+            window.location.href = "/notice"
+        } 
+
+
+        axios.post(`http://${dev_ver}:4000/api/notice/showarticle`,{id:id})
+        .then((res)=>{
+            if(res.data.err)
+            {
+
+            }
+            else
+            {
+                setResults(res.data)
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+    },[])
 
     return(
     <>  
@@ -18,28 +53,13 @@ function NoticeArticle({isLogin, isAdmin}){
     </div>
     <div className="NoticeArticle">
         <div className="NoticeArticle_userTitle">
-        <p>제목 : 게시글 제목입니다.</p>
+        <p>제목 : {results != undefined && results.title}</p>
         </div>
-        <div align="left" className="NoticeArticle_body">
-            <p>테스트1</p>
-            <p>테스트2</p>
-            <p>테스트3</p>
-            <p>테스트4</p>
-            <p>테스트5</p>
-            <p>테스트1</p>
-            <p>테스트2</p>
-            <p>테스트3</p>
-            <p>테스트4</p>
-            <p>테스트5</p>
-            <p>테스트1</p>
-            <p>테스트2</p>
-            <p>테스트3</p>
-            <p>테스트4</p>
-            <p>테스트5</p>
-            <p>테스트1</p>
-            <p>테스트1</p>
-            <p>테스트1</p>
+        {
+            results !=undefined &&
+        <div align="left" className="NoticeArticle_body" dangerouslySetInnerHTML={ {__html:results.bodytext} }>
         </div>
+         }
         <Link to="/notice"><div className="NoticeArticleBtn">
             <p>게시글 목록</p>
         </div></Link>    

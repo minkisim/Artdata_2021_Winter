@@ -1,6 +1,13 @@
+/* global history */
+/* global location */
+/* global window */
+
+/* eslint no-restricted-globals: ["off"] */
 import React, { PureComponent,useState, useEffect,useLayoutEffect }  from "react";
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import "./board.css";
+
+import queryString from 'query-string'
 import CommonTable from "./commontable/CommonTable";
 import CommonTableRow from "./commontable/CommonTableRow";
 import CommonTableColumn from "./commontable/CommonTableCloumn";
@@ -13,6 +20,12 @@ axios.defaults.withCredentials = true;
 function NoticeBoard({isLogin, isAdmin}){
 
     const [adminCheck, setAdminCheck] = useState()
+    const [data, setData] = useState()
+    const [maxPage, setMaxPage] = useState(0)
+    const [currpage, setCurrPage] = useState(1)
+    const [pagenum, setPagenum] = useState()
+    const [startnum, setStartnum] = useState(1)
+    const [lastnum, setLastnum] = useState()
 
     useEffect(()=>{
         axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
@@ -25,7 +38,140 @@ function NoticeBoard({isLogin, isAdmin}){
         .catch((err)=>{
             alert(err)
         })
+        
+        var page = 1
+        var start = 1
+        var last = 1
+        const query = queryString.parse(location.search)
+        if(query != undefined && query.page != undefined)
+        {
+            console.log("page : " + query.page)
+            page = query.page
+            setCurrPage(page)
+            setStartnum( (Math.floor((page-1)/5))*5+1)
+            start = (Math.floor((page-1)/5))*5+1
+        }
+        else
+        {
+            console.log("no page : 1")
+        }
+
+
+        axios.get(`http://${dev_ver}:4000/api/notice/pagenum`)
+        .then((res)=>{
+            if(res.data.err)
+            {
+                alert('서버와 연결이 되지 않았습니다.')
+            }
+            else if(res.data.noticenum!=undefined)
+            {
+
+                if(Math.ceil(res.data.noticenum/5.0)!=0 && Math.ceil(res.data.noticenum/5.0) < page)
+                {
+                    alert("잘못된 접근입니다.")
+                    window.location.href='/notice'
+                }
+                setMaxPage(Math.ceil(res.data.noticenum/5.0))
+
+                if(Math.ceil(res.data.noticenum/5.0) >= (Math.floor((page-1)/5))*5+1+4)
+                {
+                    last = (Math.floor((page-1)/5))*5+1+4
+                    setLastnum((Math.floor((page-1)/5))*5+1+4)
+                }
+                else
+                {
+                    last = Math.ceil(res.data.noticenum/5.0)
+                    setLastnum(Math.ceil(res.data.noticenum/5.0))
+                }
+
+                var arr = []
+
+                for(let i=start; i<=last; i++)
+                {
+                    arr.push(i)
+                }
+
+                //console.log(arr)
+                setPagenum(arr)
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+
+
+        axios.post(`http://${dev_ver}:4000/api/notice/showpage`,{page : page})
+        .then((res)=>{
+            if(res.data !=undefined)
+            {
+                setData(res.data)
+                //console.log(res.data)
+            }
+        })
+        .catch((err)=>{
+             alert(err)
+            
+        })
     },[])
+
+    const priorpage = () =>{
+        var arr = []
+        var start 
+        var last
+
+        if(startnum-5<1)
+        {
+            setStartnum(1)
+            start = 1
+        }
+        else{
+            setStartnum(startnum-5)
+            start = startnum - 5
+        }
+
+        setLastnum(startnum-5+4)
+        last = start+4
+
+        for(let i = start; i<=last; i++)
+        {
+            arr.push(i)
+        }
+        
+        setPagenum(arr)
+
+    }
+
+    const nextpage = () =>
+    {
+        var arr = []
+        var start
+        var last
+        
+        setStartnum(startnum+5)
+        start = startnum+5
+
+        if(lastnum+5 >= maxPage)
+        {
+            last = maxPage
+            setLastnum(maxPage)
+        }
+        else{
+            last=startnum+4
+            setLastnum(startnum+4)
+        }
+
+        
+        for(let i = start; i<=last; i++)
+        {
+            arr.push(i)
+        }
+
+
+        setPagenum(arr)
+
+        //console.log("start : "+startnum+"\nlast : "+lastnum+"\nmaxpage : "+maxPage)
+        //console.log(pagenum)
+    }
 
     return(
     <>  
@@ -35,44 +181,28 @@ function NoticeBoard({isLogin, isAdmin}){
     <div className="Notice">
         <div className="NoticeTable">
         <CommonTable  headersName={['글번호', '제목', '등록일', '조회수']}>
-            <CommonTableRow>
-            <CommonTableColumn>1</CommonTableColumn>
-            <CommonTableColumn>첫번째 게시글입니다.</CommonTableColumn>
-            <CommonTableColumn>2020-10-25</CommonTableColumn>
-            <CommonTableColumn>6</CommonTableColumn>
-            </CommonTableRow>
-            <CommonTableRow>
-            <CommonTableColumn>2</CommonTableColumn>
-            <CommonTableColumn>두번째 게시글입니다.</CommonTableColumn>
-            <CommonTableColumn>2020-10-25</CommonTableColumn>
-            <CommonTableColumn>5</CommonTableColumn>
-            </CommonTableRow>
-            <CommonTableRow>
-            <CommonTableColumn>3</CommonTableColumn>
-            <CommonTableColumn>세번째 게시글입니다.</CommonTableColumn>
-            <CommonTableColumn>2020-10-25</CommonTableColumn>
-            <CommonTableColumn>1</CommonTableColumn>
-            </CommonTableRow>
-            <CommonTableRow>
-            <CommonTableColumn>4</CommonTableColumn>
-            <CommonTableColumn>네번째 게시글입니다.</CommonTableColumn>
-            <CommonTableColumn>2020-10-25</CommonTableColumn>
-            <CommonTableColumn>2</CommonTableColumn>
-            </CommonTableRow>
-            <CommonTableRow>
-            <CommonTableColumn>5</CommonTableColumn>
-            <CommonTableColumn>다섯번째 게시글입니다.</CommonTableColumn>
-            <CommonTableColumn>2020-10-25</CommonTableColumn>
-            <CommonTableColumn>4</CommonTableColumn>
-            </CommonTableRow>
+            {
+                data!=undefined &&
+                data.map((item)=>(
+                    <CommonTableRow>
+                    <CommonTableColumn><Link to={"/noticeArticle?id="+item.id}>{item.rownum}</Link></CommonTableColumn>
+                    <CommonTableColumn><Link to={"/noticeArticle?id="+item.id}>{item.title}</Link></CommonTableColumn>
+                    <CommonTableColumn><Link to={"/noticeArticle?id="+item.id}>{item.uploaddate}</Link></CommonTableColumn>
+                    <CommonTableColumn><Link to={"/noticeArticle?id="+item.id}>{item.hits}</Link></CommonTableColumn>
+                    </CommonTableRow>
+                ))
+            }
         </CommonTable>
         </div>
         <div className="NoticeNumber">
-            <span className="NoticeSpan">1</span>
-            <span className="NoticeSpan">2</span>
-            <span className="NoticeSpan">3</span>
-            <span className="NoticeSpan">4</span>
-            <span className="NoticeSpan">5</span>
+        {startnum > 1 && <div onClick={priorpage}>이전</div>}
+            {
+                pagenum != undefined &&
+                pagenum.map((item)=>(
+                    <a href={"/notice?page="+item}><span className="NoticeSpan" >{item}</span></a>
+                ))
+            }
+        {lastnum < maxPage && <div onClick={nextpage}>다음</div>}
         </div>
         {adminCheck != undefined && adminCheck == 'ROLE_ADMIN' && <Link to="/noticeeditor"><div className="NoticeBtn">
             <p>글쓰기</p>

@@ -2681,24 +2681,56 @@ app.post('/api/mainsearch',(req,res)=>{
             })
 })
 
-
+//게시판 페이지 개수
+app.get('/api/board/pagenum',(req,res)=>{
+    var query = "select count(*) boardnum from (select t.*, @rownum := @rownum + 1 rownum  from (select * from board) t, (select @rownum := 0) tmp) tmp2"
+    connection.query(query,(err,result)=>{
+        if(err)
+        {
+            res.json({err:err})
+        }
+        else if(result != undefined && result[0]!=undefined)
+        {
+            res.json({boardnum : result[0].boardnum})
+        }
+    })
+})
 
 //게시판 페이징
 app.post('/api/board/showpage',(req,res)=>{
-    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
+    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select username, indices, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
     connection.query(query,(req.body.page-1)*5,(err,result)=>{
         if(err)
         {
             console.log(err)
-            res.json({err:err})
+            res.json({err:true})
         }
         else if(result != undefined && result[0] != undefined)
         {
-            console.log(result)
+            //console.log(result)
             res.json(result)
         }
     })
 
+})
+
+
+//게시판 데이터
+app.post('/api/board/showarticle',(req,res)=>{
+
+    var query = "select username, indices, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate,bodytext, answer from board where username = ? and indices = ?"
+    connection.query(query,[req.body.username, req.body.indices],(err,result)=>{
+        if(err)
+        {
+            console.log(err)
+            res.json({err:true})
+        }
+        else if(result != undefined && result[0] != undefined)
+        {
+            //console.log(result)
+            res.json(result[0])
+        }
+    })
 })
 
 //게시판 등록
@@ -2757,6 +2789,126 @@ app.post('/api/board/upload',(req,res)=>{
         res.json({login_required:true})
     }
 })
+
+
+//게시판 페이지 개수
+app.get('/api/notice/pagenum',(req,res)=>{
+    var query = "select count(*) noticenum from (select t.*, @rownum := @rownum + 1 rownum  from (select * from notification) t, (select @rownum := 0) tmp) tmp2"
+    connection.query(query,(err,result)=>{
+        if(err)
+        {
+            res.json({err:err})
+        }
+        else if(result != undefined && result[0]!=undefined)
+        {
+            res.json({noticenum : result[0].noticenum})
+        }
+    })
+})
+
+//공지 페이징
+app.post('/api/notice/showpage',(req,res)=>{
+    var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select id, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, hits from notification order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
+   
+   
+    connection.query(query,(req.body.page-1)*5,(err,result)=>{
+        if(err)
+        {
+            console.log(err)
+            res.json({err:true})
+        }
+        else if(result != undefined && result[0] != undefined)
+        {
+            //console.log(result)
+            res.json(result)
+        }
+    })
+
+})
+
+//공지 데이터
+app.post('/api/notice/showarticle',(req,res)=>{
+
+    var query = "select id , title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, bodytext from notification where id = ?"
+    connection.query(query,req.body.id,(err,result)=>{
+        if(err)
+        {
+            console.log(err)
+            res.json({err:true})
+        }
+        else if(result != undefined && result[0] != undefined)
+        {
+            //console.log(result)
+            query = "update notification set hits = hits+1 where id = ?"
+            connection.query(query, req.body.id, (err,result2)=>{
+                if(err)
+                {
+                    connection.rollback()
+                    res.json({err:true})
+                }
+                else if(result2!=undefined && result2.affectedRows>=1){
+                    connection.commit()
+                    res.json(result[0])
+                }
+            })
+           
+        }
+    })
+})
+
+//공지 등록
+app.post('/api/notice/upload',(req,res)=>{
+    var date = moment().format('YYYY-MM-DD');
+    //사용자 세션 확인
+    if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
+    {
+        var query = "select tmp2.id from (select t.*, @rownum := @rownum + 1 rownum  from (select id from notification order by id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+        
+        connection.query(query,(err,result)=>{
+            if(err)
+            {
+                console.log(err)
+                res.json({db_error:true})
+            }
+            else
+            {
+                var id
+                if(result!=undefined && result[0]!=undefined)
+                {
+                    id = result[0].id + 1
+                }
+                else{
+                    id = 1
+                }
+
+                query = "insert into notification values(?, ?, ?, DATE_FORMAT(?,'%Y-%m-%d'), 0)"
+                var input = []
+                input.push(id)
+                input.push(req.body.title)
+                input.push(req.body.bodytext)
+                input.push(date)
+                connection.query(query,input,(err,result)=>{
+                    if(err)
+                    {
+                        connection.rollback()
+                        res.json({db_error:true})
+                    }
+                    else if(result != undefined && result.affectedRows >= 1){
+                        connection.commit()
+                        res.json({result:true})
+                    }
+                })
+            }
+        })
+        
+    }
+    //로그인이 안되어 있을 때
+    else
+    {
+        res.json({login_required:true})
+    }
+})
+
 
 
 app.listen(PORT, () => {
