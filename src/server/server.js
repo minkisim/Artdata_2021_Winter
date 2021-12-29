@@ -2840,7 +2840,10 @@ app.post('/api/board/upload',(req,res)=>{
         
     }
     //로그인이 안되어 있을 때
-    c
+    else
+    {
+        res.json({login_required:true})
+    }
 })
 
 app.post('/api/board/answer',(req,res)=>{
