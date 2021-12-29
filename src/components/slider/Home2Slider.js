@@ -2,7 +2,7 @@ import ShowWindow4 from "../showWindow/ShowWindow4";
 import React, { Component } from "react";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
-
+// 이미지 슬라이더를 위한 코드. 완성본.
 export default class SimpleSlider extends Component {
 
 

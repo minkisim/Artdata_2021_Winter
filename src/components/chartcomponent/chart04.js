@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 
+// 원형 그래프 코드
 const COLORS = ['#D0D0D0', '#888888', '#484848', '#1A1311'];
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;

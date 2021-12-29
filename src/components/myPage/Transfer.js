@@ -3,6 +3,7 @@ import React, { createRef, useState, useEffect} from 'react'
 import './MyPage.css';
 import {dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
+// 보유작품 양도 관련 코드
 function Transfer({props, history}){
     let inputRef;
 
@@ -167,7 +168,7 @@ function Transfer({props, history}){
         })
     }
   
-    
+// 보유작품 양도 관련 html    
     return(
         <div className="Transfer_Page">
             <p className="Transfer_Page_Title">작품 소유권 양도</p>

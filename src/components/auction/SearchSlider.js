@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
-
+// 가격 범위용 슬라이더를 위한 코드
 const useStyles = makeStyles({
   root: {
     width: 200,

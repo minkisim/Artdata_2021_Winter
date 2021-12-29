@@ -13,7 +13,7 @@ import { func } from "prop-types";
 import queryString from 'query-string'
 import { dev_ver } from '../../pages/global_const'
 import axios from "axios";
-
+// 고객 센터 답변용 코드
 function CSAnswer({isLogin, isAdmin}){
   
     const [bodytext, setBodytext] = useState("")
@@ -84,7 +84,7 @@ function CSAnswer({isLogin, isAdmin}){
     {
         history.back()
     }
-
+// 고객 센터 답변용 html ( 글쓰기 에디터 모듈 포함)
     return(
         <>
         <div className="CSEditor_block">

@@ -1,7 +1,7 @@
 import Error from 'react';
 import '../App.css'
 import { Link } from 'react-router-dom';
-
+// Error 404 처리용 코드
 export default function Error404(){
         return(
             <div className="error_page">

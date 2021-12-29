@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import {dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
-
+// 내 정보 관련 코드 (MyPage 버튼 대응)
 function MyPage({history}){
        // console.log(islogin);
         const [userdata, setUserdata] = useState({
@@ -89,7 +89,7 @@ function MyPage({history}){
         }
 
        }
-
+// 내 정보 관련 html (MyPage 버튼 대응)
     return(
             <div className="myPage_Page">
                 {/*개인 정보*/}

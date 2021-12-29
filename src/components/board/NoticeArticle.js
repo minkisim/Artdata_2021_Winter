@@ -14,7 +14,7 @@ import queryString from 'query-string'
 import axios from "axios";
 import {dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
-
+// 공지사항 게시글 보기용 코드
 function NoticeArticle({isLogin, isAdmin}){
     const [results, setResults] = useState()
     useEffect(()=>{
@@ -45,7 +45,7 @@ function NoticeArticle({isLogin, isAdmin}){
             alert(err)
         })
     },[])
-
+// 공지사항 게시글 보기용 html
     return(
     <>  
     <div className="NoticeArticle_title">

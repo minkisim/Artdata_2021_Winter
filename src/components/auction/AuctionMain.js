@@ -5,6 +5,8 @@ import SearchSlider from './SearchSlider'
 import AuctionShowWindow from './AuctionShowWindow'
 
 import {dev_ver} from '../../pages/global_const';
+
+// 경매 메인 페이지용 코드
 export default function AuctionMain(){
 
     const [artname,setArtname] = useState('')
@@ -93,7 +95,7 @@ export default function AuctionMain(){
             alert(err);
             });
     }
-
+// 경매 메인 페이지용 html
     return(
         <div className="auction_Main_Page">
             <div className="auction_search_bar">

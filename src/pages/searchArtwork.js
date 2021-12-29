@@ -7,7 +7,7 @@ import { dev_ver } from './global_const'
 
 
 
-
+// 작품 검색 및 수정, 삭제용 코드
 export default function SearchArtwork(){
     
     const [input, setInput]=useState('')
@@ -133,7 +133,7 @@ export default function SearchArtwork(){
     )
 }
 
-
+// 작가 검색 및 수정, 삭제용 html
     return(
         <div>
                 <AdminBar></AdminBar>

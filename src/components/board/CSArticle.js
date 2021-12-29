@@ -14,7 +14,7 @@ import queryString from 'query-string'
 import axios from "axios";
 import { dev_ver } from '../../pages/global_const'
 axios.defaults.withCredentials = true;
-
+// 고객 센터 게시물 보기용 코드
 function CSArticle({isLogin, isAdmin}){
     const [results, setResults] = useState()
 
@@ -40,7 +40,7 @@ function CSArticle({isLogin, isAdmin}){
             alert(err)
         })
     },[])
-
+// 고객 센터 게시물 보기용 html
     return(
     <>  
     <div className="NoticeArticle_title">

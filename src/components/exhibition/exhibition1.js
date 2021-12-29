@@ -3,7 +3,7 @@ import react , {useState, useEffect} from 'react';
 import ShowWindow1 from '../showWindow/ShowWindow1';
 import {dev_ver} from '../../pages/global_const';
 import axios from 'axios';
-
+//  사이드바 Artdata 버튼 대응 뷰 구성 코드(웹페이지 눌러보면 확인 가능)
 function Exhibition(){
     const [data, setdata] = useState([
         {
@@ -28,7 +28,7 @@ function Exhibition(){
         });
 
     },[])   
-    
+    //  사이드바 Artdata 버튼 대응 뷰 구성 html(웹페이지 눌러보면 확인 가능)
     return(
         <div class="show_window_flexbox2">
             { data[0] != null && data[0].artist != '' && data.map( part => <div><ShowWindow1 data={part}/></div>)}

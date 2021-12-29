@@ -9,7 +9,7 @@ import SimpleSlider2 from '../../pages/Slider';
 import styled from 'styled-components';
 import axios from 'axios';
 import {dev_ver} from '../../pages/global_const';
-
+// 작가 소개 페이지 코드
 function Artist01({match}){
     
     
@@ -96,7 +96,7 @@ function Artist01({match}){
     border-radius: 15px 0px 0px 15px;
     `;
     
-
+ // 작가 소개 페이지 html
     return(
         <div className="artist01_Page">
             <div className="artist01_Artist_Info">

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-
+// I'M PORT  대응을 위한 준비 코드 . 미완성. 
 const Payment = (effect , deps) => {
     
     useEffect( () => {

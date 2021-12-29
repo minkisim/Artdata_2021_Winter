@@ -3,6 +3,7 @@ import React,{useState} from 'react';
 import '../../App.css';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Zoomimage from './Zoomimage';
+// MainPage 구성용 컴포넌트 윈도우(검정 이미지 박스)
 function ShowWindow2(props){
     //console.log(props.artdata.artist)
     return(

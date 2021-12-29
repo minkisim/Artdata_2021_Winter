@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Slider from "react-slick";
 import Slidercomponent01 from "../components/slider/slidercomponent01";
-
+// 작가 소개 페이지 슬라이더 코드
 export default class SimpleSlider2 extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +25,7 @@ export default class SimpleSlider2 extends Component {
       autoplay: true,
       autoplaySpeed: 3000
     };
+    // 작가 소개 페이지 슬라이더 html
     return (
       <div>
         <Slider ref={c => (this.slider = c)} {...settings}>

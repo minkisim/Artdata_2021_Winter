@@ -2,7 +2,7 @@ import React from 'react'
 import  './upload.css'
 import {Link} from 'react-router-dom';
 
-
+// 관리자 페이지 상단 버튼 구성용 코드
 export default function AdminBar(){
     return(
         <div className="admin_btn_flex">

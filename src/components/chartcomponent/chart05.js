@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './chart.css'
-
+// 관람객 누적 체류 시간 바 그래프(exhibition3.js 관련)
 export default function Chart05(props){
   
    

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../App.css';
 import Zoomimage from './Zoomimage';
-
+// 이미지 슬라이더 용 컴포넌트
 function ShowWindow4(props){
    //console.log(props.data);
     return(

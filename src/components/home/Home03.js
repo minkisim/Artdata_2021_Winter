@@ -9,7 +9,7 @@ import './Home.css'
 import  axios from 'axios';
 
 import {dev_ver} from '../../pages/global_const';
-
+// Weekly Exhibition 코드
 function Home3(){
     const [sliderdata, setsliderdata] = useState(
         [
@@ -75,6 +75,7 @@ function Home3(){
       },[])
       //console.log('data');
      // console.log(sliderdata);
+     // Weekly Exhibition html
     return(
         <div>
             <div className="home_3_Current">

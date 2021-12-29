@@ -3,7 +3,7 @@ import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
 import * as RiIcons from 'react-icons/ri';
 import * as BsIcons from "react-icons/bs"
-
+// 실제 보여지는 사이드바의 데이터를 구성한 코드. 규칙만 지키면 깨지지 않습니다.
 export const SidebarData = [
   
    

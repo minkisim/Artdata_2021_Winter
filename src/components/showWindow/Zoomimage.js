@@ -3,7 +3,7 @@ import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
 
 
-
+// 이미지 줌 지원용 api
 const Zoomimage = (props) => (
   <Zoom>
     <img

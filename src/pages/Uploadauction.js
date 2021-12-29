@@ -3,7 +3,7 @@ import axios from 'axios'
 import './upload.css'
 import AdminBar from './AdminBar';
 import {dev_ver} from '../pages/global_const';
-
+// 경매 정보 업로드용 코드
 export default function UploadAuction(){
 
     const [artname, setArtname] = useState('');
@@ -97,7 +97,7 @@ export default function UploadAuction(){
        e.target.value = temp
         setUnit(temp)
     }
-
+// 경매 정보 업로드용 html
     return(
         <div>
                 <AdminBar></AdminBar>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
+// 사이드바 코드. api 이므로 SidebarData.js 만 수정하고 나머지 절!대! 건들지 말것.
 const SidebarLink = styled(Link)`
   display: flex;
   color: #e1e9fc;

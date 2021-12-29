@@ -16,7 +16,7 @@ import CommonTableColumn from "./commontable/CommonTableCloumn";
 import axios from "axios";
 import {dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
-
+// 공지사항 리스트 코드
 function NoticeBoard({isLogin, isAdmin}){
 
     const [adminCheck, setAdminCheck] = useState()
@@ -172,7 +172,7 @@ function NoticeBoard({isLogin, isAdmin}){
         //console.log("start : "+startnum+"\nlast : "+lastnum+"\nmaxpage : "+maxPage)
         //console.log(pagenum)
     }
-
+// 공지사항 리스트 html
     return(
     <>  
     <div className="NoticeTable_title">

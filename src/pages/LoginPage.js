@@ -4,7 +4,7 @@ import axios from 'axios';
 import './login.css';
 
 import {dev_ver} from './global_const';
-
+// 로그인 페이지 구성용 코드
 function LoginPage({history,props}){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -41,7 +41,7 @@ function LoginPage({history,props}){
             loginForm();
         }
     }
-
+// 로그인 페이지 구성용 html
         return(
             <div className="login_page_div">
                 <p className="login_Slogan1">IoT기술과 예술이 만나다</p>

@@ -1,6 +1,8 @@
 import react from 'react';
 import './ShowWindow.css';
 import Zoomimage from './Zoomimage';
+
+// New Artwork 컴포넌트 용 코드
 function ShowWindow6(props){
    
     return(

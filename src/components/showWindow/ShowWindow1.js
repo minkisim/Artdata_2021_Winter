@@ -4,6 +4,8 @@ import './ShowWindow.css';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import Zoomimage from './Zoomimage';
+
+// Artdata 버튼의 각 컴포넌트용 윈도우 코드
 function ShowWindow1(props){
     return(
        <div className="show_window1">

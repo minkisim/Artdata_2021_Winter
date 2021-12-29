@@ -4,7 +4,7 @@ import './login.css';
 import { useForm } from 'react-hook-form';
 
 import {dev_ver} from './global_const';
-
+// 회원가입 용 페이지 구성 코드
 function SignupPage({history}){
     const { handleSubmit, register, watch, errors } = useForm();
 
@@ -114,7 +114,7 @@ function SignupPage({history}){
         })
     }
 
-
+// 회원가입 용 페이지 구성 html
         return(
             <div>
                 <div className="signup_box">

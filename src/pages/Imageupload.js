@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import {dev_ver} from './global_const';
 
-
+// 작품 이미지 업로드 처리용 코드. 
 function Imageupload()
 {
     const [file, setFile] =useState('');
@@ -59,7 +59,7 @@ function Imageupload()
 
         
     }
-
+// 작품 이미지 업로드 처리용 html 
     return (
       <div>
           <br/>

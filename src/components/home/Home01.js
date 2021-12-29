@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import {dev_ver} from '../../pages/global_const';
 import  axios from 'axios';
 
-
+// MainPage 코드
 export default function Home( ){
     
     
@@ -60,7 +60,7 @@ export default function Home( ){
 
         
     },[])
-
+// MainPage html
     return(
        
         <div>

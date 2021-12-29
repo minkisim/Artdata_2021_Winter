@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './chart.css'
 
-
+// 전시관용 관람객 그래프 코드
 export default function Chart03(props){
    
       return (

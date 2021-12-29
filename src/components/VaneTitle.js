@@ -9,7 +9,7 @@ import { IoMdLogOut } from 'react-icons/io';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 import {dev_ver} from '../pages/global_const'
-
+// 타이틀에 상단바 코드
 function VaneTitle({isLogin,isAdmin}){
     
     const [search, setSearch] = useState('')
@@ -66,7 +66,7 @@ function VaneTitle({isLogin,isAdmin}){
         mainSearch()
       }
   }
-
+  // 타이틀에 상단바 html
     return(
       <>
       <div className="art_data_title">
@@ -91,7 +91,7 @@ function VaneTitle({isLogin,isAdmin}){
               <option value="2" >작가명</option>
               <option value="3" >전시관</option>
             </select>
-
+          
           <input type="text" placeholder="검색" onKeyPress={onKeyPress} onChange={(e) => {setSearch(e.target.value)}} />
           <img src="/img/search_btn.png" onClick={mainSearch} alt="검색버튼"/>
         </div>
@@ -106,26 +106,5 @@ function VaneTitle({isLogin,isAdmin}){
     )
   }
 
-function Show_window_first(props){
-    return(
-       <div className="show_window">
-         <div><img src="/img/picture.png" alt="그림" /></div>
-         <div>
-           <p className="artist_name">Joan Miro : Joan</p>
-           <p className="day">Mar 2 - Jul 21, 2021</p>
-           <p className="musium_name">MoMA Museum</p>
-         </div>
-       </div>
-    )
-  }
-  function Main_show_window(props){
-    return(
-      <div className="main_show_window">
-        <div><img src="/img/picture.png" alt="그림" /></div>
-        <div>Joan Miro : Joan</div>
-        <div>MoMA Museum</div>
-      </div>
-  
-    )
-  }
+
 export default VaneTitle;

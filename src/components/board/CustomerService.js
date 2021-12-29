@@ -16,7 +16,7 @@ import axios from "axios";
 import { result } from "lodash";
 import { max } from "moment";
 axios.defaults.withCredentials = true;
-
+// 고객 센터 리스트 코드
 function CustomerService({isLogin, isAdmin}){
        
         const [data, setData] = useState([])
@@ -161,7 +161,7 @@ function CustomerService({isLogin, isAdmin}){
         //console.log("start : "+startnum+"\nlast : "+lastnum+"\nmaxpage : "+maxPage)
         //console.log(pagenum)
     }
-
+// 고객 센터 리스트 html
     return(
     <>  
     <div className="NoticeTable_title">

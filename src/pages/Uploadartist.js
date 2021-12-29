@@ -9,7 +9,7 @@ import './upload.css'
 import AdminBar from './AdminBar';
 import { dev_ver } from './global_const';
 import queryString from 'query-string'
-
+// 작가 정보 업로드용 코드
 export default function UploadArtist(){
 
     const [artist,setArtist] = useState('')
@@ -123,7 +123,7 @@ export default function UploadArtist(){
         
     }
 
-
+// 작가 정보 업로드용 html
     return(
         <div>
                 <AdminBar></AdminBar>

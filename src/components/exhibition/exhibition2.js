@@ -7,7 +7,7 @@ import axios from 'axios';
 import Zoomimage from '../showWindow/Zoomimage';
 import {Link} from 'react-router-dom'
 import {dev_ver} from '../../pages/global_const';
-
+// 사이드바 Artdata>Exhibition 버튼 대응 뷰 코드(전시관 소개)
 function Exhibition2({match}){
 
  
@@ -117,7 +117,7 @@ function Exhibition2({match}){
         });
 
     },[match.params.exhibition])   
-    
+    // 사이드바 Artdata>Exhibition 버튼 대응 뷰 html(전시관 소개)
     return(
         <div className='exhibition_page'>
             <div className='exhibition2'>

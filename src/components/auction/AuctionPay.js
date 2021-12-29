@@ -10,7 +10,7 @@ import './Auctioncheck.css'
 
 import { dev_ver } from '../../pages/global_const'
 import queryString from 'query-string'
-
+// 경매 결제 페이지용 코드
 export default function AuctionPay(){
     const [clickbtn1,setclickbtn1] = useState(false);
     const [clickbtn2,setclickbtn2] = useState(false);
@@ -239,7 +239,7 @@ export default function AuctionPay(){
         })
         
     }
-
+// 경매 결제 페이지용 html
     function AuctionBid(){
         return(
                 <div className="Bid_back_div2">
@@ -280,6 +280,7 @@ export default function AuctionPay(){
                 </div>
         )
     }
+    // 경매 결제 페이지용 html
             return(
             <div className="Auctiondata_Page">
                 <div className="picture">

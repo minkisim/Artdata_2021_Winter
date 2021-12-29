@@ -3,7 +3,7 @@ import axios from 'axios'
 import './search.css'
 import AdminBar from './AdminBar'
 import { dev_ver } from './global_const'
-
+// 작가 검색 및 수정, 삭제용 코드
 export default function SearchArtist(){
     
     const [CheckList, setCheckList] = useState([])
@@ -124,7 +124,7 @@ export default function SearchArtist(){
       document.location.href=`/uploadartist?id=${CheckList2[0]}`
     }
 
-
+// 작가 검색 및 수정, 삭제용 html
     return(
 
         <div>

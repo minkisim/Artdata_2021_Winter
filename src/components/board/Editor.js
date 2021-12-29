@@ -11,7 +11,7 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
 import { dev_ver } from '../../pages/global_const'
 import axios from "axios";
-
+// 공지사항 에디터 코드
 function Editor({isLogin, isAdmin}){
 
     const [title,setTitle] = useState("")
@@ -76,7 +76,7 @@ function Editor({isLogin, isAdmin}){
     {
         history.back()
     }
-
+// 공지사항 에디터 html
     return(
         <>
         <div className="NoticeEditor_block">

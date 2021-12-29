@@ -1,10 +1,10 @@
 import React from 'react';
 import './Home.css';
 import { Link } from 'react-router-dom';
-
+// 대문 Page 코드
 export default function TitlePage(){
 
-
+// 대문 Page html
     return(
         <>
         <img src="/img/title_page.jpg" className="Title_Page_back" />

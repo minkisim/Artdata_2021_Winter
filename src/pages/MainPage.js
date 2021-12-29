@@ -15,30 +15,31 @@ import Home3 from '../components/home/Home03';
 import Home4 from '../components/home/Home04';
 
 /* LoginPage Part */
-import MyPage from '../components/myPage/MyPage';
-import MyAuction from '../components/myPage/MyAuction';
 import LoginPage from './LoginPage';
 import SignupPage from './signupPage';
+
+/* Auction Part */
+import MyPage from '../components/myPage/MyPage';
+import MyAuction from '../components/myPage/MyAuction';
 import Transfer from '../components/myPage/Transfer';
 import AuctionMain from '../components/auction/AuctionMain';
 import Auctiondata from '../components/auction/Auctiondata';
 import AuctionPay from '../components/auction/AuctionPay';
+
+/* Admin Part */
 import UploadAuction from './Uploadauction';
 import UploadArtwork from './Uploadartwork';
 import UploadArtist from './Uploadartist';
 import SearchArtist from './Searchartist';
 import SearchArtwork from './searchArtwork';
+
 /* Exhibition Part */
 import Exhibition from '../components/exhibition/exhibition1';
 import Exhibition2 from '../components/exhibition/exhibition2';
 import Exhibition3 from '../components/exhibition/exhibition3';
 
 /* Artist Part */
-import Artist from '../components/box/Artist';
 import Artist01 from '../components/box/Artist01';
-
-/*Artwork Part*/
-import Artwork from '../components/box/Artwork';
 
 /*Route setting*/
 import PrivateRoute from './PrivateRoute';
@@ -59,7 +60,6 @@ import CSEditor from '../components/board/CSEditor';
 import NoticeArticle from '../components/board/NoticeArticle';
 import CSArticle from '../components/board/CSArticle';
 import CSAnswer from '../components/board/CSAnswer';
-
 
 import {dev_ver} from './global_const';
 
@@ -134,9 +134,6 @@ function MainPage({isLogin, isAdmin}){
                 <Route path="/exhibition3/:id" component={Exhibition3} exact></Route>
                 <Route path="/exhibition3" component={Exhibition3} exact></Route>
 
-                <Route path="/artwork" component={Artwork} exact></Route>
-    
-                <Route path="/artist" component={Artist} exact></Route>
                 <Route path="/artist01" component={Artist01} exact></Route>
                 <Route path="/artist01/:artist" component={Artist01} exact></Route>
     
@@ -164,17 +161,12 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    }
-                   
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    } 
 
 
                 {<Route  path="/auctionmain"  component={AuctionMain} exact></Route> }   
-                {console.log("isLogin : "+isLogin)}
+                {console.log("isLogin : "+isLogin)}         
                 
-                
-                
-
-
                 { isLogin && isAdmin && <AdminRoute path="/uploadartwork" isLogin={isLogin} isAdmin={isAdmin}  component={UploadArtwork} exact></AdminRoute> }
                 { isLogin && isAdmin && <AdminRoute path="/uploadartist"  isLogin={isLogin} isAdmin={isAdmin} component={UploadArtist} exact></AdminRoute>   }
                 { isLogin && isAdmin && <AdminRoute path="/uploadauction" isLogin={isLogin} isAdmin={isAdmin}  component={UploadAuction} exact></AdminRoute> }
@@ -184,7 +176,6 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin && isAdmin &&  <AdminRoute isLogin={isLogin} isAdmin={isAdmin} path="/csanswer" component={CSAnswer} exact></AdminRoute>      }
                 
                 <Route path="/" component={TitlePage} exact></Route>
-
 
                 { !(isLogin==undefined || isLogin=='' || isLogin.length<1) && <Route component={Error404}></Route>}
             </Switch>            

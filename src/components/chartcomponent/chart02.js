@@ -6,7 +6,9 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Labe
 import { RiStoreLine } from 'react-icons/ri';
 import XDataFormater from './XDataFormater';
 
+// 진행 중인 전시별 관람 정보 코드 (home03.js 관련)
 function Chart02(props){
+    // 진행 중인 전시별 관람 정보 html (home03.js 관련)
     return(
         <div>
             <div className="graph_2_title">진행 중인 전시별 관람 정보</div>

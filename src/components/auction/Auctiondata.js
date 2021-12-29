@@ -6,6 +6,7 @@ import { dev_ver } from '../../pages/global_const'
 import queryString from 'query-string'
 import Auctiontimer from './Auctiontimer'
 
+// 경매 작품 내용 보여주기용 페이지 코드
 export default function Auctiondata({location, match}){
     const [clickbtn1,setclickbtn1] = useState(false);
     const [clickbtn2,setclickbtn2] = useState(false);
@@ -318,7 +319,7 @@ export default function Auctiondata({location, match}){
     }
 
    
-
+// 경매 작품 내용 보여주기용 페이지 html
     function AuctionBid(){
         return(
                 <div className="Bid_back_div">
@@ -378,6 +379,7 @@ export default function Auctiondata({location, match}){
                 </div>
         )
     }
+    // 경매 작품 내용 보여주기용 페이지 html
     function Popup(){
         return(
             <div>
@@ -430,7 +432,7 @@ export default function Auctiondata({location, match}){
     }
 
     
-
+// 경매 작품 내용 보여주기용 페이지 html
         return(
             <>
             {(tminus!='' && tminus!=undefined)&&

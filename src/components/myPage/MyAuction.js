@@ -9,6 +9,7 @@ import {Link} from 'react-router-dom';
 import {dev_ver} from '../../pages/global_const'
 import axios from 'axios'
 import { useAsync } from 'react-async';
+// 내 경매 관련 코드 (MyAuction 버튼 대응)
 function MyAuction(){
         const [userdata, setUserdata] = useState({
                 username:'',
@@ -164,7 +165,7 @@ function MyAuction(){
         
         }
     }
-
+// 내 경매 관련 html (MyAuction 버튼 대응)
     return(
             <div className="myPage_Page">
                 {/*개인 정보*/}

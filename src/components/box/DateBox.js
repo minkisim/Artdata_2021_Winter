@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './box.css'
+// home03 전시일정 관련 코드
 function DateBox(props){
-
+// home03 전시일정 관련 html
     return(
         <div>
             <p className="exhibition_date_title">전시 일정</p>

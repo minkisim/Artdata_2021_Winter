@@ -9,7 +9,7 @@ import './upload.css'
 import AdminBar from './AdminBar';
 import {dev_ver} from './global_const';
 import queryString from 'query-string'
-
+// 작품 정보 업로드용 코드
 export default function UploadArtwork(){
  
 
@@ -223,7 +223,7 @@ export default function UploadArtwork(){
 
         
     }
-
+// 작품 정보 업로드용 html
     return(
         <div>
                 <AdminBar></AdminBar>

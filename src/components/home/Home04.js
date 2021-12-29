@@ -7,7 +7,7 @@ import {dev_ver} from '../../pages/global_const';
 import  axios from 'axios';
 import { Link } from 'react-router-dom'
 
-
+// New Artwork 코드
 function Home4( ){
     const [data, setdata] = useState(
         [
@@ -36,7 +36,7 @@ function Home4( ){
         });
 
     },[])   
-    
+    // New Artwork html
     return(
         <div className="new_artwork">
             <p>New artwork</p>

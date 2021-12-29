@@ -13,7 +13,7 @@ import { func } from "prop-types";
 
 import { dev_ver } from '../../pages/global_const'
 import axios from "axios";
-
+// 고객 센터 문의글용 코드
 function CSEditor({isLogin, isAdmin}){
     const selectList = ["전시관 관련", "작가 관련", "경매 진행 관련", "경매 결제 관련", "사이트 관련"]
 
@@ -85,7 +85,7 @@ function CSEditor({isLogin, isAdmin}){
     {
         history.back()
     }
-
+// 고객 센터 문의글용 html
     return(
         <>
         <div className="CSEditor_block">

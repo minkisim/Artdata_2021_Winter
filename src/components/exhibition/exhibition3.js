@@ -13,6 +13,8 @@ import {dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 import queryString from 'query-string'
 import {Link} from 'react-router-dom'
+
+// 사이드바 Artdata>Artwork 뷰 대응 코드(작품 소개 페이지)
 function Exhibition3({match}){
     const [query,setQuery] = useState()
 
@@ -219,7 +221,7 @@ function Exhibition3({match}){
     }
 
 
-        
+// 사이드바 Artdata>Artwork 뷰 대응 html(작품 소개 페이지)        
     return(
 
         <div className="exhibition3_page">

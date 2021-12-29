@@ -5,10 +5,12 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import { BarChart, Bar, Cell, XAxis, YAxis, LabelList, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import YDataFormater from './YDataFormater';
 
-
+//주간 전시별 관람 정보 비교 코드 (home01 .js 관련)
 function Chart01(props){
     //console.log('data');
     //console.log(props.data);
+    
+//주간 전시별 관람 정보 비교 html (home01 .js 관련)
     return(
         <div>
             <div className="graph_1_title">주간 전시별 관람 정보 비교</div>

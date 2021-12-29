@@ -5,7 +5,7 @@ import Zoomimage from '../showWindow/Zoomimage';
 import { Link } from 'react-router-dom';
 import {dev_ver} from '../../pages/global_const';
 import axios from 'axios';
-
+// Today Artwork 코드
 function Home2() {
     const [artData, setArtData] = useState([{
         imageurl : '',
@@ -29,7 +29,7 @@ function Home2() {
             console.log('error')
         })
     }, [])
-
+    // Today Artwork html
     return(
         <div className="home_2_div">
             <div className="home_2_div_img">{artData != null && <Zoomimage image={artData.imageurl} size='548'></Zoomimage>}</div>
