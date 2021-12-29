@@ -156,7 +156,7 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }  
-                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={AuctionPay} exact></PrivateRoute>    }  
+                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    }  
                 
 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
@@ -164,7 +164,7 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={AuctionPay} exact></PrivateRoute>    }
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    }
                    
 
 
