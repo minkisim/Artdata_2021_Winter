@@ -772,7 +772,7 @@ app.post('/api/searchArtist/delete',(req,res) => {
 app.post('/api/joinForm',(req,res)=>
 {
         //회원 정보 등록
-        let query = "INSERT INTO ARTUSER VALUES (?, ?, ?, ?, ?, ?)"
+        let query = "insert into artuser values (?, ?, ?, ?, ?, ?)"
         connection.query(query, [
             req.body.username,
             req.body.name,
@@ -2107,7 +2107,7 @@ app.get('/api/Transfer/artdata',(req,res) => {
             console.log('로그인 확인')
 
                 //세션에 담긴 아이디(req.session.user.username)로 사용자가 소유한 작품 검색
-                let query = "SELECT R.Artist_name, A.Art_name,  DATE_FORMAT(A.Expired,'%Y-%m-%d') resdate, A.Art_id FROM  ART A, ARTIST R, AUCTION U WHERE A.owner_username = ?  AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id"
+                let query = "SELECT R.Artist_name, A.Art_name,  DATE_FORMAT(A.Expired,'%Y-%m-%d') resdate, A.Art_id FROM  art A, artist R, auction U WHERE A.owner_username = ?  AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id"
                 connection.query(query, [req.session.user.username],async (err,result) =>
                 {
                     if(err)
@@ -2551,7 +2551,7 @@ app.post('/api/myauction', (req,res)=>{
 
     var jsondata = []
         //사용자가 참여한 입찰 정보 찾기
-        let query = "SELECT A.art_id, A.Art_name, R.Artist_name, DATE_FORMAT(U.End_point,'%Y-%m-%d') end_point, A.Owner_username FROM USER_BID S, ART A, ARTIST R, AUCTION U WHERE S.username = ? AND S.art_id = A.art_id AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id AND A.owner_username IS null"
+        let query = "SELECT A.art_id, A.Art_name, R.Artist_name, DATE_FORMAT(U.End_point,'%Y-%m-%d') end_point, A.Owner_username FROM user_bid S, art A, artist R, auction U WHERE S.username = ? AND S.art_id = A.art_id AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id AND A.owner_username IS null"
         connection.query(query, [req.body.username],(err,result)=>{
         if(err)
         {
@@ -2580,7 +2580,7 @@ app.post('/api/myauction', (req,res)=>{
                 //사용자가 참여한 각 입찰 정보를 확인
                 jsondata.forEach(async(item, index) =>{
                     //사용자의 입찰이 가장 높은 가격을 제시했는지 유무 확인 
-                    query = "SELECT U.Username FROM USER_BID U WHERE U.Art_id = ? AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM USER_BID S WHERE S.Art_id = U.Art_id)";
+                    query = "SELECT U.Username FROM user_bid U WHERE U.Art_id = ? AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM user_bid S WHERE S.Art_id = U.Art_id)";
                     connection.query(query, [item.artwork_id],(err,result2)=>{
                     if(result2 != undefined && result2[0]!=undefined)
                     {
