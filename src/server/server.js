@@ -4,28 +4,65 @@ const app = express();
 const cors = require("cors");
 
 //mysql추가사항
-var mysql = require('mysql2')
+var mysql = require('mysql2/promise')
 //var mysql_dbConfig = require('./config/db') 
-const connection = mysql.createConnection({
-    host : "localhost",
-    user : "vane",
-    password : "vane2021@@",
-    database : "nodedb",
-    port : "3306"
-})
 
-connection.connect((err)=>{
+
+async function openConnection(connection)
+{
+    //동기 db연결, 질의 결과를 대기
+    const pool = mysql.createPool({
+        host : "localhost",
+        user : "vane",
+        password : "vane2021@@",
+        database : "nodedb",
+        port : "3306"
+    })
+    
+    var connection = await pool.getConnection(async conn => conn)
+    /*
+    //콜백함수로 db연결
+    var connection = await mysql.createConnection({
+        host : "localhost",
+        user : "vane",
+        password : "vane2021@@",
+        database : "nodedb",
+        port : "3306"
+    })
+   await connection.connect((err)=>{
+        if(err)
+        {
+            console.log(err)
+        }
+    
+        else{
+            console.log('mysql 연결완료')
+        }
+        
+    })
+    */
+    return connection
+}
+
+async function closeConnection(connection)
+{
+    await connection.release()
+   /*
+   await connection.end((err)=>{
     if(err)
     {
         console.log(err)
     }
 
     else{
-        console.log('mysql 연결완료')
+        console.log('mysql 연결종료')
     }
-    
-})
+   })
+   */
+}
 
+
+/*
 const pool = mysql.createPool({
     host : "localhost",
     user : "vane",
@@ -35,7 +72,7 @@ const pool = mysql.createPool({
 })
 
 const promisePool = pool.promise()
-
+*/
 //mysql추가사항 end
 
 
@@ -170,11 +207,10 @@ app.post('/api/fileupload', upload.single('file'), function(req, res){
     })
   });
 
-app.post('/api/artist_upload',(req,res) => {
+app.post('/api/artist_upload',async (req,res) => {
+    var connection = await openConnection()
     //작가 업로드
-
     let jsondata = {}
-
     //json데이터에 사용자가 입력한 정보 담기
     if(req.body.artist != undefined && req.body.artist.length>=1)
         {
@@ -208,7 +244,9 @@ app.post('/api/artist_upload',(req,res) => {
                //가장 최근에 쓰인 작가id 찾아서
                //거기에 +1한걸 새로운 작가 id로 사용하기
                 var query = "select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select artist_id from artist order by artist_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1;"
-                connection.query(query,(err,result)=>{
+                try{
+                    await connection.beginTransaction()
+                    var [result] = await connection.query(query)
                     var idnum
                 //질의 결과가 있으면 +1 한 것 쓰기
                 if(result!=undefined && result[0]!=undefined)
@@ -225,71 +263,82 @@ app.post('/api/artist_upload',(req,res) => {
 
                 //작가 튜플 생성
                 query = "insert into artist values (?, ?, ?, ?, ?)"
-                connection.query(query,[
-                    idnum,
-                    req.body.artist,
-                    req.body.artistInfo,
-                    req.body.life_term,
-                    req.body.artistyearInfo
-                ],(err,result2)=>{
-                    if(result2.affectedRows>=1)
-                    {
-                        connection.commit()
-                        res.json({
-                            success:true
-                        })
-                    }
-                    else{
-                        res.json({
-                            success:err
-                        })
-                    }
-                })
+                try{
+                    var [result2] = await connection.query(query,[
+                        idnum,
+                        req.body.artist,
+                        req.body.artistInfo,
+                        req.body.life_term,
+                        req.body.artistyearInfo
+                    ])
+                        if(result2 != undefined && result2.affectedRows>=1)
+                        {
+                            await connection.commit()
+                            res.json({
+                                success:true
+                            })
+                        }
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({
+                       success:false
+                   })
+                }    
 
-                })
+                }catch(err)
+                {
+                    //db 에러시
+                    console.error(err); 
+                    res.status(200).json({
+                      success:false
+                   })
+                }
             }
             //수정할 작가 id가 존재할 경우
             //작가 정보 업데이트
             else{
                 var query = "update artist set artist_name = ?, artist_info = ?, life_term = ?, artist_career = ? where artist_id = ?"
-                connection.query(query,[
-                    req.body.artist,
-                    req.body.artistInfo,
-                    req.body.life_term,
-                    req.body.artistyearInfo,
-                    req.body.id
-                ],(err,result2)=>{
-                    if(result2.affectedRows>=1)
-                    {
-                        connection.commit()
-                        res.json({
-                            success:true
-                        })
-                    }
-                    else{
-                        res.json({
-                            success:err
-                        })
-                    }
-                })
+                try{
+                    var [result2] = await connection.query(query,[
+                        req.body.artist,
+                        req.body.artistInfo,
+                        req.body.life_term,
+                        req.body.artistyearInfo,
+                        req.body.id
+                    ])
+                        if(result2 != undefined && result2.affectedRows>=1)
+                        {
+                            await connection.commit()
+                            res.json({
+                                success:true
+                            })
+                        }
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({
+                       success:false
+                   })
+                }    
             }
-
+            closeConnection(connection)
 })
 
 
-app.post('/api/artist_upload/search',(req,res)=>{
+app.post('/api/artist_upload/search',async (req,res)=>{
+    var connection = await openConnection()
     //작가 정보 작가 id로 찾아와서
     //관리자의 작가 수정하기에서 작가 정보 보여주기용
-
             var query = "select artist_name, life_term, Artist_info, Artist_career from artist where artist_id = ?"
-
-            connection.query(query, [req.body.id],(err,result)=>{
-                if(err)
-                {
-                    console.log(err)
-                }
+            try{
+                var [result] = await connection.query(query, [req.body.id])
                 //query 결과가 있을시 작가 정보 반환
-                else if(result!=undefined && result[0]!= undefined)
+                if(result!=undefined && result[0]!= undefined)
                 {
                     res.json({
                         artist: result[0].artist_name,
@@ -298,10 +347,19 @@ app.post('/api/artist_upload/search',(req,res)=>{
                         artistyearInfo: result[0].Artist_career
                     })
                 }
-            })
+            }catch(err)
+            {
+                //db 에러시
+                console.error(err); 
+                res.status(200).json({
+                  success:false
+               })
+            }
+            closeConnection(connection)
 })
 
-app.post('/api/imgupload',(req,res) => {
+app.post('/api/imgupload',async (req,res) => {
+    var connection = await openConnection()
     //작품 업로드 혹은 등록
 
     //업로드할 작품 id가 입력되지 않았을때
@@ -312,7 +370,9 @@ app.post('/api/imgupload',(req,res) => {
             //가장 최근에 쓰인 작품 id찾아서
             //+1한 값을 새로운 작품의 id로 사용하기
             var query = "select art_id from (select t.*, @rownum := @rownum + 1 rownum  from (select art_id from art order by art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
-            connection.query(query,(err,result)=>{
+            try{    
+                await connection.beginTransaction()
+                var [result] = await connection.query(query)
                 var idnum
                 //질의 결과가 존재할 경우
                 //+1한 값
@@ -330,43 +390,55 @@ app.post('/api/imgupload',(req,res) => {
                 console.log("idnum : "+idnum)
 
                 var query = "insert into art values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        
-                connection.query(query,
-                    [
-                        idnum,
-                        req.body.artname,
-                        null,
-                        req.body.imagesize,
-                        req.body.imageurl,
-                        req.body.imagetype,
-                        req.body.arttext,
-                        req.body.USD_upper,
-                        req.body.USD_lower,
-                        req.body.KRW_upper,
-                        req.body.KRW_lower,
-                        req.body.artrelease_date,
-                        100,
-                        100,
-                        req.body.artist,
-                        req.body.exhibition,
-                        null,
-                        null
-                    ],(err, result2)=>{
-                        if(err)
-                        {
-                            console.log(err)
-                            res.json({success:false})
-                        }
-                        else if(result2 != undefined  && result2.affectedRows>=1)
-                        {
-                            res.json({success:true})
-                        }
-                        else
-                        {
-                            res.json({notexist:true})
-                        }
-                    })
-            })
+                try{
+                    var [result2] = await connection.query(query,
+                        [
+                            idnum,
+                            req.body.artname,
+                            null,
+                            req.body.imagesize,
+                            req.body.imageurl,
+                            req.body.imagetype,
+                            req.body.arttext,
+                            req.body.USD_upper,
+                            req.body.USD_lower,
+                            req.body.KRW_upper,
+                            req.body.KRW_lower,
+                            req.body.artrelease_date,
+                            100,
+                            100,
+                            req.body.artist,
+                            req.body.exhibition,
+                            null,
+                            null
+                        ])
+                            if(result2 != undefined  && result2.affectedRows>=1)
+                            {
+                                await connection.commit()
+                                res.json({success:true})
+                            }
+                            else
+                            {
+                                connection.rollback()
+                                res.json({notexist:true})
+                            }
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({
+                       success:false
+                   })
+                }
+            }catch(err)
+            {
+                //db 에러시
+                console.error(err); 
+                res.status(200).json({
+                  success:false
+               })
+            }
     }
     //입력된 작품 id가 존재할 경우
     //해당 작품 업데이트
@@ -378,46 +450,12 @@ app.post('/api/imgupload',(req,res) => {
             {
                 var query = "update art set Art_name = ?,  Image_size= ?, Image_url = ?, Image_type = ?, Art_text = ?, usd_upper = ?, usd_lower = ?, krw_upper = ?, krw_lower = ?, Displaydate = ?,  Artist_id = ?, Exhibition_id = ? where art_id = ?"
                 var exhibition = req.body.exhibition == null ? null : req.body.exhibition
-                connection.query(query,
-                    [
-                        req.body.artname,
-                        req.body.imagesize,
-                        req.body.imageurl,
-                        req.body.imagetype,
-                        req.body.arttext,
-                        req.body.USD_upper,
-                        req.body.USD_lower,
-                        req.body.KRW_upper,
-                        req.body.KRW_lower,
-                        req.body.artrelease_date,
-                        req.body.artist,
-                        exhibition,
-                        req.body.id
-                    ],(err, result2)=>{
-                        if(err)
-                        {
-                            console.log(err)
-                            res.json({success:false})
-                        }
-                        else if(result2 != undefined && result2.affectedRows>=1)
-                        {
-                            res.json({success:true})
-                        }
-                        else
-                        {
-                            res.json({notexist:true})
-                        }
-                    })
-
-                }
-                //새로운 파일 등록을 하지 않은 경우
-                else{
-                    //위와 달리 image_url을 업데이트하지 않음
-                    var query = "update art set Art_name = ?,  Image_size= ?, Image_type = ?, Art_text = ?, usd_upper = ?, usd_lower = ?, krw_upper = ?, krw_lower = ?, Displaydate = ?,  Artist_id = ?, Exhibition_id = ? where art_id = ?"
-                    connection.query(query,
+                try{
+                    var [result2] = await connection.query(query,
                         [
                             req.body.artname,
                             req.body.imagesize,
+                            req.body.imageurl,
                             req.body.imagetype,
                             req.body.arttext,
                             req.body.USD_upper,
@@ -426,40 +464,83 @@ app.post('/api/imgupload',(req,res) => {
                             req.body.KRW_lower,
                             req.body.artrelease_date,
                             req.body.artist,
-                            req.body.exhibition,
+                            exhibition,
                             req.body.id
-                        ],(err, result2)=>{
-                            if(err)
+                        ])
+                            if(result2 != undefined && result2.affectedRows>=1)
                             {
-                                console.log(err)
-                                res.json({success:false})
-                            }
-                            else if(result2 != undefined && result2.affectedRows>=1)
-                            {
+                                await connection.commit()
                                 res.json({success:true})
                             }
                             else
                             {
+                                await connection.rollback()
                                 res.json({notexist:true})
                             }
-                        })
+    
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({
+                       success:false
+                   })
                 }
-            
+            }
+                //새로운 파일 등록을 하지 않은 경우
+                else{
+                    //위와 달리 image_url을 업데이트하지 않음
+                    var query = "update art set Art_name = ?,  Image_size= ?, Image_type = ?, Art_text = ?, usd_upper = ?, usd_lower = ?, krw_upper = ?, krw_lower = ?, Displaydate = ?,  Artist_id = ?, Exhibition_id = ? where art_id = ?"
+                    try{
+                        var [result2] = await connection.query(query,
+                            [
+                                req.body.artname,
+                                req.body.imagesize,
+                                req.body.imagetype,
+                                req.body.arttext,
+                                req.body.USD_upper,
+                                req.body.USD_lower,
+                                req.body.KRW_upper,
+                                req.body.KRW_lower,
+                                req.body.artrelease_date,
+                                req.body.artist,
+                                req.body.exhibition,
+                                req.body.id
+                            ])
+                                if(result2 != undefined && result2.affectedRows>=1)
+                                {
+                                    await connection.commit()
+                                    res.json({success:true})
+                                }
+                                else
+                                {
+                                    await connection.rollback()
+                                    res.json({notexist:true})
+                                }
+                    }catch(err)
+                    {
+                        //db 에러시
+                        await connection.rollback()
+                        console.error(err); 
+                        res.json({
+                           success:false
+                       })
+                    }
+                }
     }
-
+    closeConnection(connection)
 });
 
-app.post('/api/imgupload/search',(req,res) => {
+app.post('/api/imgupload/search',async (req,res) => {
+    var connection = await openConnection()
 //작품 id로 작품 정보 찾아서
 //관리자 작품 수정하기에서 작품 정보 보여주기용
 
         //입력된 작품 id로 작품정보 찾기
         var query = "select artist_id, art_name, exhibition_id, Displaydate, Image_size, Image_type, KRW_lower, KRW_upper, USD_lower,USD_upper, Art_text from art where art_id = ?"
-        connection.query(query,[req.body.id],(err,result)=>{
-            if(err)
-            {
-                res.json({err:err})
-            }
+        try{
+            var [result] = await connection.query(query,[req.body.id])
             if(result!=undefined && result[0]!=undefined)
             {
                 
@@ -481,10 +562,19 @@ app.post('/api/imgupload/search',(req,res) => {
             else{
                 res.json(null)
             }
-        })
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              err:true
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/auction_upload',(req,res) =>{
+app.post('/api/auction_upload',async (req,res) =>{
+    var connection = await openConnection()
 //경매 등록하기
 
     //세션을 확인
@@ -495,95 +585,96 @@ app.post('/api/auction_upload',(req,res) =>{
                     //경매로 등록할 작품이 실제로 db에 존재하는지 알기 위해
                     //해당 작품 id로 튜플검색
         var  query = "select a.art_id from art a where a.art_id = ?"
-        connection.query(query, [req.body.art_id],(err,result)=>{
-                 //해당 작품이 db에 존재할 때
-                 if(result!=undefined && result[0] != undefined)
-                 {
-                     //가장 최근에 등록된 경매 id에 +1한 값을
-                     //새로운 경매의 id로 등록
-                     query = "select auction_id from (select t.*, @rownum := @rownum + 1 rownum  from (select auction_id from auction order by auction_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
-                     connection.query(query,(err,result2)=>{
-                        var idnum
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query, [req.body.art_id])
+            //해당 작품이 db에 존재할 때
+            if(result!=undefined && result[0] != undefined)
+            {
+                //가장 최근에 등록된 경매 id에 +1한 값을
+                //새로운 경매의 id로 등록
+                query = "select auction_id from (select t.*, @rownum := @rownum + 1 rownum  from (select auction_id from auction order by auction_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+                var [result2] = await connection.query(query)
+                   var idnum
 
-                        if(result2 != undefined && result2[0] != undefined)
-                        {
-                            idnum = result2[0].auction_id+1
-                            console.log("추가 : "+idnum)   
-                        }
-                        //질의 결과가 없다는 것은
-                        //튜플이 없다는 의미이므로 1로 설정
-                        else{
-                            idnum = 1
-                            console.log("추가 : " + 1)
-                        }
-   
-   
-                        //경매에 등록하려는 작품의 id, 해당 작품의 작가 id, 하한가 알아내기
-                        //단 이미 경매에 등록되지 않은 작품이어야 함
-                        query = "select a.art_id, a.artist_id, a.krw_lower from art a where a.art_id = ? and not exists (select t.art_id from auction t where t.art_id = a.art_id)"
-                        connection.query(query, [req.body.art_id],(err,result3)=>{
-                            console.log(result3)
-                            if(result3!=undefined && result3[0] != undefined)
-                            {
-                                //작품을 경매에 등록
-                                query = "insert into auction values (?, ?, DATE_FORMAT(?,'%Y-%m-%d'), DATE_FORMAT(?,'%Y-%m-%d'), ?, ?, ?, ?, ?)"
-       
-                                try{
-                                    connection.query(query,[
-                                        idnum,
-                                        req.body.unit,
-                                        req.body.begintime,
-                                        req.body.endtime,
-                                        result3[0].krw_lower,
-                                        null,
-                                        req.session.user.username,
-                                        result3[0].artist_id,
-                                        result3[0].art_id
-                                        
-                                    ],(err, result4)=>{
+                   if(result2 != undefined && result2[0] != undefined)
+                   {
+                       idnum = result2[0].auction_id+1
+                       console.log("추가 : "+idnum)   
+                   }
+                   //질의 결과가 없다는 것은
+                   //튜플이 없다는 의미이므로 1로 설정
+                   else{
+                       idnum = 1
+                       console.log("추가 : " + 1)
+                   }
 
-                                        if(result4 != undefined && result4.affectedRows>=1)
-                                        {
-                                            connection.commit()
-                                            res.json({
-                                                success:true
-                                            })
-                                        }
-                                        else{
-                                            connection.rollback()
-                                            res.json({
-                                                success:false
-                                            })
-                                        }
-                                    })
-                                }catch(err)
-                                {
-                                    connection.rollback()
-                                    res.json({
-                                        err:err
-                                    })
-                                }
-                                
-                            }
-                            //이미 작품이 경매에 등록되어 있는 경우
-                            else{
-                                res.json({
-                                    auctionexist:true
-                                })
-                            }
-                        })
-                        
-                     })
-             }
-             //해당 작품이 존재하지 않을 때
-             else{
-                 res.json({
-                     nosuchart:true
-                 })
-             }                                    
-        })
 
-                   
+                   //경매에 등록하려는 작품의 id, 해당 작품의 작가 id, 하한가 알아내기
+                   //단 이미 경매에 등록되지 않은 작품이어야 함
+                   query = "select a.art_id, a.artist_id, a.krw_lower from art a where a.art_id = ? and not exists (select t.art_id from auction t where t.art_id = a.art_id)"
+                   var [result3] = await connection.query(query, [req.body.art_id])
+                       if(result3!=undefined && result3[0] != undefined)
+                       {
+                           //작품을 경매에 등록
+                           query = "insert into auction values (?, ?, DATE_FORMAT(?,'%Y-%m-%d'), DATE_FORMAT(?,'%Y-%m-%d'), ?, ?, ?, ?, ?)"
+  
+                           try{
+                               var [result4] = await connection.query(query,[
+                                   idnum,
+                                   req.body.unit,
+                                   req.body.begintime,
+                                   req.body.endtime,
+                                   result3[0].krw_lower,
+                                   null,
+                                   req.session.user.username,
+                                   result3[0].artist_id,
+                                   result3[0].art_id
+                                   
+                               ])
+                                   if(result4 != undefined && result4.affectedRows>=1)
+                                   {
+                                       await connection.commit()
+                                       res.json({
+                                           success:true
+                                       })
+                                   }
+                                   else{
+                                       await connection.rollback()
+                                       res.json({
+                                           success:false
+                                       })
+                                   }
+                           }catch(err)
+                           {
+                               await connection.rollback()
+                               res.json({
+                                   err:err
+                               })
+                           }
+                           
+                       }
+                       //이미 작품이 경매에 등록되어 있는 경우
+                       else{
+                           res.json({
+                               auctionexist:true
+                           })
+                       }
+        }
+        //해당 작품이 존재하지 않을 때
+        else{
+            res.json({
+                nosuchart:true
+            })
+        }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              err:err
+           })
+        }
     }
     //세션이 없다면 로그인 하지 않은 경우임
     else
@@ -592,8 +683,7 @@ app.post('/api/auction_upload',(req,res) =>{
             notlogin:true
         })
     }
-
-
+    closeConnection(connection)
 })
 
 app.get('/img',(req,res)=>{
@@ -621,16 +711,14 @@ app.get('/img',(req,res)=>{
 
 })
 
-app.post('/api/searchArtwork/search',(req,res) => {
+app.post('/api/searchArtwork/search',async (req,res) => {
+    var connection = await openConnection()
     //관리자 페이지에서 작품명으로 작품 찾기
 
         //like 작품명%로 작품 찾기
         var query = "select a.art_id, a.art_name, r.artist_name  from art a, artist r where a.art_name like ? and a.artist_id = r.artist_id order by a.art_name"
-        connection.query(query, [req.body.input+"%"],(err,result)=>{
-            if(err)
-            {
-                res.json({err:err})
-            }
+        try{
+            var [result] = await connection.query(query, [req.body.input+"%"])
             var jsondata = []
             if(result!=undefined && result[0]!=undefined)
             {
@@ -644,10 +732,19 @@ app.post('/api/searchArtwork/search',(req,res) => {
                 })
             }
             res.json(jsondata)
-        })
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              err:err
+           })
+        }
+        closeConnection(connection)
 })
 
 app.post('/api/searchArtwork/delete',async (req,res) => {
+    var connection = await openConnection()
 //관리자 페이지에서 
 //선택한 작품 삭제하기
         var input = []
@@ -662,44 +759,40 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
         //한번의 dbms요청으로 배열에 담긴 작품 id들을 삭제
         var query = "delete from art where art_id = ?;"
         var sql = ""
-
-        connection.beginTransaction((err)=>{
+        try{
+            await connection.beginTransaction()
             for(let i=0; i<input.length; i++)
             {
                 sql += query
             }
-            connection.query(sql,input,(err,result)=>{
-                if(err)
+            var [result] = await connection.query(sql,input)
+                if(result!=undefined)
                 {
-                    connection.rollback()
-                    console.log(err)
-                    res.json({
-                        success:false
-                    })
-                }
-                else
-                {
-                    connection.commit()
+                    await connection.commit()
                     console.log(result)
                     res.json({
                         success:true
                     })
                 }
-            })
-    
-        })
-
+        }catch(err)
+        {
+            //db 에러시
+            await connection.rollback()
+            console.error(err); 
+            res.json({
+               success:false
+           })
+        }    
+        closeConnection(connection)
 })
 
-app.post('/api/searchArtist/search',(req,res) => {
+app.post('/api/searchArtist/search', async (req,res) => {
+    var connection = await openConnection()
     //관리자 페이지에서 작가명으로 작가 찾기
         //like 작가명% 로 작가찾기 
         var query = "select r.artist_id, r.artist_name, r.life_term  from artist r where r.artist_name like ? order by r.artist_name"
-        connection.query(query, [req.body.input+"%"],(err,result)=>{
-            if(err)
-            {
-                res.json({err:err})
-            }
+        try{
+            var [result] = await connection.query(query, [req.body.input+"%"])
             var jsondata = []
             if(result!=undefined && result[0]!=undefined)
             {
@@ -713,10 +806,19 @@ app.post('/api/searchArtist/search',(req,res) => {
                 })
             }
             res.json(jsondata)
-        })
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              err:err
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/searchArtist/delete',(req,res) => {
+app.post('/api/searchArtist/delete',async (req,res) => {
+    var connection = await openConnection()
 //관리자 페이지 작가 삭제
     console.log(req.body.checkBoxId)
 
@@ -733,90 +835,83 @@ app.post('/api/searchArtist/delete',(req,res) => {
         //작가id를 통해 작가 삭제
         var query = "delete from artist where artist_id = ?;"
         var sql = ""
-
-        //트랜잭션 생성
-        connection.beginTransaction((err)=>{
-            //동일한 질의문(삭제) 반복
-            for(let i=0; i<input.length; i++)
-            {
-                sql += query
-            }
-            //복수의 질의문 실행
-            connection.query(sql,input,(err,result)=>{
-                //에러 시 rollback
-                if(err)
-                {
-                    connection.rollback()
-                    console.log(err)
-                    res.json({
-                        success:false
-                    })
-                }
-                //성공적으로 반영시 commit
-                else
-                {
-                    connection.commit()
-                    console.log(result)
-                    res.json({
-                        success:true
-                    })
-                }
-            })
-    
-        })
-
-
-})
-
-
-app.post('/api/joinForm',(req,res)=>
-{
-        //회원 정보 등록
-        let query = "insert into artuser values (?, ?, ?, ?, ?, ?)"
-        connection.query(query, [
-            req.body.username,
-            req.body.name,
-            req.body.password,
-            req.body.email,
-            req.body.phone,
-            "ROLE_USER"],
-             async (err,result) =>
+        try{
+                    //트랜잭션 생성
+        await connection.beginTransaction()
+        //동일한 질의문(삭제) 반복
+        for(let i=0; i<input.length; i++)
         {
-            //db 에러 시
-            if(err)
+            sql += query
+        }
+        //복수의 질의문 실행
+        var [result] = await connection.query(sql,input)
+            //성공적으로 반영시 commit
+            if(result!=undefined)
             {
-                console.error(err.message);
-
-                return res.status(200).json({
-                    success:false
-                })
-            }
-            //회원 정보 등록
-            if(result != undefined && result.affectedRows>=1)
-            {
-                console.log("COMMIT 회원가입 성공")
-                connection.commit()
-                return res.status(200).json({
+                await connection.commit()
+                console.log(result)
+                res.json({
                     success:true
                 })
             }
-            //반영이 안된 경우
-            else{
-                connection.rollback()
-                return res.status(200).json({
-                    success:false
-                })
-            }
-
-
-        })
-
+        }catch(err)
+        {
+            //db 에러시
+            await connection.rollback()
+            console.error(err); 
+            res.json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/loginForm',(req,res)=>
-{
-    console.log('로그인');
 
+app.post('/api/joinForm', async (req,res)=>
+{
+    var connection = await openConnection()
+        //회원 정보 등록
+        let query = "insert into artuser values (?, ?, ?, ?, ?, ?)"
+        try{
+            var [result] = await connection.query(query, [
+                req.body.username,
+                req.body.name,
+                req.body.password,
+                req.body.email,
+                req.body.phone,
+                "ROLE_USER"])
+                //회원 정보 등록
+                if(result != undefined && result.affectedRows>=1)
+                {
+                    console.log("COMMIT 회원가입 성공")
+                    await connection.commit()
+                    res.status(200).json({
+                        success:true
+                    })
+                }
+                //반영이 안된 경우
+                else{
+                    await connection.rollback()
+                    res.status(200).json({
+                        success:false
+                    })
+                }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              success:false
+           })
+        }
+
+        closeConnection(connection)
+})
+
+app.post('/api/loginForm', async (req,res)=>
+{
+    var connection = await openConnection()
+    console.log('로그인');
         var uname = req.body.username
         
         //사용자명으로 비밀번호, 사용자 권한 알아내기
@@ -825,19 +920,14 @@ app.post('/api/loginForm',(req,res)=>
         //uname.trim()으로 공백 지운
         //사용자의 아이디 입력값으로
         //db에 등록된 사용자 찾기
-        connection.query(sql, [uname.trim()], function(err,result,fields)
-        {
-            if(err)
-            {
-                console.error(err.message);
-                return;
-            }
+        try{
+            var [result] = await connection.query(sql, [uname.trim()])
 
             //결과가 없거나, 결과 튜플의 비밀번호가 사용자가 입력한 비밀번호와 일치하지 않을때, 로그인 실패
             if(result==undefined || result[0] == undefined || result[0].password != req.body.password)
             {
                 console.log("비밀번호 불일치 : "+err);
-                return res.json({
+                res.json({
                     success:false
                 })
             }
@@ -864,19 +954,23 @@ app.post('/api/loginForm',(req,res)=>
                 // 세션 ID 확인
                 const sessionID = req.sessionID;
                 console.log('session id :', sessionID);
-                    
-                
-                return res.json({
+                res.json({
                         success: true,
                         session: req.session
                 })
                 //.render('/api/checkAdmin',{
                 //    session : req.session
                 //})
- 
             }
-
-        })
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
 app.get('/api/logout',(req,res)=>{
@@ -889,23 +983,15 @@ app.get('/api/logout',(req,res)=>{
 
 
 //여기서 부터 blog내용 적용
-app.get('/api/home1/about', (req, res) =>
+app.get('/api/home1/about', async (req, res) =>
 {
+        var connection = await openConnection()
         //Home1 화면에 출력할 최근 등록한 작품 3개 정보 얻기
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db 에러시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
+        try{
+
+            var [result] = await connection.query(query)
+
             var jsondata = []
             //질의 결과가 있을 때
             if(result != undefined && result[0] != undefined)
@@ -922,31 +1008,29 @@ app.get('/api/home1/about', (req, res) =>
                     jsondata.push(data)
                 })
             }
+            res.json(jsondata)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err);
 
-            return res.json(jsondata)
-        })
+                res.status(200).json({
+                    success:false
+                })
+        }
+        
+        closeConnection(connection)
 })
 
-app.get('/api/home1/about2', (req, res) =>
+app.get('/api/home1/about2', async (req, res) =>
 {
+    var connection = await openConnection()
     //HOME1 최근 등록된 작품3개의
     //하단 그래프용 정보 얻어오기
 
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select a.art_name, a.Remaintime, a.Audience_number  from  art a order by Remaintime, Audience_number desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
-        connection.query(query,
-            
-            async (err,result,fields) =>
-        {
-            //db 에러시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
-
+        try{
+            let [result] = await connection.query(query)
             var jsondata = []
             //질의 결과가 있을 때
             if(result != undefined && result[0]!=undefined)
@@ -961,32 +1045,27 @@ app.get('/api/home1/about2', (req, res) =>
                     jsondata.push(data)
                 })
             }
+             res.json(jsondata)
 
-            return res.json(jsondata)
-        })
-
-
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
 
-app.get('/api/home2',(req,res) => {
-
+app.get('/api/home2', async(req,res) => {
+    var connection = await openConnection()
     //HOME2에서 보여줄 가장 최근에 등록된 작품의 정보 가져오기
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select  a.image_url, a.art_name, a.displaydate, r.artist_name, a.Art_text,  a.art_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
 
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db에러시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
+        try{
+            var [result] = await connection.query(query)
             //질의 결과가 있을 때
            if(result!=undefined && result[0]!=undefined)
            {
@@ -999,28 +1078,25 @@ app.get('/api/home2',(req,res) => {
                     id:result[0].art_id
                 }
             }
-            return res.json(data)
-        })
+            res.json(data)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
 
-app.get('/api/home3/slider', function (req, res) {
+app.get('/api/home3/slider', async function (req, res) {
+    var connection = await openConnection()
     //HOME3 슬라이드에 사용되는 가장 최근에 등록된 작품 15개 보여주기
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 15"
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db 에러시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
-
+        try{
+            var [result] = await connection.query(query)
             var jsondata = []
             //질의 결과가 있을 때
             if(result != undefined && result[0]!=undefined)
@@ -1032,34 +1108,27 @@ app.get('/api/home3/slider', function (req, res) {
                         imgUrl: rows.Image_url,
                         id: rows.Art_id
                     }
-
                     jsondata.push(data)
-
                 })
-
-            return res.json(jsondata)
-
-        })   
+           res.json(jsondata)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 });
 
-app.get('/api/home3/graph', function (req, res) {
+app.get('/api/home3/graph', async function (req, res) {
+    var connection = await openConnection()
  //HOME3의 그래프에 사용될
  //가장 최근에 등록한 작품 5개의 정보 가져오기
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from ( select art_name, Remaintime ,Audience_number  from art a order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db 에러시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
-
+        try{
+            var [result] = await connection.query(query)
             var jsondata = []
            //질의 결과가 있을 때
             if(result != undefined && result[0]!=undefined)
@@ -1070,17 +1139,20 @@ app.get('/api/home3/graph', function (req, res) {
                         '전시 관람객': array.Audience_number}
     
                     //console.log('\n')
-    
-    
                     jsondata.push(data)
                 })
             }
-
-            return res.json(jsondata)
-
-
-        })
-
+            res.json(jsondata)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+    
+        closeConnection(connection)
 });
 
 app.get('/api/home3/date', function (req, res) {
@@ -1119,23 +1191,12 @@ app.get('/api/home3/date', function (req, res) {
 });
 
 
-app.get('/api/home4/data', function (req, res) {
+app.get('/api/home4/data', async function (req, res) {
+    var connection = await openConnection()
 //HOME4
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_url, a.art_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db 에러 시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
-
+        try{
+            var [result] = await connection.query(query)
             var jsondata = []
             //질의 결과가 있을 때
             if(result != undefined && result[0] != undefined)
@@ -1147,39 +1208,30 @@ app.get('/api/home4/data', function (req, res) {
                         imgUrl: array.image_url,
                         moreUrl:'#',
                         id : array.art_id
-                    
                     }
-
                     jsondata.push(data)
                 })
-
             }
-
-            return res.json(jsondata)
-
-        })
-
+            res.json(jsondata)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 });
 
     
-app.get('/api/exhibition1/data', function (req, res) {
+app.get('/api/exhibition1/data', async function (req, res) {
+    var connection = await openConnection()
         //현재 작품들 정보 가져오기
         let query = "select tmp.* from ( select r.artist_id, r.artist_name , a.art_id, a.art_name, a.image_url, e.exhibition_id, e.exhibition_name  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by art_id desc ) tmp"
-        connection.query(query,
-            
-            async (err,result) =>
-        {
-            //db 에러 시
-            if(err)
-            {
-                console.error(err.message);
-                
-                return res.status(200).json({
-                    success:false
-                })
-            }
+        try{
+            var [result] = await connection.query(query)
             var jsondata = []
-
             //질의 결과가 존재할 때
             if(result != undefined)
             {
@@ -1195,107 +1247,98 @@ app.get('/api/exhibition1/data', function (req, res) {
                         moreUrl:'#',
                         exhibition_id : array.exhibition_id,
                         musium : array.exhibition_name
-                        
                     }
-
                     jsondata.push(data)
                 })
             }
-
-            return res.json(jsondata)
-        })    
+            res.json(jsondata)
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
     });
 
-
-    app.post('/api/exhibition2/exhibition', function (req, res) {
-
+    app.post('/api/exhibition2/exhibition', async function (req, res) {
+        var connection = await openConnection()
         //접속한 url에 전시관 id가 존재할 때
         if(req.body.exhibition != undefined && req.body.exhibition.length>=1)
         {
             
                 //전시관 id를 통해 전시관에 있는 작품들 찾기
                 let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data  from art a, artist r, exhibition e where e.exhibition_id = ? AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc"
-                connection.query(query,
-                    [req.body.exhibition],
-                    async (err,result) =>
-                {
-                    //db 에러 시
-                    if(err)
-                    {
-                        console.error(err.message);
-                        
-                        return res.status(200).json({
-                            success:false
-                        })
-                    }
-                    var jsondata = []
-        
-                    //전시관에 작품이 존재할 때
-                    if(result != undefined && result[0] != undefined )
-                    {
-                        result.forEach((rows,i) => {
-                            var data = {
-                                artist:rows.artist_name,
-                                day:'apr 10 - may 11, 2021',
-                                musium: rows.exhibition_name,
-                                img:rows.image_url,
-                                artworkUrl: '/exhibition3/'+rows.art_name,
-                                textTitle: rows.Art_id,
-                                textArea: rows.Exhibition_data,
-                                datenumber:351,
-                                totalnumber:'194:36:41',
-                                time:'2020. 02. 08 PM 14:00 기준'
-                            
-                            }
-                            jsondata.push(data)
-                        })
-
-                         return res.json(jsondata)
-                    }
-                    //전시관에 작품이 없는 경우 전시관에 대한 정보만 반환
-                    else
-                    {
-                        
-                        let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id = ?"
-                        connection.query(q,[req.body.exhibition], (err, result2) => {
-                            if(err)
-                            {
-                                console.error(err.message);
-                                
-                                return res.status(200).json({
-                                    success:false
-                                })
-                            }
-                            else{
-                                if(result2 != undefined && result2[0] != undefined)
-                                {
-                                    var data = {
-                                        artist:'작품 없음',
-                                        day:'apr 10 - may 11, 2021',
-                                        musium: result2[0].exhibition_name,
-                                        img:'notfoung.png',
-                                        artworkUrl:'#',
-                                        textTitle: '해당 전시관에 진행중인 내용이 없습니다',
-                                        textArea: result2[0].exhibition_data,
-                                        datenumber:351,
-                                        totalnumber:'194:36:41',
-                                        time:'2020. 02. 08 PM 14:00 기준'
-                                    
-                                    }
+                try{
+                    var [result] = await connection.query(query,
+                        [req.body.exhibition])
+    
+                        var jsondata = []
             
-                                    jsondata.push(data)
+                        //전시관에 작품이 존재할 때
+                        if(result != undefined && result[0] != undefined )
+                        {
+                            result.forEach((rows,i) => {
+                                var data = {
+                                    artist:rows.artist_name,
+                                    day:'apr 10 - may 11, 2021',
+                                    musium: rows.exhibition_name,
+                                    img:rows.image_url,
+                                    artworkUrl: '/exhibition3/'+rows.art_name,
+                                    textTitle: rows.Art_id,
+                                    textArea: rows.Exhibition_data,
+                                    datenumber:351,
+                                    totalnumber:'194:36:41',
+                                    time:'2020. 02. 08 PM 14:00 기준'
+                                
                                 }
-                                else{
-                                    
-                                    jsondata.push({notuple:true})
-                                }
-                              }
-                              console.log(jsondata)
-                             return res.json(jsondata)
+                                jsondata.push(data)
                             })
-
-                    }
-                })
+    
+                            res.json(jsondata)
+                        }
+                        //전시관에 작품이 없는 경우 전시관에 대한 정보만 반환
+                        else
+                        {
+                            
+                            let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id = ?"
+                            var [result2] = await connection.query(q,[req.body.exhibition])
+                                    if(result2 != undefined && result2[0] != undefined)
+                                    {
+                                        var data = {
+                                            artist:'작품 없음',
+                                            day:'apr 10 - may 11, 2021',
+                                            musium: result2[0].exhibition_name,
+                                            img:'notfoung.png',
+                                            artworkUrl:'#',
+                                            textTitle: '해당 전시관에 진행중인 내용이 없습니다',
+                                            textArea: result2[0].exhibition_data,
+                                            datenumber:351,
+                                            totalnumber:'194:36:41',
+                                            time:'2020. 02. 08 PM 14:00 기준'
+                                        
+                                        }
+                
+                                        jsondata.push(data)
+                                    }
+                                    else{
+                                        
+                                        jsondata.push({notuple:true})
+                                    }
+                                  console.log(jsondata)
+                                 res.json(jsondata)
+    
+                        }
+                }catch(err)
+                {
+                    //db 에러시
+                    console.error(err); 
+                    res.status(200).json({
+                       success:false
+                   })
+                }
 
         }
 
@@ -1303,18 +1346,8 @@ app.get('/api/exhibition1/data', function (req, res) {
         else{
                 //작품수가 가장 많이 전시된 전시관의 작품 정보 가져오기
                 let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data from (select * from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id, x.Exhibition_name, x.Exhibition_data, count(*) artnum from exhibition x, art aa where x.Exhibition_id = aa.Exhibition_id group by x.Exhibition_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1) e, art a, artist r where e.exhibition_id = a.exhibition_id and a.Artist_id = r.Artist_id"
-                  connection.query(query,
-                    async (err,result) =>
-                {
-                    //db 에러 시
-                    if(err)
-                    {
-                        console.error(err);
-                        
-                        return res.status(200).json({
-                            success:false
-                        })
-                    }
+                try{
+                    var [result] = await connection.query(query)
                     var jsondata = []
                     //전시관에 작품이 있을 때
                     if(result != undefined && result[0] != undefined )
@@ -1336,7 +1369,7 @@ app.get('/api/exhibition1/data', function (req, res) {
 
                             jsondata.push(data)
                         })
-                        return res.json(jsondata)
+                        res.json(jsondata)
                     }
                     //작품수가 가장 많이 전시된 전시관에 작품이 없는 경우
                     else
@@ -1345,16 +1378,7 @@ app.get('/api/exhibition1/data', function (req, res) {
                         //작품이 가장 많이 전시된 전시관의 작품수가 0이므로
                         //모든 전시관의 작품수가 0이란 의미 
                         let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
-                        connection.query(q,[req.body.exhibition], (err, result2) => {
-                            if(err)
-                            {
-                                console.error(err.message);
-                                
-                                return res.status(200).json({
-                                    success:false
-                                })
-                            }
-                            else{
+                        var result2 = await connection.query(q,[req.body.exhibition])
                                 if(result2 != undefined && result2[0] != undefined)
                                 {
                                     var data = {
@@ -1377,75 +1401,60 @@ app.get('/api/exhibition1/data', function (req, res) {
                                     
                                     jsondata.push({notuple:true})
                                 }
-                              }
                               console.log(jsondata)
-                             return res.json(jsondata)
-                            })
-                    
-                        
+                             res.json(jsondata)
                     }
-        
-                })
-
+                }catch(err)
+                {
+                    //db 에러시
+                    console.error(err); 
+                    res.status(200).json({
+                       success:false
+                   })
+                }
         }
-
+        closeConnection(connection)
         });
 
-        app.post('/api/exhibition2/rank', function (req, res) {
+        app.post('/api/exhibition2/rank', async function (req, res) {
+            var connection = await openConnection()
             //url에 전시관 id가 있는 경우
             if(req.body.exhibition != undefined && req.body.exhibition.length>=1)
             {
                     //해당 전시관에 전시된 작품 최대 6개 정보 반환
                     let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, a.Art_id  from art a, artist r, exhibition e where e.exhibition_id = ? AND a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 6"
-                    connection.query(query,
-                        [req.body.exhibition],
-                        async (err,result) =>
+                    try{
+                        var [result] = await connection.query(query,
+                            [req.body.exhibition])
+                            var jsondata = []
+                
+                            if(result != undefined)
+                            {
+                                result.forEach((rows,i) => {
+                                    var data = {
+                                        rank:i+1,
+                                        art: rows.artist_name+" : "+rows.art_name,
+                                        looktime:'194:36:41',
+                                        id:rows.Art_id
+                                    }
+                                    jsondata.push(data)
+                                })
+                            }
+                            res.json(jsondata)
+                    }catch(err)
                     {
-                        if(err)
-                        {
-                            console.error(err.message);
-                            
-                            return res.status(200).json({
-                                success:false
-                            })
-                        }
-                        var jsondata = []
-            
-                        if(result != undefined)
-                        {
-                            result.forEach((rows,i) => {
-                                var data = {
-                                    rank:i+1,
-                                    art: rows.artist_name+" : "+rows.art_name,
-                                    looktime:'194:36:41',
-                                    id:rows.Art_id
-                                }
-                                jsondata.push(data)
-                            })
-                        }
-            
-                        return res.json(jsondata)
-            
-            
-                    })
-            
-
+                        //db 에러시
+                        console.error(err); 
+                        res.status(200).json({
+                           success:false
+                       })
+                    }
             }
             //url에 전시관 id가 없을 때 작품 수가 가장 많은 전시관의 작품 최대 6개 정보
             else{
                     let query = "select artist_name, art_name, Art_id from (select t2.*, @rownum2 := @rownum2 + 1 rownum2  from (select r.artist_name, a.art_name, a.Art_id from (select * from (select t.*, @rownum := @rownum + 1 rownum2  from (select x.exhibition_id, x.Exhibition_name, x.Exhibition_data, count(*) artnum from exhibition x, art aa where x.Exhibition_id = aa.Exhibition_id group by x.Exhibition_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum2 <= 1) e, art a, artist r where e.exhibition_id = a.exhibition_id and a.Artist_id = r.Artist_id) t2, (select @rownum2 := 0) tmp4) tmp5 where tmp5.rownum2 <= 6"
-                    connection.query(query,
-                      
-                        async (err,result) =>
-                    {
-                        if(err)
-                        {
-                            console.error(err.message);
-                            
-                            return res.status(200).json({
-                                success:false
-                            })
-                        }
+                    try{
+                        var [result] = await connection.query(query)
                         var jsondata = []
             
                         if(result != undefined && result[0]!=undefined)
@@ -1456,21 +1465,23 @@ app.get('/api/exhibition1/data', function (req, res) {
                                     art: rows.artist_name+" : "+rows.art_name,
                                     looktime:'194:36:41',
                                     id:rows.Art_id
-                                
                                 }
             
                                 jsondata.push(data)
                             })
                         }
-            
-                        return res.json(jsondata)
-            
-            
-                    })
-            
+                        res.json(jsondata)
+                    }catch(err)
+                    {
+                        //db 에러시
+                        console.error(err); 
+                        res.status(200).json({
+                           success:false
+                       })
+                    }
 
             }
-
+                closeConnection(connection)
             });
 
             app.get('/api/exhibition2/chart03/day', function (req, res) {
@@ -1529,70 +1540,59 @@ app.get('/api/exhibition1/data', function (req, res) {
                         ])
                     });
         
-                    app.post('/api/exhibition3/exhibition', function (req, res) {
-
+                    app.post('/api/exhibition3/exhibition', async function (req, res) {
+                        var connection = await openConnection()
                         var date = moment().format('YYYY-MM-DD HH:mm:ss');
                         //작품 id가 url에 있는 경우
                         if(req.body.id !=undefined && req.body.id.length>=1)
                         {
                                 //해당 작품의 정보 반환
                                 let query = "select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where a.art_id = ? AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
-                                connection.query(query,
-                                    [req.body.id],
-                                    async (err,result) =>
+                                try{
+                                    var [result] = await connection.query(query,
+                                        [req.body.id])
+                                        var jsondata = []
+                            
+                                        if(result != undefined && result[0] !=undefined)
+                                        {
+                                            result.forEach((array) => {
+                                                
+                                                var data = {
+                                                    artist: array.artist_name,
+                                                    artname: array.art_name,
+                                                    arttype: array.image_type,
+                                                    artsize: array.getdate+", " +array.image_size,
+                                                    imgUrl: array.image_url,
+                                                    musium: array.exhibition_name,
+                                                    people_number: 351,
+                                                    total_people_number: 9510,
+                                                    time : date +'기준',
+                                                    totaltime: '283:36:41',
+                                                    exhibition_id : array.exhibition_id,
+                                                    artist_id : array.artist_id
+                                                }
+                                                jsondata.push(data)
+                                            })
+                            
+                                        }
+                            
+                                        res.json(jsondata)
+                                }catch(err)
                                 {
-                                    if(err)
-                                    {
-                                        console.error(err.message);
-                                        
-                                        return res.status(200).json({
-                                            success:false
-                                        })
-                                    }
-                                    var jsondata = []
-                        
-                                    if(result != undefined && result[0] !=undefined)
-                                    {
-                                        result.forEach((array) => {
-                                            
-                                            var data = {
-                                                artist: array.artist_name,
-                                                artname: array.art_name,
-                                                arttype: array.image_type,
-                                                artsize: array.getdate+", " +array.image_size,
-                                                imgUrl: array.image_url,
-                                                musium: array.exhibition_name,
-                                                people_number: 351,
-                                                total_people_number: 9510,
-                                                time : date +'기준',
-                                                totaltime: '283:36:41',
-                                                exhibition_id : array.exhibition_id,
-                                                artist_id : array.artist_id
-                                            }
-                                            jsondata.push(data)
-                                        })
-                        
-                                    }
-                        
-                                    return res.json(jsondata)
-                                })
+                                    //db 에러시
+                                    console.error(err); 
+                                    res.status(200).json({
+                                       success:false
+                                   })
+                                }
                         }
                         //작품 id가 url에 없는 경우
                         else
                         {
                                 //가장 최근에 등록된 작품 보여주기
                                 let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
-                                connection.query(query,
-                                    async (err,result) =>
-                                {
-                                    if(err)
-                                    {
-                                        console.error(err.message);
-                                        
-                                        return res.status(200).json({
-                                            success:false
-                                        })
-                                    }
+                                try{
+                                    var [result] = await connection.query(query)
                                    
                                     var jsondata = []
                                     
@@ -1616,13 +1616,19 @@ app.get('/api/exhibition1/data', function (req, res) {
                                             }
                                             jsondata.push(data)
                                         })
-                        
                                     }
                         
-                                    return res.json(jsondata)
-                                })
-                        
+                                    res.json(jsondata)
+                                }catch(err)
+                                {
+                                    //db 에러시
+                                    console.error(err); 
+                                    res.status(200).json({
+                                       success:false
+                                   })
+                                }
                         }
+                        closeConnection(connection)
                     });
 
                         app.post('/api/exhibition3/chart05', function (req, res) {
@@ -1791,21 +1797,15 @@ app.get('/api/exhibition1/data', function (req, res) {
                             }
                         });
 
-                                app.post('/api/artist01/slider', function (req, res) {
+                                app.post('/api/artist01/slider', async function (req, res) {
+                                    var connection = await openConnection()
                                             //작가 id가 url에 있을 경우
                                             if(req.body.id !=undefined && req.body.id.length>=1)
                                             {
                                                 //해당 작가의 정보 가져오기
                                                 var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id = ?"
-
-                                                connection.query(query, [req.body.id],(err,result)=>{
-                                                    if(err)
-                                                    {
-                                                        return res.status(200).json({
-                                                            success:false
-                                                        })
-                                                    }
-                                                    
+                                                try{
+                                                    var [result] = await connection.query(query, [req.body.id])
                                                     var jsondata = []
 
                                                     if(result !=undefined)
@@ -1823,21 +1823,21 @@ app.get('/api/exhibition1/data', function (req, res) {
                                                         })
                                                     }
                                                     res.json(jsondata)
-                                                })
+                                                }catch(err)
+                                                {
+                                                    //db 에러시
+                                                    console.error(err); 
+                                                    res.status(200).json({
+                                                       success:false
+                                                   })
+                                                }
                                             }
                                             //작가 id가 url에 없는 경우 작품수가 가장 많이 등록된 작가 보여주기
                                             else
                                             {
                                                 var query = "select r.artist_name, a.image_type, a.image_size, e.exhibition_name, a.image_url, a.art_name, a.art_id from artist r, art a, exhibition e where e.exhibition_id = a.exhibition_id and a.artist_id = r.artist_id and r.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1) "
-
-                                                connection.query(query,(err,result)=>{
-                                                    if(err)
-                                                    {
-                                                        return res.status(200).json({
-                                                            success:false
-                                                        })
-                                                    }
-
+                                                try{
+                                                    var [result] = await connection.query(query)
                                                     var jsondata = []
 
                                                     if(result !=undefined && result[0]!=undefined)
@@ -1855,28 +1855,28 @@ app.get('/api/exhibition1/data', function (req, res) {
                                                         })
                                                     }
                                                     res.json(jsondata)
-                                                } )
+                                                }catch(err)
+                                                {
+                                                    //db 에러시
+                                                    console.error(err); 
+                                                    res.status(200).json({
+                                                       success:false
+                                                   })
+                                                }
 
                                             }
-                                           
+                                            closeConnection(connection)
                                     });
                                    
-                                    app.post('/api/artist01/artist', function (req, res) {
+                                    app.post('/api/artist01/artist', async function (req, res) {
+                                        var connection = await openConnection()
                                         var date = moment().format('YYYY-MM-DD HH:mm:ss')
                                                     if(req.body.id !=undefined && req.body.id.length>=1)
                                                     {
                                                         var query = "select artist_name, Artist_info from artist where artist_id = ?"
-
-                                                        connection.query(query,[req.body.id],(err,result)=>{
-                                                            if(err)
-                                                            {
-                                                                return res.status(200).json({
-                                                                    success:false
-                                                                })
-                                                            }
-
+                                                        try{
+                                                            var [result] = await connection.query(query,[req.body.id])
                                                             var jsondata = []
-    
                                                             if(result !=undefined && result[0]!=undefined)
                                                             {
                                                                 result.forEach((rows)=>{
@@ -1892,43 +1892,51 @@ app.get('/api/exhibition1/data', function (req, res) {
                                                                 })
                                                             }
                                                             res.json(jsondata)
-                                                        })
+                                                        }catch(err)
+                                                        {
+                                                            //db 에러시
+                                                            console.error(err); 
+                                                            res.status(200).json({
+                                                               success:false
+                                                           })
+                                                        }
                                                     }
                                                     
                                                     else
                                                     {
                                                         var query = "select t.artist_name, t.Artist_info from artist t where t.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
-
-                                                       connection.query(query, (err,result)=>{
-                                                        if(err)
-                                                        {
-                                                            return res.status(200).json({
-                                                                success:false
-                                                            })
-                                                        }
-                                                        var jsondata = []
-                                                        if(result !=undefined && result[0] != undefined)
-                                                            {
-                                                                result.forEach((rows)=>{
-                                                                    jsondata.push({
-                                                                        name: rows.artist_name,
-                                                                        btnUrl: '#',
-                                                                        textArea: rows.Artist_info,
-                                                                        people_num: '35121',
-                                                                        totaltime: '1894:36:41',
-                                                                        timeline: date+' 기준',
-                                                                        like: '60'
+                                                        try{
+                                                            var [result] = await connection.query(query)
+                                                            var jsondata = []
+                                                            if(result !=undefined && result[0] != undefined)
+                                                                {
+                                                                    result.forEach((rows)=>{
+                                                                        jsondata.push({
+                                                                            name: rows.artist_name,
+                                                                            btnUrl: '#',
+                                                                            textArea: rows.Artist_info,
+                                                                            people_num: '35121',
+                                                                            totaltime: '1894:36:41',
+                                                                            timeline: date+' 기준',
+                                                                            like: '60'
+                                                                        })
                                                                     })
-                                                                })
-                                                            }
-                                                            res.json(jsondata)
-                                                       })
-    
+                                                                }
+                                                                res.json(jsondata)
+                                                        }catch(err)
+                                                        {
+                                                            //db 에러시
+                                                            console.error(err); 
+                                                            res.status(200).json({
+                                                               success:false
+                                                           })
+                                                        }
                                                     }
-
+                                                    closeConnection(connection)
                                     })
 
-    app.post('/api/checkId', (req,res) => {
+    app.post('/api/checkId', async (req,res) => {
+        var connection = await openConnection()
         //사용가능한 아이디인지 확인
         //입력이 없을 경우 그냥 반환
         //프론트에서도 확인하긴 함
@@ -1941,20 +1949,13 @@ app.get('/api/exhibition1/data', function (req, res) {
         }
             //해당 사용자가 있는지 확인
             let query = "select username from artuser where username = ?";
-            console.log("oracle질의 : "+query);
-            connection.query(query, [req.body.username], function(err,result)
-            {
-                if(err)
-                {
-                    console.error(err.message)
-                    return;
-                }
-
+            try{
+                var [result] = await connection.query(query, [req.body.username])
                 //질의 결과 같은 사용자가 있는 경우
                 if(result !=undefined && result[0] != undefined && result[0].username === req.body.username)
                 {
                     console.log("이미 존재하는 아이디");
-                    return res.json({
+                    res.json({
                         success:false
                     })
                 }
@@ -1962,22 +1963,26 @@ app.get('/api/exhibition1/data', function (req, res) {
                 //없는 경우 사용가능
                 else
                 {
-
                     console.log("사용가능한 아이디")
 
-                    return res.status(200).json({
+                    res.status(200).json({
                           success:true
                      })
                 }
-    
-                
-            })
+            }catch(err)
+            {
+                //db 에러시
+                console.error(err); 
+                res.status(200).json({
+                   success:false
+               })
+            }
 
+            closeConnection(connection)
     })
 
     //checkAdmin인데 그냥 세션 정보 프론트로 보내는 거임
     app.get('/api/checkAdmin', (req,res) => {
-        
         /*세션 로그인 파트*/
         if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
         //오라클 작업시 id부분은 필요없어서 조건문에서 생략 // && req.session.user.id != undefined
@@ -2014,13 +2019,8 @@ app.get('/api/exhibition1/data', function (req, res) {
         }
     })
 
-
-
 app.post('/api/myPage', (req,res) => {
-
     console.log(req.session)
-    console.log("현재 세션 : "+req.session.user.username)
-    
     /*세션 로그인 파트*/
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     {
@@ -2046,11 +2046,11 @@ app.post('/api/myPage', (req,res) => {
             success:false
         })
     }
-
 })
 
 
-app.post('/api/myPagefindUser', (req,res) => {
+app.post('/api/myPagefindUser', async (req,res) => {
+    var connection = await openConnection()
     //사용자 아이디 입력이 없을 경우
     if(req.body.username == '' || req.body.username == undefined || req.body.username==null)
     {
@@ -2058,24 +2058,14 @@ app.post('/api/myPagefindUser', (req,res) => {
            name: false
         })
     }
-
     else
     {
         //사용자 아이디로 사용자 정보 얻기
         var query = "select username, name, email from artuser where username = ?"
         var str = req.body.username.trim()
-        connection.query(query,[str],(err, result)=>
-             {
-                if(err)
-                {
-                    console.log(err)
-                    return res.json({
-                        name: false
-                     })
-                }
-
-                
-                else if(result !=undefined && result[0] != undefined){
+        try{
+            var [result] = await connection.query(query,[str])
+            if(result !=undefined && result[0] != undefined){
                     var jsondata = []
                     result.forEach((rows)=>{
                         var data ={
@@ -2089,18 +2079,25 @@ app.post('/api/myPagefindUser', (req,res) => {
                         return res.json(data)
                     })
                 }
-
                 else{
                     return res.json({
                         name: false
                     })
                 }
-             })
-
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
     }
+    closeConnection(connection)
 })
 
-app.get('/api/Transfer/artdata',(req,res) => {
+app.get('/api/Transfer/artdata', async (req,res) => {
+    var connection = await openConnection()
     //세션 정보확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     {
@@ -2108,15 +2105,8 @@ app.get('/api/Transfer/artdata',(req,res) => {
 
                 //세션에 담긴 아이디(req.session.user.username)로 사용자가 소유한 작품 검색
                 let query = "SELECT R.Artist_name, A.Art_name,  DATE_FORMAT(A.Expired,'%Y-%m-%d') resdate, A.Art_id FROM  art A, artist R, auction U WHERE A.owner_username = ?  AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id"
-                connection.query(query, [req.session.user.username],async (err,result) =>
-                {
-                    if(err)
-                    {
-                        console.error(err.message)
-                        return res.status(200).json({
-                            success:false
-                        })
-                    }
+                try{
+                    var [result] = await connection.query(query, [req.session.user.username])
                     var jsondata = []
                     //질의 결과가 있을 경우
                     if(result !=undefined && result[0]!=undefined)
@@ -2132,11 +2122,15 @@ app.get('/api/Transfer/artdata',(req,res) => {
                             jsondata.push(data)
                         })
                     }
-                    return res.json(jsondata)
-        
-                })
-        
-        
+                    res.json(jsondata)
+                }catch(err)
+                {
+                    //db 에러시
+                    console.error(err); 
+                    res.status(200).json({
+                       success:false
+                   })
+                }
         }
         //로그인 하지 않은 경우
         else
@@ -2150,10 +2144,11 @@ app.get('/api/Transfer/artdata',(req,res) => {
                 success:false
             })
         }
-    
+        closeConnection(connection)
 })
 
-app.post('/api/Transfer/sendArt',(req,res) => {
+app.post('/api/Transfer/sendArt', async (req,res) => {
+    var connection = await openConnection()
     //소유한 작품 타인에게 양도
     var date = moment().format('YYYY-MM-DD');
     var input = []
@@ -2168,113 +2163,106 @@ app.post('/api/Transfer/sendArt',(req,res) => {
         input.push(date)
         input.push(req.body.checkBoxValue[i])
     }
-    //트랜잭션 설정
-        connection.beginTransaction((err)=>{
-            if(err)
-            {
-                console.log(err)
-            }
-            else{
-                //업데이트
-                connection.query(sql,input,(err, result)=>{
-                    //db에러 시
-                    if(err)
-                    {
-                        connection.rollback()
-                        console.error(err);
-                        return res.json({
-                            success: false
-                        })
-                    }
-                    //정상 수행 시
-                    else if(result!=undefined && result.affectedRows>=1)
-                    {
-                        connection.commit()
-                        console.log(result)
-                        return res.json({
-                            success: true
-                        })
-                    }
-                })
-            }
-        })
-
-            
+    try{
+            //트랜잭션 설정
+            await connection.beginTransaction()
+            //업데이트
+           var [result] = await connection.query(sql,input)
+           
+           if(result!=undefined && result.affectedRows>=1)
+                {
+                    await connection.commit()
+                    console.log(result)
+                    res.json({
+                        success: true
+                    })
+                }
+    }catch(err)
+    {
+        //db 에러시
+        await connection.rollback()
+        console.error(err); 
+        res.status(200).json({
+           success:false
+       })
+    }    
+    closeConnection(connection)
 })
 
-app.post('/api/AuctionMain/isStarted',(req,res)=>{
+app.post('/api/AuctionMain/isStarted',async (req,res)=>{
+    var connection = await openConnection()
         //경매 시작일, 종료일 확인
         var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point from art a, auction u where a.art_id = ? and a.art_id = u.art_id"
-        connection.query(query,[req.body.art_id],
-             (err, result) => {
-                if(err)
-                {
-                    console.error(err);
-                    return res.json({
-                        err:err,
-                        //success:false
-                    })
-                }
-
-                var jsondata = []
-                if(result != undefined && result[0] != undefined)
-                {
-                    result.forEach((rows)=>{
-                        var data= {
-                            begin_point : rows.begin_point,
-                            end_point : rows.end_point
-                        }
-                        res.json(data)
-                    })
-                }
-
-                else
-                {
-                    res.json(null)
-                }
-
-             })
-        
+        try{
+            var [result] = await connection.query(query,[req.body.art_id])
+            if(result != undefined && result[0] != undefined)
+            {
+                result.forEach((rows)=>{
+                    var data= {
+                        begin_point : rows.begin_point,
+                        end_point : rows.end_point
+                    }
+                    res.json(data)
+                })
+            }
+            else
+            {
+                res.json(null)
+            }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.get('/api/AuctionMain/picturedata', function (req, res) {
+app.get('/api/AuctionMain/picturedata', async function (req, res) {
+        var connection = await openConnection()
         //경매 정보 반환
         var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null order by u.end_point desc"
-
-                connection.query(query, (err,result)=>{
-                    if(result !=undefined)
-                    {
-                        var jsondata = []
-
-                        result.forEach((rows)=>{
-                            jsondata.push({
-                                img: rows.Image_url,
-                                artist: rows.artist_name,
-                                artwork: rows.art_name,
-                                size: rows.image_size,
-                                year:"1973",
-                                type: rows.image_type,
-                                KRWpriceStart: rows.krw_lower,
-                                KRWpriceEnd: rows.krw_upper,
-                                USDpriceStart: rows.usd_lower,
-                                USDpriceEnd: rows.usd_upper,
-                                id: rows.art_id,
-                                isauctioned:null
-        
-                            })
-
-                        })
-
-                        //console.log(jsondata)
-                        return res.json(jsondata)
-                    }
+        try{
+            var [result] = await connection.query(query)
+            if(result !=undefined)
+            {
+                var jsondata = []
+                result.forEach((rows)=>{
+                    jsondata.push({
+                        img: rows.Image_url,
+                        artist: rows.artist_name,
+                        artwork: rows.art_name,
+                        size: rows.image_size,
+                        year:"1973",
+                        type: rows.image_type,
+                        KRWpriceStart: rows.krw_lower,
+                        KRWpriceEnd: rows.krw_upper,
+                        USDpriceStart: rows.usd_lower,
+                        USDpriceEnd: rows.usd_upper,
+                        id: rows.art_id,
+                        isauctioned:null
+                    })
                 })
+                //console.log(jsondata)
+                res.json(jsondata)
+            }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
 
+    closeConnection(connection)
 });
 
 
-app.post('/api/search_auction',(req,res)=>{
-
+app.post('/api/search_auction',async (req,res)=>{
+    var connection = await openConnection()
         //경매 정보 질의 결과 반환하는 함수
         function putresult(result)
         {
@@ -2302,124 +2290,118 @@ app.post('/api/search_auction',(req,res)=>{
                         })
 
                         //console.log(jsondata)
-                        return res.json(jsondata)
+                        res.json(jsondata)
                     }
         }
 
         let jsondata = {}
 
         jsondata.isauctioned='yes'
-
-            //작품 아이디로 작품을 찾을 경우
-            if(req.body.num.length>=1)
-            {
-                var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.art_id = ? and a.owner_username is null"
-
-                connection.query(query,[req.body.num], (err,result)=>{
-                    putresult(result)
-                })
-            }
-            //작품 아이디 외 다른 조건으로 찾을 경우
-            else{
-                var query = ""
-                
-                
-                //작가명, 작품명, 가격대로 검색시
-                if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname != undefined && req.body.artname.length>=1)
-                {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
-                    connection.query(query,[req.body.artname+"%",req.body.artist+"%",req.body.value,req.body.value2],(err,result)=>{
-                        putresult(result)
-                    })
-
-                }
-                //작가명, 가격대로 검색시
-                else if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname.length<1)
-                {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
-                    connection.query(query,[req.body.artist+"%", req.body.value, req.body.value2],(err,result)=>{
-                        putresult(result)
-                    })
-                }
-                //작품명, 가격대로 검색시
-                else if( req.body.artname != undefined && req.body.artname.length>=1 && req.body.artist.length<1)
-                {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
-                    connection.query(query,[req.body.artname+"%", req.body.value,req.body.value2],(err,result)=>{
-                        putresult(result)
-                    })
-                }
-                //가격대로만 검색시
-                else if(req.body.artname.length<1 && req.body.artist.length<1)
-                {
-                    query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= ? and a.krw_upper <= ?"
-                    connection.query(query,[req.body.value, req.body.value2],(err,result)=>{
-                        putresult(result)
-                    })
-                }
-            }
-
-})
-
-
-app.post('/api/auctiondata',(req,res)=>{
-        //선택한 경매의 상세 정보(작가, 작품 설명) 리턴
-        var query = "select r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.Art_text, r.Artist_info, r.life_term, a.art_id, DATE_FORMAT(a.Release_date, '%Y-%m-%d') release_date, r.artist_id, a.image_url from artist r, art a, auction u where a.art_id = ? and a.artist_id = r.artist_id and a.art_id = u.art_id and a.owner_username is null"
-
-        connection.query(query,[req.body.id],
-            (err, result)=>
-            {
-                //db 에러시
-                if(err)
-                {
-                    console.log(err)
-                    return res.json(err)
-                }
-                //정상적인 질의 결과 반환 시
-                else if(result!= undefined && result[0]!=undefined)
-                {
-                    data = {
-                        artist: result[0].artist_name,
-                        artistyear: '',
-                        artname: result[0].art_name,
-                        size: result[0].image_size,
-                        year:"",
-                        imagesize: 100,
-                        type: result[0].image_type,
-                        KRW_lower: result[0].krw_lower,
-                        KRW_upper: result[0].krw_upper,
-                        nowprice: result[0].usd_lower,
-                        enddate: result[0].usd_upper,
-                        arttext: result[0].Art_text,
-                        artist_info: result[0].Artist_info,
-                        artistyearInfo: result[0].life_term,
-                        art_id : result[0].art_id,
-                        artrelease_date : result[0].release_date,
-                        artist_id : result[0].artist_id,
-                        imageurl : result[0].image_url
-                    }
-                    return res.json(data)
-                }
-                else{
-                    return res.json(null)
-                }
-
-            })
-
-
-})
-
-app.post('/api/auctiondata/search',(req,res)=>{
-        //선택한 경매에 입찰 시도한 사용자 입찰 가격순으로 최대 5명 뽑기
-        var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.username, u.user_price, u.bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = ? order by u.user_price desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
-
-        connection.query(query,[req.body.id],(err, result)=>
+        try{
+                        //작품 아이디로 작품을 찾을 경우
+                        if(req.body.num.length>=1)
+                        {
+                            var query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.art_id = ? and a.owner_username is null"
+            
+                            var [result] = await connection.query(query,[req.body.num])
+                            putresult(result)
+                        }
+                        //작품 아이디 외 다른 조건으로 찾을 경우
+                        else{
+                            var query = ""
+                            //작가명, 작품명, 가격대로 검색시
+                            if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname != undefined && req.body.artname.length>=1)
+                            {
+                                query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                                var [result] = await connection.query(query,[req.body.artname+"%",req.body.artist+"%",req.body.value,req.body.value2])
+                                putresult(result)
+                            }
+                            //작가명, 가격대로 검색시
+                            else if(req.body.artist != undefined && req.body.artist.length>=1 && req.body.artname.length<1)
+                            {
+                                query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and r.artist_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                                var [result] = await connection.query(query,[req.body.artist+"%", req.body.value, req.body.value2])
+                                putresult(result)
+                            }
+                            //작품명, 가격대로 검색시
+                            else if( req.body.artname != undefined && req.body.artname.length>=1 && req.body.artist.length<1)
+                            {
+                                query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.art_name like ? AND a.krw_lower >= ? and a.krw_upper <= ?"
+                                var [result] = await connection.query(query,[req.body.artname+"%", req.body.value,req.body.value2])
+                                putresult(result)
+                            }
+                            //가격대로만 검색시
+                            else if(req.body.artname.length<1 && req.body.artist.length<1)
+                            {
+                                query = "select a.Image_url, r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.art_id from (art a join artist r on a.artist_id = r.artist_id) join auction u on a.art_id = u.art_id where a.owner_username is null and a.krw_lower >= ? and a.krw_upper <= ?"
+                                var [result] = await connection.query(query,[req.body.value, req.body.value2])
+                                    putresult(result)
+                            }
+                        }
+        }catch(err)
         {
             //db 에러시
-            if(err)
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+
+    closeConnection(connection)
+})
+
+
+app.post('/api/auctiondata',async (req,res)=>{
+    var connection = await openConnection()
+        //선택한 경매의 상세 정보(작가, 작품 설명) 리턴
+        var query = "select r.artist_name, a.art_name, a.image_size, a.image_type, a.krw_lower, a.krw_upper, a.usd_lower, a.usd_upper, a.Art_text, r.Artist_info, r.life_term, a.art_id, DATE_FORMAT(a.Release_date, '%Y-%m-%d') release_date, r.artist_id, a.image_url from artist r, art a, auction u where a.art_id = ? and a.artist_id = r.artist_id and a.art_id = u.art_id and a.owner_username is null"
+        try{
+            var [result] = await connection.query(query,[req.body.id])
+            //정상적인 질의 결과 반환 시
+            if(result!= undefined && result[0]!=undefined)
             {
-                console.log(err)
+                data = {
+                    artist: result[0].artist_name,
+                    artistyear: '',
+                    artname: result[0].art_name,
+                    size: result[0].image_size,
+                    year:"",
+                    imagesize: 100,
+                    type: result[0].image_type,
+                    KRW_lower: result[0].krw_lower,
+                    KRW_upper: result[0].krw_upper,
+                    nowprice: result[0].usd_lower,
+                    enddate: result[0].usd_upper,
+                    arttext: result[0].Art_text,
+                    artist_info: result[0].Artist_info,
+                    artistyearInfo: result[0].life_term,
+                    art_id : result[0].art_id,
+                    artrelease_date : result[0].release_date,
+                    artist_id : result[0].artist_id,
+                    imageurl : result[0].image_url
+                }
+                res.json(data)
             }
+            else{
+                res.json(null)
+            }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+    closeConnection(connection)
+})
+
+app.post('/api/auctiondata/search',async (req,res)=>{
+    var connection = await openConnection()
+        //선택한 경매에 입찰 시도한 사용자 입찰 가격순으로 최대 5명 뽑기
+        var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.username, u.user_price, u.bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = ? order by u.user_price desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
+        try{
+            var [result] = await connection.query(query,[req.body.id])
             //정상 결과 반환 시
             if(result != undefined && result[0] != undefined)
             {
@@ -2429,10 +2411,8 @@ app.post('/api/auctiondata/search',(req,res)=>{
                         username : rows.username,
                         userprice : rows.user_price,
                         updateDate : rows.bid_date
-
                     })
                 })
-
                 res.json({
                     success: true,
                     email : result[0].email,
@@ -2444,218 +2424,225 @@ app.post('/api/auctiondata/search',(req,res)=>{
                     success: false
                 })
             }
-
-        })
-
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/auctiondata/submit',(req,res)=>{
+app.post('/api/auctiondata/submit',async (req,res)=>{
+    var connection = await openConnection()
         //해당 경매 입찰 시도 시
         //현재 해당 작품에 가장 높은 가격 제시한 사람 확인
         var query = "select user_price from user_bid where art_id = ? order by user_price desc"
-        connection.query(query,[req.body.art_id], (err,result)=>{
-            //현재 사용자가 해당 작품의 최대가 보다 작게 제시한 경우
-            if(result != undefined && result[0]!=undefined && result[0].user_price >= req.body.userprice)
-            {
-                
-                res.json({err : true})
-            }
-            else{
-                //사용자가 이전에 해당 작품의 입찰에 참여한 적 있는지 확인
-                query = "select * from user_bid where username = ? and art_id = ?"
-    
-                connection.query(query,[req.body.username, req.body.art_id], (err,result1)=>{
-                 //이전에 해당 작품 경매에 참여한 적이 있을 경우   
-                if(result1 != undefined && result1[0] != undefined)
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query,[req.body.art_id])
+                //현재 사용자가 해당 작품의 최대가 보다 작게 제시한 경우
+                if(result != undefined && result[0]!=undefined && result[0].user_price >= req.body.userprice)
                 {
-                    //해당 입찰 정보의 가격과 입찰 날짜를 업데이트
-                    query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"
-                    try{                  
-                         connection.query(query,[req.body.userprice, req.body.updateDate, req.body.username, req.body.art_id],(err,result2)=>{
-                            
-                            if(result2 !=undefined && result2.affectedRows>=1)
-                            {
-                                connection.commit()
-                                res.json({success : true})
-                            }
-                            else{
-                                connection.rollback()
-                                res.json({err : true})
-                            }
-                         })
-
-                        }catch(err)
-                        {
-                            connection.rollback()
-                            console.log(err)
-                            res.json({err : true})
-                        }
-
+                    res.json({err : true})
                 }
-                //해당 작품에 입찰한 적이 없을 경우
                 else{
-                   //새로운 입찰 튜플 생성
-                    query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
-                    connection.query(query,[req.body.username, req.body.userprice, req.body.updateDate, req.body.art_id],
-                        (err,result2)=>{
-                            
-                            if(err)
-                            {
-                                connection.rollback()
-                                console.log(err)
-                                res.json({err : true})
-                            }
-                            
-                            else if(result2.affectedRows>=1)
-                            {
-                                connection.commit()
-                                res.json({success : true})
-                            }
-                            else{
-                                connection.rollback()
-                                res.json({err : true})
-                            }
-                        })
-                  }
+                    //사용자가 이전에 해당 작품의 입찰에 참여한 적 있는지 확인
+                    query = "select * from user_bid where username = ? and art_id = ?"
+        
+                    var [result1] = await connection.query(query,[req.body.username, req.body.art_id])
+                     //이전에 해당 작품 경매에 참여한 적이 있을 경우   
+                    if(result1 != undefined && result1[0] != undefined)
+                    {
+                        //해당 입찰 정보의 가격과 입찰 날짜를 업데이트
+                        query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"                
+                             var [result2] = await connection.query(query,[req.body.userprice, req.body.updateDate, req.body.username, req.body.art_id])
+                                if(result2 !=undefined && result2.affectedRows>=1)
+                                {
+                                    await connection.commit()
+                                    res.json({success : true})
+                                }
+                                else{
+                                    connection.rollback()
+                                    res.json({err : true})
+                                }
     
-                })
-    
-                
-            }
-        })
-
+                    }
+                    //해당 작품에 입찰한 적이 없을 경우
+                    else{
+                       //새로운 입찰 튜플 생성
+                        query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
+                        var [result2] = await connection.query(query,[req.body.username, req.body.userprice, req.body.updateDate, req.body.art_id])
+                                if(result2.affectedRows>=1)
+                                {
+                                    await connection.commit()
+                                    res.json({success : true})
+                                }
+                                else{
+                                    connection.rollback()
+                                    res.json({err : true})
+                                }
+                      }
+                }
+        }catch(err)
+        {
+            //db 에러시
+            await connection.rollback()
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/auctiondata/isStarted',(req,res)=>{
+app.post('/api/auctiondata/isStarted',async (req,res)=>{
+    var connection = await openConnection()
         //작품id로 특정 경매의 시작일, 종료일, 입찰 단위 검색
         var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point, Auction_unit  from auction u where art_id = ?"
-
-        connection.query(query,[req.body.artname], (err, result)=>{
-            if(err)
-            {
-                console.log(err)
-            }
-            else if(result!=undefined && result[0]!=undefined)
-            {
-                res.json({
-                    begin_point : result[0].begin_point,
-                    end_point : result[0].end_point,
-                    auction_unit : result[0].Auction_unit
-                })
-            }
-        })
-
+        try{
+            var [result] = await connection.query(query,[req.body.artname])
+            if(result!=undefined && result[0]!=undefined)
+                {
+                    res.json({
+                        begin_point : result[0].begin_point,
+                        end_point : result[0].end_point,
+                        auction_unit : result[0].Auction_unit
+                    })
+                }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/myauction', (req,res)=>{
-
+app.post('/api/myauction', async (req,res)=>{
+   
+    var connection = await openConnection()
     var jsondata = []
         //사용자가 참여한 입찰 정보 찾기
         let query = "SELECT A.art_id, A.Art_name, R.Artist_name, DATE_FORMAT(U.End_point,'%Y-%m-%d') end_point, A.Owner_username FROM user_bid S, art A, artist R, auction U WHERE S.username = ? AND S.art_id = A.art_id AND A.Artist_id = R.Artist_id AND U.art_id = A.art_id AND A.owner_username IS null"
-        connection.query(query, [req.body.username],(err,result)=>{
-        if(err)
-        {
-            console.log('존재하지 않습니다.')
-            res.json({
-                //auction:user_auctiondata
-            })
-        }
-        else if(result!=undefined && result[0]!=undefined)
-            {
-                result.forEach((array) => {
-                    var data = {
-                        artwork_id: array.art_id,
-                        artname: array.Art_name,
-                        artist: array.Artist_name,
-                        end_point: array.end_point,
-                        owner_id:array.Owner_username,
-                        isfirst:null
-                    }
-                    jsondata.push(data)
-                })
-            
-                var jsize = jsondata.length-1
-                var jsondata2 = []
-
-                //사용자가 참여한 각 입찰 정보를 확인
-                jsondata.forEach(async(item, index) =>{
-                    //사용자의 입찰이 가장 높은 가격을 제시했는지 유무 확인 
-                    query = "SELECT U.Username FROM user_bid U WHERE U.Art_id = ? AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM user_bid S WHERE S.Art_id = U.Art_id)";
-                    connection.query(query, [item.artwork_id],(err,result2)=>{
-                    if(result2 != undefined && result2[0]!=undefined)
-                    {
-                        result2.forEach((rows)=>{
-
-                            //각 작품에서 가장 높은 가격을 제시한 사람이
-                            //현재 사용자일 경우
-                            if(rows.Username === req.body.username)
-                            {
-                                //console.log("일치")
-                                item.isfirst = 'yes'
-                            } 
-                        })
-                    }
-                    //data2에 반환할 정보 담기
-                    var data2 = {
-                        artwork_id: item.artwork_id,
-                        artname: item.artname,
-                        artist: item.artist,
-                        end_point: item.end_point,
-                        owner_id: item.owner_id,
-                        isfirst: item.isfirst
-                    }
-                    //console.log(jsize+", "+index+", "+data2)
-                    jsondata2.push(data2)
-                    
-                    //입찰 갯수만큼 실행했다면 바로 반환
-                    if(index == jsize)
-                    {
-                        res.json({
-                            dib:jsondata2,
-                            //auction:user_auctiondata
-                        })
-                    }
+        try{
+            var [result] = await connection.query(query, [req.body.username])
+            if(result!=undefined && result[0]!=undefined)
+                {
+                    result.forEach((array) => {
+                        var data = {
+                            artwork_id: array.art_id,
+                            artname: array.Art_name,
+                            artist: array.Artist_name,
+                            end_point: array.end_point,
+                            owner_id:array.Owner_username,
+                            isfirst:null
+                        }
+                        jsondata.push(data)
                     })
-                })
-            }
-            //사용자가 입찰에 참여하지 않았을 경우 null반환
-            else{
-                res.json({
-                   
-                })
-            }
-        })
+                    var jsize = jsondata.length-1
+                    var jsondata2 = []
+    
+                    //사용자가 참여한 각 입찰 정보를 확인
+                    jsondata.forEach(async(item, index) =>{
+                        //사용자의 입찰이 가장 높은 가격을 제시했는지 유무 확인 
+                        query = "SELECT U.Username FROM user_bid U WHERE U.Art_id = ? AND U.User_price IN( SELECT DISTINCT MAX(S.User_price) FROM user_bid S WHERE S.Art_id = U.Art_id)";
+                        var [result2] = await connection.query(query,[item.artwork_id])
+                        if(result2 != undefined && result2[0]!=undefined)
+                        {
+                            result2.forEach((rows)=>{
+    
+                                //각 작품에서 가장 높은 가격을 제시한 사람이
+                                //현재 사용자일 경우
+                                if(rows.Username === req.body.username)
+                                {
+                                    //console.log("일치")
+                                    item.isfirst = 'yes'
+                                } 
+                            })
+                        }
+                        //data2에 반환할 정보 담기
+                        var data2 = {
+                            artwork_id: item.artwork_id,
+                            artname: item.artname,
+                            artist: item.artist,
+                            end_point: item.end_point,
+                            owner_id: item.owner_id,
+                            isfirst: item.isfirst
+                        }
+                        //console.log(jsize+", "+index+", "+data2)
+                        jsondata2.push(data2)
+                        
+                        //입찰 갯수만큼 실행했다면 바로 반환
+                        if(index == jsize)
+                        {
+                            res.json({
+                                dib:jsondata2,
+                                //auction:user_auctiondata
+                            })
+                        }
+                        })
+                }
+                //사용자가 입찰에 참여하지 않았을 경우 null반환
+                else{
+                    res.json({
+                       
+                    })
+                }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+               success:false
+           })
+        }
+        closeConnection(connection)
 })
 
-app.post('/api/auction_submit',(req,res)=>{
+app.post('/api/auction_submit', async (req,res)=>{
+    var connection = await openConnection()
             //경매 구매절차
             //사용자가 해당 작품 소유
             var query = "update art set owner_username = ?, expired = ? where art_id = ?"
-            connection.query(query,[
-                req.body.username,
-                req.body.date,
-                req.body.art_id
-            ],(err,result)=>{
-                if(err)
-                {
-                    console.log(err)
-                }
-                else if(result != undefined && result.affectedRows>=1)
-                {
-                    connection.commit()
-                    res.json({
-                        success:true
-                    })
-                }
-            })
+            try{
+                var [result] = await connection.query(query,[
+                    req.body.username,
+                    req.body.date,
+                    req.body.art_id
+                ])
+                    if(result != undefined && result.affectedRows>=1)
+                    {
+                        await connection.commit()
+                        res.json({
+                            success:true
+                        })
+                    }
+            }catch(err)
+            {
+                //db 에러시
+                await connection.rollback()
+                console.error(err); 
+                res.status(200).json({
+                   success:false
+               })
+            }
+            closeConnection(connection)
 })
 
-app.post('/api/deleteuser',(req,res)=>{
+app.post('/api/deleteuser',async (req,res)=>{
+    var connection = await openConnection()
     //세션 제거로 로그아웃
     req.session.destroy()
     //사용자 입찰 정보 삭제
             var query = "delete from user_bid where username = ?"
-            connection.query(query, [req.body.username],(err,result)=>{
+            try{
+                await connection.beginTransaction()
+                var [result] = await connection.query(query, [req.body.username])
                 if(result.affectedRows<0)
                 {
                     connection.rollback()
@@ -2666,18 +2653,17 @@ app.post('/api/deleteuser',(req,res)=>{
                 {
                     //사용자가 소유한 작품의 소유자를 없앰
                     query = "update art set owner_username = null, expired = null where owner_username = ?"
-                    result = connection.query(query, [req.body.username],(err, result2)=>{
+                    var [result2] = await connection.query(query, [req.body.username])
                         if(result2.affectedRows<0)
                         {
                             connection.rollback()
                             res.json({success: false})
                         }
-            
                         else
                         {
                             //사용자 정보 삭제
                             query = "delete from artuser where username = ?"
-                            result = connection.query(query, [req.body.username],(err,result3)=>{
+                            var [result3] = await connection.query(query, [req.body.username])
                                 if(result3.affectedRows<0)
                                 {
                                     connection.rollback()
@@ -2686,17 +2672,25 @@ app.post('/api/deleteuser',(req,res)=>{
                     
                                 else
                                 {
-                                    connection.commit()
+                                    await connection.commit()
                                     res.json({success: true})
                                 }
-                            })
                         }
-                    })
                 }
-            })
+            }catch(err)
+            {
+                //db 에러시
+                await connection.rollback()
+                console.error(err); 
+                res.status(200).json({
+                   success:false
+               })
+            }
+            closeConnection(connection)
 })
 
-app.post('/api/mainsearch',(req,res)=>{
+app.post('/api/mainsearch',async (req,res)=>{
+    var connection = await openConnection()
     //메인 화면의 검색 기능
     console.log(req.body.check)
             var query
@@ -2715,9 +2709,8 @@ app.post('/api/mainsearch',(req,res)=>{
             {
                 query = "select exhibition_id id from exhibition where exhibition_name like ?"
             }
-            console.log(query)
-            
-            connection.query(query, [req.body.name+"%"],(err,result)=>{
+            try{
+                var [result] = await connection.query(query, [req.body.name+"%"])
                 if(result != undefined && result[0]!=undefined)
                 {
                     res.json({
@@ -2729,65 +2722,89 @@ app.post('/api/mainsearch',(req,res)=>{
                         err:true
                     })
                 }
-            })
+            }catch(err)
+            {
+                //db 에러시
+                console.error(err); 
+                res.status(200).json({
+                   success:false
+               })
+            }
+            closeConnection(connection)
 })
 
 //게시판 페이지 개수
-app.get('/api/board/pagenum',(req,res)=>{
+app.get('/api/board/pagenum',async (req,res)=>{
+    var connection = await openConnection()
     //현재 게시글의 갯수 리턴
     var query = "select count(*) boardnum from (select t.*, @rownum := @rownum + 1 rownum  from (select * from board) t, (select @rownum := 0) tmp) tmp2"
-    connection.query(query,(err,result)=>{
-        if(err)
-        {
-            res.json({err:err})
-        }
-        else if(result != undefined && result[0]!=undefined)
+    try{
+        var [result] = await connection.query(query)
+        if(result != undefined && result[0]!=undefined)
         {
             res.json({boardnum : result[0].boardnum})
         }
-    })
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+    closeConnection(connection)
 })
 
 //게시판 페이징
-app.post('/api/board/showpage',(req,res)=>{
+app.post('/api/board/showpage',async (req,res)=>{
+    var connection = await openConnection()
     //현재 페이지의 게시글 5개 정보 리턴
     var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select username, indices, boardtype, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate from board order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
-    connection.query(query,(req.body.page-1)*5,(err,result)=>{
-        if(err)
-        {
-            console.log(err)
-            res.json({err:true})
-        }
-        else if(result != undefined && result[0] != undefined)
-        {
-            //console.log(result)
-            res.json(result)
-        }
-    })
-
+    try{
+        var [result] = await connection.query(query,(req.body.page-1)*5)
+        if(result != undefined && result[0] != undefined)
+       {
+           //console.log(result)
+           res.json(result)
+       }
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+    closeConnection(connection)
 })
 
 
 //게시판 데이터
-app.post('/api/board/showarticle',(req,res)=>{
+app.post('/api/board/showarticle',async (req,res)=>{
+    var connection = await openConnection()
     //선택한 게시글의 상세 정보 리턴
     var query = "select username, indices, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, manager, DATE_FORMAT(answerdate,'%Y-%m-%d') answerdate,bodytext, answer from board where username = ? and indices = ?"
-    connection.query(query,[req.body.username, req.body.indices],(err,result)=>{
-        if(err)
-        {
-            console.log(err)
-            res.json({err:true})
-        }
-        else if(result != undefined && result[0] != undefined)
+    try{
+        var [result] = await connection.query(query,[req.body.username, req.body.indices])
+        if(result != undefined && result[0] != undefined)
         {
             //console.log(result)
             res.json(result[0])
         }
-    })
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+    closeConnection(connection)
 })
 
 //게시판 등록
-app.post('/api/board/upload',(req,res)=>{
+app.post('/api/board/upload',async (req,res)=>{
+    var connection = await openConnection()
     var date = moment().format('YYYY-MM-DD');
     //사용자 세션 확인, 세션으로 부터 사용자명 가져오기
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
@@ -2796,15 +2813,9 @@ app.post('/api/board/upload',(req,res)=>{
         //사용자의 가장 큰 indices 반환하여 +1한 값을
         //현재 게시글의 indices로 설정
         var query = "select tmp2.indices from (select t.*, @rownum := @rownum + 1 rownum  from (select indices from board where username = ? order by indices desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
-        
-        connection.query(query, req.session.user.username,(err,result)=>{
-            if(err)
-            {
-                console.log(err)
-                res.json({db_error:true})
-            }
-            else
-            {
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query, req.session.user.username)
                 var indices
                 if(result!=undefined && result[0]!=undefined)
                 {
@@ -2823,30 +2834,38 @@ app.post('/api/board/upload',(req,res)=>{
                 input.push(req.body.bodytext)
                 input.push(date)
                 console.log(input)
-
-                connection.query(query,input,(err,result)=>{
-                    if(err)
-                    {
-                        connection.rollback()
-                        res.json({db_error:true})
-                    }
-                    else if(result != undefined && result.affectedRows >= 1){
-                        connection.commit()
+                try{
+                    var [result2] = await connection.query(query,input)
+                    if(result2 != undefined && result2.affectedRows >= 1){
+                        await connection.commit()
                         res.json({result:true})
                     }
-                })
-            }
-        })
-        
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({db_error:true})
+                }   
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.json({db_error:true})
+        }
+
+
     }
     //로그인이 안되어 있을 때
     else
     {
         res.json({login_required:true})
     }
+    closeConnection(connection)
 })
 
-app.post('/api/board/answer',(req,res)=>{
+app.post('/api/board/answer',async (req,res)=>{
+    var connection = await openConnection()
     var date = moment().format('YYYY-MM-DD');
     //로그인 확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
@@ -2856,95 +2875,119 @@ app.post('/api/board/answer',(req,res)=>{
         //답변 내용과 함께 업데이트
         //req.body.username는 게시글을 쓴 사람의 아이디
         var query = "update board set manager = ?, answer = ?, answerdate = DATE_FORMAT(?,'%Y-%m-%d') where username = ? and indices = ?"
-        connection.query(query,
-            [req.session.user.username, req.body.bodytext, date, req.body.username, req.body.indices],
-            (err,result)=>{
-                if(err)
-                {
-                    res.json({db_error:true})
-                }
-                else if(result!=undefined && result.affectedRows>=1)
-                {
-                    res.json({result:true})
-                }
-            })
+        try{
+            var [result] = await connection.query(query,
+                [req.session.user.username, req.body.bodytext, date, req.body.username, req.body.indices])
+                    if(result!=undefined && result.affectedRows>=1)
+                    {
+                        res.json({result:true})
+                    }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.json({db_error:true})
+        }
     }
     //로그인 하지 않았을 때
     else
     {
         res.json({login_required:true})
     }
+    closeConnection(connection)
 })
 
 
 //공지 페이지 개수
-app.get('/api/notice/pagenum',(req,res)=>{
+app.get('/api/notice/pagenum',async (req,res)=>{
+    var connection = await openConnection()
     //공지글의 갯수 리턴
     var query = "select count(*) noticenum from (select t.*, @rownum := @rownum + 1 rownum  from (select * from notification) t, (select @rownum := 0) tmp) tmp2"
-    connection.query(query,(err,result)=>{
-        if(err)
-        {
-            res.json({err:err})
-        }
-        else if(result != undefined && result[0]!=undefined)
+    try{
+        var [result] = await connection.query(query)
+        if(result != undefined && result[0]!=undefined)
         {
             res.json({noticenum : result[0].noticenum})
         }
-    })
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+
+    closeConnection(connection)
 })
 
 //공지 페이징
-app.post('/api/notice/showpage',(req,res)=>{
+app.post('/api/notice/showpage',async (req,res)=>{
+    var connection = await openConnection()
     //현재 페이지의 공지 5개 리턴
     var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select id, title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, hits from notification order by uploaddate desc) t, (select @rownum := 0) tmp) tmp2  limit ?,5"
-    connection.query(query,(req.body.page-1)*5,(err,result)=>{
-        if(err)
-        {
-            console.log(err)
-            res.json({err:true})
-        }
-        else if(result != undefined && result[0] != undefined)
+    try{
+        var [result] = await connection.query(query,(req.body.page-1)*5)
+        if(result != undefined && result[0] != undefined)
         {
             //console.log(result)
             res.json(result)
         }
-    })
-
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+    closeConnection(connection)
 })
 
 //공지 데이터
-app.post('/api/notice/showarticle',(req,res)=>{
+app.post('/api/notice/showarticle',async (req,res)=>{
+    var connection = await openConnection()
     //현재 선택한 공지 상세 정보 리턴
     var query = "select id , title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, bodytext from notification where id = ?"
-    connection.query(query,req.body.id,(err,result)=>{
-        if(err)
-        {
-            console.log(err)
-            res.json({err:true})
-        }
-        else if(result != undefined && result[0] != undefined)
+    try{
+        await connection.beginTransaction()
+        var [result] = await connection.query(query,req.body.id)
+        if(result != undefined && result[0] != undefined)
         {
             //상세 정보 볼때마다
             //조회수 증가
-            query = "update notification set hits = hits+1 where id = ?"
-            connection.query(query, req.body.id, (err,result2)=>{
-                if(err)
-                {
-                    connection.rollback()
-                    res.json({err:true})
-                }
-                else if(result2!=undefined && result2.affectedRows>=1){
-                    connection.commit()
-                    res.json(result[0])
-                }
-            })
-           
+            try{
+                query = "update notification set hits = hits+1 where id = ?"
+                var [result2] = await connection.query(query, req.body.id)
+                    if(result2!=undefined && result2.affectedRows>=1){
+                        await connection.commit()
+                        res.json(result[0])
+                    }
+            }catch(err)
+            {
+                //db 에러시
+                await connection.rollback()
+                console.error(err); 
+                res.status(200).json({
+                   err:true
+               })
+            }    
         }
-    })
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+
+    closeConnection(connection)
 })
 
 //공지 등록
-app.post('/api/notice/upload',(req,res)=>{
+app.post('/api/notice/upload',async (req,res)=>{
+    var connection = await openConnection()
     var date = moment().format('YYYY-MM-DD');
     //사용자 세션 확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
@@ -2952,15 +2995,9 @@ app.post('/api/notice/upload',(req,res)=>{
         //공지글 중에서 가장 큰 id를 선택하여
         //+1한 값을 현재 공지의 id로 설정
         var query = "select tmp2.id from (select t.*, @rownum := @rownum + 1 rownum  from (select id from notification order by id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
-        
-        connection.query(query,(err,result)=>{
-            if(err)
-            {
-                console.log(err)
-                res.json({db_error:true})
-            }
-            else
-            {
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query)
                 var id
                 //질의 결과 id를 구해왔을 경우
                 if(result!=undefined && result[0]!=undefined)
@@ -2979,26 +3016,34 @@ app.post('/api/notice/upload',(req,res)=>{
                 input.push(req.body.title)
                 input.push(req.body.bodytext)
                 input.push(date)
-                connection.query(query,input,(err,result)=>{
-                    if(err)
-                    {
-                        connection.rollback()
-                        res.json({db_error:true})
-                    }
-                    else if(result != undefined && result.affectedRows >= 1){
-                        connection.commit()
+                try{
+                    var [result2] = await connection.query(query,input)
+                    if(result2 != undefined && result2.affectedRows >= 1){
+                        await connection.commit()
                         res.json({result:true})
                     }
-                })
-            }
-        })
-        
+                }catch(err)
+                {
+                    //db 에러시
+                    await connection.rollback()
+                    console.error(err); 
+                    res.json({db_error:true})
+                }    
+
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.json({db_error:true})
+        }
+
     }
     //로그인이 안되어 있을 때
     else
     {
         res.json({login_required:true})
     }
+    closeConnection(connection)
 })
 
 
