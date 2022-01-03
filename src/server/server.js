@@ -115,6 +115,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
+const { truncate } = require('fs/promises');
 //const { off } = require('process');
 //const { elemIndices } = require('prelude-ls');
 //const nodedb = require('./models/nodedb');
@@ -747,33 +748,35 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
     var connection = await openConnection()
 //관리자 페이지에서 
 //선택한 작품 삭제하기
-        var input = []
-        //checkBoxId는 삭제하려는 작품의 id들의 배열
-        for(let i=0; i< req.body.checkBoxId.length; i++)
-        {
-            input.push([
-                req.body.checkBoxId[i]
-            ])
-
-        }
-        //한번의 dbms요청으로 배열에 담긴 작품 id들을 삭제
         var query = "delete from art where art_id = ?;"
-        var sql = ""
+        var check = true
         try{
             await connection.beginTransaction()
-            for(let i=0; i<input.length; i++)
+            //checkBoxId는 삭제하려는 작품의 id들의 배열
+            for(let i=0; i< req.body.checkBoxId.length; i++)
             {
-                sql += query
-            }
-            var [result] = await connection.query(sql,input)
-                if(result!=undefined)
+                var [result] = await connection.query(query,req.body.checkBoxId[i])
+                if(result!=undefined && result.affectedRows>=1)
                 {
-                    await connection.commit()
-                    console.log(result)
-                    res.json({
-                        success:true
-                    })
                 }
+                else{
+                    check = false
+                }
+            }
+           if(check)
+           {
+            await connection.commit()
+            console.log(result)
+            res.json({
+                success:true
+            })
+           }
+           else{
+            await connection.rollback()
+            res.json({
+                success:false
+            })
+           }
         }catch(err)
         {
             //db 에러시
@@ -820,40 +823,41 @@ app.post('/api/searchArtist/search', async (req,res) => {
 app.post('/api/searchArtist/delete',async (req,res) => {
     var connection = await openConnection()
 //관리자 페이지 작가 삭제
-    console.log(req.body.checkBoxId)
-
-        var input =[]
-        //checkBoxId는 삭제할 작가의 id가 담긴 배열
-        for(let i=0; i< req.body.checkBoxId.length; i++)
-        {
-            input.push([
-               req.body.checkBoxId[i]
-            ])
-        }
-        console.log(input)
+        var check = true
 
         //작가id를 통해 작가 삭제
         var query = "delete from artist where artist_id = ?;"
-        var sql = ""
         try{
-                    //트랜잭션 생성
+        //트랜잭션 생성
         await connection.beginTransaction()
-        //동일한 질의문(삭제) 반복
-        for(let i=0; i<input.length; i++)
+        //checkBoxId는 삭제할 작가의 id가 담긴 배열
+        for(let i=0; i< req.body.checkBoxId.length; i++)
         {
-            sql += query
-        }
-        //복수의 질의문 실행
-        var [result] = await connection.query(sql,input)
+            //복수의 질의문 실행
+            var [result] = await connection.query(query,req.body.checkBoxId[i])
             //성공적으로 반영시 commit
-            if(result!=undefined)
+            if(result!=undefined && result.affectedRows>=1)
             {
-                await connection.commit()
-                console.log(result)
-                res.json({
-                    success:true
-                })
             }
+            else{
+                check = false
+            }
+        }
+        if(check)
+        {
+            await connection.commit()
+            console.log(result)
+            res.json({
+                success:true
+            })
+        }
+        else
+        {
+            await connection.rollback()
+            res.json({
+                success:false
+            })
+        }
         }catch(err)
         {
             //db 에러시
@@ -2151,32 +2155,37 @@ app.post('/api/Transfer/sendArt', async (req,res) => {
     var connection = await openConnection()
     //소유한 작품 타인에게 양도
     var date = moment().format('YYYY-MM-DD');
-    var input = []
     var query = "update art set owner_username = ?, expired = DATE_FORMAT(?, '%Y-%m-%d') where art_id = ?;"
-    var sql = ""
-    //선택한 작품 리스트(req.body.checkBoxValue)만큼 
-    //업데이트 질의 시행
-    for(let i=0; i< req.body.checkBoxValue.length ; i++)
-    {
-        sql += query
-        input.push(req.body.username)
-        input.push(date)
-        input.push(req.body.checkBoxValue[i])
-    }
     try{
             //트랜잭션 설정
             await connection.beginTransaction()
-            //업데이트
-           var [result] = await connection.query(sql,input)
-           
-           if(result!=undefined && result.affectedRows>=1)
-                {
-                    await connection.commit()
-                    console.log(result)
-                    res.json({
-                        success: true
-                    })
+            var check = true
+            //선택한 작품 리스트(req.body.checkBoxValue)만큼 
+            //업데이트 질의 시행
+            for(let i=0; i< req.body.checkBoxValue.length ; i++)
+            {
+                 //업데이트
+                var [result] = await connection.query(query,[req.body.username,date,req.body.checkBoxValue[i]])
+                if(result!=undefined && result.affectedRows>=1)
+                        {
+                        }
+                else{
+                    check = false
                 }
+            }
+            if(check)
+            {
+                await connection.commit()
+                res.json({
+                    success: true
+                })
+            }else{
+                await connection.rollback()
+                res.status(200).json({
+                    success:false
+                })
+            }
+           
     }catch(err)
     {
         //db 에러시
