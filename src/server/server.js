@@ -115,7 +115,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
-const { truncate } = require('fs/promises');
+//const { truncate } = require('fs/promises');
 //const { off } = require('process');
 //const { elemIndices } = require('prelude-ls');
 //const nodedb = require('./models/nodedb');
@@ -327,7 +327,7 @@ app.post('/api/artist_upload',async (req,res) => {
                    })
                 }    
             }
-            closeConnection(connection)
+            await closeConnection(connection)
 })
 
 
@@ -356,7 +356,7 @@ app.post('/api/artist_upload/search',async (req,res)=>{
                   success:false
                })
             }
-            closeConnection(connection)
+            await closeConnection(connection)
 })
 
 app.post('/api/imgupload',async (req,res) => {
@@ -530,7 +530,7 @@ app.post('/api/imgupload',async (req,res) => {
                     }
                 }
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 });
 
 app.post('/api/imgupload/search',async (req,res) => {
@@ -571,7 +571,7 @@ app.post('/api/imgupload/search',async (req,res) => {
               err:true
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/auction_upload',async (req,res) =>{
@@ -684,7 +684,7 @@ app.post('/api/auction_upload',async (req,res) =>{
             notlogin:true
         })
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 app.get('/img',(req,res)=>{
@@ -741,7 +741,7 @@ app.post('/api/searchArtwork/search',async (req,res) => {
               err:err
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/searchArtwork/delete',async (req,res) => {
@@ -786,7 +786,7 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
                success:false
            })
         }    
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/searchArtist/search', async (req,res) => {
@@ -817,7 +817,7 @@ app.post('/api/searchArtist/search', async (req,res) => {
               err:err
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/searchArtist/delete',async (req,res) => {
@@ -867,7 +867,7 @@ app.post('/api/searchArtist/delete',async (req,res) => {
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 
@@ -909,7 +909,7 @@ app.post('/api/joinForm', async (req,res)=>
            })
         }
 
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/loginForm', async (req,res)=>
@@ -974,7 +974,7 @@ app.post('/api/loginForm', async (req,res)=>
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.get('/api/logout',(req,res)=>{
@@ -1023,7 +1023,7 @@ app.get('/api/home1/about', async (req, res) =>
                 })
         }
         
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.get('/api/home1/about2', async (req, res) =>
@@ -1059,7 +1059,7 @@ app.get('/api/home1/about2', async (req, res) =>
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 
@@ -1091,7 +1091,7 @@ app.get('/api/home2', async(req,res) => {
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 
@@ -1123,7 +1123,7 @@ app.get('/api/home3/slider', async function (req, res) {
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 });
 
 app.get('/api/home3/graph', async function (req, res) {
@@ -1156,7 +1156,7 @@ app.get('/api/home3/graph', async function (req, res) {
            })
         }
     
-        closeConnection(connection)
+        await closeConnection(connection)
 });
 
 app.get('/api/home3/date', function (req, res) {
@@ -1225,7 +1225,7 @@ app.get('/api/home4/data', async function (req, res) {
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 });
 
     
@@ -1264,7 +1264,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
     });
 
     app.post('/api/exhibition2/exhibition', async function (req, res) {
@@ -1417,7 +1417,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                    })
                 }
         }
-        closeConnection(connection)
+        await closeConnection(connection)
         });
 
         app.post('/api/exhibition2/rank', async function (req, res) {
@@ -1485,7 +1485,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                     }
 
             }
-                closeConnection(connection)
+                await closeConnection(connection)
             });
 
             app.get('/api/exhibition2/chart03/day', function (req, res) {
@@ -1632,7 +1632,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                    })
                                 }
                         }
-                        closeConnection(connection)
+                        await closeConnection(connection)
                     });
 
                         app.post('/api/exhibition3/chart05', function (req, res) {
@@ -1869,7 +1869,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                 }
 
                                             }
-                                            closeConnection(connection)
+                                            await closeConnection(connection)
                                     });
                                    
                                     app.post('/api/artist01/artist', async function (req, res) {
@@ -1936,7 +1936,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                            })
                                                         }
                                                     }
-                                                    closeConnection(connection)
+                                                    await closeConnection(connection)
                                     })
 
     app.post('/api/checkId', async (req,res) => {
@@ -1982,7 +1982,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                })
             }
 
-            closeConnection(connection)
+            await closeConnection(connection)
     })
 
     //checkAdmin인데 그냥 세션 정보 프론트로 보내는 거임
@@ -2058,7 +2058,7 @@ app.post('/api/myPagefindUser', async (req,res) => {
     //사용자 아이디 입력이 없을 경우
     if(req.body.username == '' || req.body.username == undefined || req.body.username==null)
     {
-        return res.json({
+        res.json({
            name: false
         })
     }
@@ -2080,11 +2080,11 @@ app.post('/api/myPagefindUser', async (req,res) => {
                             email : rows.email
                         }
                         //console.log(data)
-                        return res.json(data)
+                        res.json(data)
                     })
                 }
                 else{
-                    return res.json({
+                    res.json({
                         name: false
                     })
                 }
@@ -2097,7 +2097,7 @@ app.post('/api/myPagefindUser', async (req,res) => {
            })
         }
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 app.get('/api/Transfer/artdata', async (req,res) => {
@@ -2148,7 +2148,7 @@ app.get('/api/Transfer/artdata', async (req,res) => {
                 success:false
             })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/Transfer/sendArt', async (req,res) => {
@@ -2195,7 +2195,7 @@ app.post('/api/Transfer/sendArt', async (req,res) => {
            success:false
        })
     }    
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 app.post('/api/AuctionMain/isStarted',async (req,res)=>{
@@ -2226,7 +2226,7 @@ app.post('/api/AuctionMain/isStarted',async (req,res)=>{
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.get('/api/AuctionMain/picturedata', async function (req, res) {
@@ -2266,7 +2266,7 @@ app.get('/api/AuctionMain/picturedata', async function (req, res) {
            })
         }
 
-    closeConnection(connection)
+    await closeConnection(connection)
 });
 
 
@@ -2356,7 +2356,7 @@ app.post('/api/search_auction',async (req,res)=>{
            })
         }
 
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 
@@ -2402,7 +2402,7 @@ app.post('/api/auctiondata',async (req,res)=>{
                success:false
            })
         }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 app.post('/api/auctiondata/search',async (req,res)=>{
@@ -2441,7 +2441,7 @@ app.post('/api/auctiondata/search',async (req,res)=>{
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/auctiondata/submit',async (req,res)=>{
@@ -2504,7 +2504,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/auctiondata/isStarted',async (req,res)=>{
@@ -2529,7 +2529,7 @@ app.post('/api/auctiondata/isStarted',async (req,res)=>{
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/myauction', async (req,res)=>{
@@ -2610,7 +2610,7 @@ app.post('/api/myauction', async (req,res)=>{
                success:false
            })
         }
-        closeConnection(connection)
+        await closeConnection(connection)
 })
 
 app.post('/api/auction_submit', async (req,res)=>{
@@ -2640,7 +2640,7 @@ app.post('/api/auction_submit', async (req,res)=>{
                    success:false
                })
             }
-            closeConnection(connection)
+            await closeConnection(connection)
 })
 
 app.post('/api/deleteuser',async (req,res)=>{
@@ -2695,7 +2695,7 @@ app.post('/api/deleteuser',async (req,res)=>{
                    success:false
                })
             }
-            closeConnection(connection)
+            await closeConnection(connection)
 })
 
 app.post('/api/mainsearch',async (req,res)=>{
@@ -2739,7 +2739,7 @@ app.post('/api/mainsearch',async (req,res)=>{
                    success:false
                })
             }
-            closeConnection(connection)
+            await closeConnection(connection)
 })
 
 //게시판 페이지 개수
@@ -2761,7 +2761,7 @@ app.get('/api/board/pagenum',async (req,res)=>{
            err:true
        })
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 //게시판 페이징
@@ -2784,7 +2784,7 @@ app.post('/api/board/showpage',async (req,res)=>{
            err:true
        })
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 
@@ -2808,7 +2808,7 @@ app.post('/api/board/showarticle',async (req,res)=>{
            err:true
        })
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 //게시판 등록
@@ -2870,7 +2870,7 @@ app.post('/api/board/upload',async (req,res)=>{
     {
         res.json({login_required:true})
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 app.post('/api/board/answer',async (req,res)=>{
@@ -2903,7 +2903,7 @@ app.post('/api/board/answer',async (req,res)=>{
     {
         res.json({login_required:true})
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 
@@ -2927,7 +2927,7 @@ app.get('/api/notice/pagenum',async (req,res)=>{
        })
     }
 
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 //공지 페이징
@@ -2950,7 +2950,7 @@ app.post('/api/notice/showpage',async (req,res)=>{
            err:true
        })
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 //공지 데이터
@@ -2991,7 +2991,7 @@ app.post('/api/notice/showarticle',async (req,res)=>{
        })
     }
 
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 //공지 등록
@@ -3052,7 +3052,7 @@ app.post('/api/notice/upload',async (req,res)=>{
     {
         res.json({login_required:true})
     }
-    closeConnection(connection)
+    await closeConnection(connection)
 })
 
 
