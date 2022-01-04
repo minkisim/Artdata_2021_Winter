@@ -440,9 +440,6 @@ export default function Auctiondata({location, match}){
                 
                 <div className="picture">
                     <img className="Main_Image" src={`/img/${data.imageurl}`} alt="그림" />
-                    <img className="Sub_Image1" src="/img/picture.png" alt="그림" />
-                    <img className="Sub_Image2" src="/img/picture.png" alt="그림" />
-                    <img className="Sub_Image3" src="/img/picture.png" alt="그림" />
                 </div>
                 <div className="Auction_Info">
                     <div className="Artwork_Artist">

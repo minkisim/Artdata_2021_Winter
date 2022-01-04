@@ -7,7 +7,8 @@ export default function Chart03(props){
    
       return (
         <div className="graph3">
-          <LineChart width={869} height={389} data={props.data}
+          <ResponsiveContainer width='100%' aspect={4.0/2.0}>
+          <LineChart data={props.data}
             margin={{
               top: 30,
               right: 30,
@@ -22,6 +23,7 @@ export default function Chart03(props){
             <Legend />
             <Line dataKey="관람객" stroke="#191F1D" activeDot={{ r: 8 }} />
           </LineChart>
+          </ResponsiveContainer>
         </div>
       )
     

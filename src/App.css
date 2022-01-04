@@ -17,6 +17,14 @@ body{
   top:62px;
 }
 
+@media only screen and (max-width:500px)  {
+  .art_data_title{
+    position: absolute;
+    top:1vh;
+  }
+}
+
+
 a { text-decoration: none; color: black; }
     a:visited { text-decoration: none; }
     a:hover { text-decoration: none; }
@@ -32,6 +40,25 @@ a { text-decoration: none; color: black; }
 }
 .art_data_title .logo img{
   width:134px;
+}
+@media only screen and (max-width:1024px)  {
+  .art_data_title{
+    position: absolute;
+    top:20px;
+  }
+  .art_data_title .logo{
+    top:10px;
+    left:10px;
+    width:90px;
+
+  }
+  .art_data_title .logo img{
+    width:90px;
+  }
+  .menu_bar{
+    visibility: hidden;
+  }
+
 }
 
 .menu_bar{
@@ -57,7 +84,6 @@ a { text-decoration: none; color: black; }
   top:62px;
   left:1104px;
   display:flex;
- 
   width:370px;
   margin-left: 200px;
   margin-right:25px;
@@ -115,6 +141,37 @@ a { text-decoration: none; color: black; }
   margin: 10px;
 }
 
+@media only screen and (max-width:1024px)  {
+
+  .user_icon .icon_sample{
+    position: absolute;
+    top: 50px;
+    left: 77vmin;
+    width: 40px;
+    height: 40px;
+    border-radius: 70%;
+    margin-top:7px;
+    background-color: #888888;
+  }
+  
+  .title_login_btn{
+    position: absolute;
+    top:55px;
+    left:86vmin;
+    width:100px;
+    height:40px;
+    background-color: #181818;
+    border-radius: 20px;
+  }
+  
+  .title_login_btn p{
+    color:#e0e0e0;
+    font-size:16px;
+    margin: 10px;
+  }
+
+}
+
 
 /* Sidebar */
 .side_bar{
@@ -169,3 +226,48 @@ a { text-decoration: none; color: black; }
   margin:0px;
 
 }
+
+@media only screen and (max-width:768px)  {
+
+
+  .error_page{
+    position: absolute;
+    top:150px;
+    left:20vmin;
+    background-color: #e9e9e9;
+    border-radius: 25px;
+    width:300px;
+    padding:20px;
+  }
+
+  .error_p1{
+    font-size:16px;
+    font-family: Lato;
+    font-weight: bold;
+  }
+  .error_p2{
+    font-size:16px;
+    font-family: Lato;
+    font-weight: 300;
+    margin-bottom: 30px;
+  }
+  .error_btn{
+    position: relative;
+    left:75px;
+    background-color: #181818;
+    padding: 10px 0px;
+    border-radius: 20px;
+    width: 150px;
+    cursor:pointer;
+    margin-bottom: 30px;
+  }
+  .error_btn p{
+    color:#e0e0e0;
+    font-family: Noto Sans KR;
+    font-family: bold;
+    font-size: 16px;
+    margin:0px;
+  
+  }
+}
+

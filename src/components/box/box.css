@@ -88,10 +88,14 @@ body{
   position: absolute;
   top:123px;
   left:306px;
+  width:300px;
+  text-align: left;
+
   font-size:18px;
   font-weight: 600;
   font-family: Noto Sans KR;
-  margin:0px;
+  margin-top:0px;
+  margin-left:10px;
 }
 
 .artist01_Artist_Info_div{
@@ -207,10 +211,14 @@ body{
   position: absolute;
   top:123px;
   left:958px;
+  width:300px;
+  text-align: left;
+
   font-family: Noto Sans KR;
   font-size:16px;
   font-weight: 600;
-  margin: 0px;
+  margin-top: 0px;
+  margin-left: 10px;
 }
 .artist01_Artist_Fav_Art_div{
   position: absolute;
@@ -234,10 +242,13 @@ body{
   position: absolute;
   top:845px;
   left:992px;
+  width: 300px;
+  text-align: left;
   font-size: 16px;
   font-family: Noto Sans KR;
   font-weight: 600;
-  margin: 0px;
+  margin-top: 0px;
+  margin-left:10px;
 }
 
 .artist01_Artist_Old_graph_div{
@@ -323,4 +334,151 @@ body{
   background-color: #d0d0d0;
   height:20px;
   border-radius: 15px;
+}
+
+
+@media only screen and (max-width:1024px) {
+  
+  
+.artist01_Artist_title{
+  position: absolute;
+  top:160px;
+  width:300px;
+  left:calc(( 100vmin - 620px ) / 2 + 2vmin );
+  font-size:18px;
+  font-weight: 600;
+  font-family: Noto Sans KR;
+  margin:0px;
+}
+
+.artist01_Artist_Info_div{
+  position: absolute;
+  top:200px;
+  left:calc(( 100vmin - 620px ) / 2 );
+  height: 949px;
+  width:620px;
+  border-radius: 15px;
+  background: linear-gradient(to top,#F9F9F9 99%,#181818 1%);
+}
+
+
+
+.artist01_Artist_Fav_title{
+  position: absolute;
+  top:1170px;
+  left:7vmin;
+  font-family: Noto Sans KR;
+  font-size:16px;
+  font-weight: 600;
+  margin: 0px;
+}
+.artist01_Artist_Fav_Art_div{
+  position: absolute;
+  top:1200px;
+  left:5vmin;
+  height:679px;
+  width: 90vmin;
+  border-radius: 15px;
+  background: linear-gradient(to top,#F9F9F9 99%,#181818 1%);
+}
+
+.Fav_Art_slider{
+  position: absolute;
+  top:30px;
+  left:0px;
+  width: 90vmin;
+  height:660px;
+}
+
+.artist01_Artist_Old_title{
+  position: absolute;
+  top:1900px;
+  left:12vmin;
+  font-size: 16px;
+  font-family: Noto Sans KR;
+  font-weight: 600;
+  margin: 0px;
+}
+
+.artist01_Artist_Old_graph_div{
+  position: absolute;
+  top:1930px;
+  left:10vmin;
+  width:80vmin;
+  height:220px;
+  border-radius: 15px;
+  background: linear-gradient(to top,#F9F9F9 97%,#181818 3%);
+}
+
+.artist01_Artist_Old_graph{
+  width:80vmin;
+  height:300px;
+}
+.artist01_Artist_Old_graph svg{
+  width:80%;
+  height:80%;
+}
+
+
+.Art_like_title{
+  position: absolute;
+  top:45px;
+  left:35px;
+  width:70vmin;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Art_like_title p{
+  font-size: 16px;
+  margin: 0px;
+  font-family: Noto Sans KR;
+  font-weight: 400;
+}
+
+.Art_like_num{
+  position: absolute;
+  top:70px;
+  left:30px;
+  width:71vmin;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Art_like_num p{
+  font-size: 33px;
+  margin: 0px;
+  font-family: Lato;
+  font-weight: 500;
+}
+
+.artist01_Art_Like_div{
+  position: absolute;
+  top:2200px;
+  left:10vmin;
+  width:80vmin;
+  height:220px;
+  border-radius: 15px;
+  background: linear-gradient(to top,#F9F9F9 97%,#181818 3%);
+}
+
+.artist01_Art_Like_title{
+  position: absolute;
+  top:2170px;
+  left:6vmin;
+  width:200px;
+  font-size: 16px;
+  font-family: Noto Sans KR;
+  font-weight: 600;
+  margin: 0px;
+}
+.bar_state{
+  position: absolute;
+  top:160px;
+  left:40px;
+  width:70vmin;
+  background-color: #d0d0d0;
+  height:20px;
+  border-radius: 15px;
+}
 }

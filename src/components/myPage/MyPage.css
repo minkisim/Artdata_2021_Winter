@@ -11,6 +11,14 @@ body {
     top: 150px;
     left: 304px;
 }
+
+@media only screen and (max-width:1024px) {
+    .myPage_Page {
+        position: absolute;
+        top: 200px;
+        left: 5vmin;
+    }
+}
 .Transfer_button{
     position: absolute;
     top: 190px;
@@ -186,6 +194,90 @@ body {
     margin-right: 105px;
 }
 
+@media only screen and (max-width:1024px) {
+    .collection {
+        position: relative;
+        top:10px;
+        width: 90vmin;
+        height: 300px;
+        border-radius: 15px;
+        text-align: center;
+        background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
+        font-size: 18px;
+    }
+    .collect_num{
+        margin-right: 4vmin;
+        width:40px;
+        margin-left: 0px;
+        text-align: left;
+        font-family: Noto Sans KR;
+    }
+    .collect_art{
+        width:30vmin;
+        margin-right:8vmin;
+        text-align: left;
+        font-family: Noto Sans KR;
+    }
+    .collect_artist{
+        width:15vmin;
+        text-align: left;
+        font-family: Noto Sans KR;
+        margin-right: 5vmin;
+    }
+    .collection_header_flex {
+        position: relative;
+        width: 90vmin;
+        top: 0px;
+        left: 50px;
+        height: 40px;
+        
+        display: flex;
+        text-align: center;
+        color:#F9F9F9;
+    }
+    
+    .collection_header_flex p {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 15px;
+    }
+    
+    .collection_data_flex {
+        position: relative;
+        top: 20px;
+        width: 90vmin;
+        left: 5vmin;
+        height: 40px;
+        
+        display: flex;
+        text-align: center;
+        
+        background-color: #F9F9F9;
+        border-radius: 15px;
+    }
+    
+    .data_num {
+        margin-right:6vmin;
+    }
+    
+    .data_picture1{
+        width:30vmin;
+        text-align: left;
+        margin-right:8vmin;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+    .data_artist1{
+        width:16vmin;
+        text-align: left;
+        margin-right: 5vmin;
+    }
+    .data_Link1{
+        width:9vmin;
+    }
+}
+
 
 .like_art {
     width: 1100px;
@@ -220,6 +312,50 @@ body {
 .data_artist2{
     width:250px;
     margin-right: 120px;
+}
+
+@media only screen and (max-width:1024px) {
+    .like_art {
+        width: 90vmin;
+        text-align: left;
+        position: relative;
+        border-radius: 15px;
+        top: 10px;
+        height: 300px;
+        background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
+        font-size: 18px;
+        margin-bottom: 300px;
+    }
+    .like_art_num{
+        margin-right:5vmin;
+    }
+    .like_art_art{
+        width: 32.5vmin;
+        text-align: left;
+        margin-right: 5vmin;
+        font-family: Noto Sans KR;
+    }
+    .like_art_artist{
+        width:10vmin;
+        text-align: left;
+        margin-right: 7vmin;
+    }
+    
+    
+    .data_picture2{
+        width:29vmin;
+        text-align: left;
+        margin-right:9vmin;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+    .data_artist2{
+        width:10vmin;
+        text-align: left;
+        margin-right: 7vmin;
+    }
+
 }
 
 /* 양도 페이지 css */
@@ -382,6 +518,96 @@ body {
     top:10px;
 }
 
+
+@media screen  and (max-width:1024px){
+    .Transfer_Page{
+        position: absolute;
+        top:180px;
+        left:5vmin;
+    }
+    .Owner_table{
+        background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
+        border-radius: 15px;
+        position: relative;
+        top:0px;
+        width: 700px;
+        height: 200px;
+    }
+    .Owner_table_header{
+        position: relative;
+        top:0px;
+        display: flex;
+    }
+    .Owner_table_header p{
+        color:#F9F9F9;
+        font-family: Noto Sans KR;
+        font-size:16px;
+        font-weight: 600;
+    }
+    
+    .Owner_table_content_div{
+        overflow-y: auto;
+        height: 150px;
+    }
+    
+    
+    .Owner_table_contents{
+        position: relative;
+        top:0px;
+        display: flex;
+    }
+    .Owner_table_contents p{
+        font-size:14px;
+    }
+    .Owner_header_num{
+        position: relative;
+        left:20px;
+        width:50px;
+        text-align: left;
+        margin-top:10px;
+        margin-right:130px;
+    }
+    .Owner_header_artwork
+    {
+        margin-top:10px;
+        margin-right:230px;
+    }
+    .Owner_header_artist
+    {
+        margin-top:10px;
+        margin-right:140px;
+    }
+    .Owner_header_transfer
+    {
+        margin-top:10px;
+        margin-right:0px
+    }
+    .Owner_content_num
+    {
+        position: relative;
+        margin-top:10px;
+        left:32px;
+        margin-right:50px;
+    }
+    .Owner_content_artwork
+    {
+        margin-top:10px;
+        text-align: center;
+        width:300px
+    }
+    .Owner_content_artist
+    {
+        margin-top:10px;
+        
+        text-align: center;
+        width:236px;
+        margin-right: 50px;
+    }
+    .Owner_content_btn{
+        position: relative;
+        top:10px;
+    }
+}
 .people_header_name{
     position: relative;
     left:30px;

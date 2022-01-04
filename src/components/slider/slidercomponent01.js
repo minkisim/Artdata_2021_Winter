@@ -11,7 +11,7 @@ function Slidercomponent01(props){
             <p className="component1_type">{props.data.type}</p>
             <p className="component1_size">{props.data.size}</p>
             <p className="component1_musium">{props.data.musium}</p>
-            <div className="component1_img"><Zoomimage image={props.data.imgUrl} size='360'></Zoomimage></div>
+            <div className="component1_img"><Zoomimage image={props.data.imgUrl} size='360px'></Zoomimage></div>
             
  
         </div>    

@@ -285,9 +285,7 @@ export default function AuctionPay(){
             <div className="Auctiondata_Page">
                 <div className="picture">
                     <img className="Main_Image" src={`/img/${data.imageurl}`} alt="그림" />
-                    <img className="Sub_Image1" src="/img/picture.png" alt="그림" />
-                    <img className="Sub_Image2" src="/img/picture.png" alt="그림" />
-                    <img className="Sub_Image3" src="/img/picture.png" alt="그림" />
+                  
                 </div>
                 <div className="Auction_Info">
                     <div className="Artwork_Artist">
@@ -322,7 +320,7 @@ export default function AuctionPay(){
                             <span className="price_content">{email ? email : '없음'}</span>
                         </div>
                     </div>
-                    <div className="Auction_Info_btn">
+                    <div className="Auction_Info_btn2">
                     { current.username == userdata.username ? <div className="Auction_Info_submit" onClick={click_auction_btn2}><p>결제하기</p></div> : null}
                     </div>
                 </div>

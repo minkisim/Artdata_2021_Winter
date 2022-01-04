@@ -10,7 +10,12 @@ body {
 .show_window1 {
     margin-right: 180px;
 }
-
+@media only screen and (max-width:1024px) {
+    .show_window1 {
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+}
 
 .artist_name1 {
     font-size: 30px;

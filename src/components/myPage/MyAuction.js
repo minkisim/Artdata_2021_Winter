@@ -195,7 +195,7 @@ function MyAuction(){
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture1">{data.artname}</p></div>
                                         <div><p className="data_artist1">{data.artist}</p></div>
-                                        <div><a href={`/auctiondata?id=${data.artwork_id}`}><p>LINK</p></a></div>
+                                        <div><a href={`/auctiondata?id=${data.artwork_id}`}><p className="data_Link1">LINK</p></a></div>
                                  </div>)}
                          )}
                          

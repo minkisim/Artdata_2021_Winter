@@ -150,6 +150,167 @@
     margin-top: 10px;
 }
 
+@media only screen and (max-width:1024px) {
+
+    .auction_Main_Page{
+        position:absolute;
+        top:250px;
+        left:0px;
+        width:100vmin;
+    }
+    .auction_search_bar{
+        width:90vmin;
+        position: relative;
+        left:2.5vmin;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    
+.search_bar_artwork{
+    width:230px;
+    display: flex;
+    justify-content: space-between;
+    margin-right:15px;
+}
+.search_bar_artwork p {
+    font-family:Noto Sans KR;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+
+.search_artist{
+    width:230px;
+    display: flex;
+    justify-content: space-between;
+    margin-right:15px;
+}
+.search_artist p {
+    font-family:Noto Sans KR;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-right:10px;
+}
+.search_input1{
+    width:164px;
+    height:45px;
+    border-radius: 23px;
+    border : 1px solid #B7B7B7;
+}
+.search_input1 input{
+    position: relative;
+    top:10px;
+    border:none;
+    font-size: 14px;
+    left:5px;
+    width:125px;
+}
+.search_input1 input::placeholder {
+    color: #C3C3C3;
+}
+
+.search_input2{
+    width:164px;
+    height:45px;
+    border-radius: 23px;
+    border : 1px solid #B7B7B7;
+}
+.search_input2 input{
+    position: relative;
+    top:10px;
+    border:none;
+    font-size: 14px;
+    left:5px;
+    width:125px;
+}
+.search_input2 input::placeholder {
+    color: #C3C3C3;
+}
+
+
+.search_price p{
+    font-family:Noto Sans KR;
+    font-size: 17px;
+    margin-top: 10px;
+    
+}
+.search_price{
+    width:260px;
+    height:45px;
+    display: flex;
+    justify-content: space-between;
+    margin-right:15px;
+}
+.price_btn{
+    position: relative;
+    top:-10px;
+}
+
+.search_num{
+    width:150px;
+    display: flex;
+    justify-content: space-between;
+    margin-right:15px;
+}
+
+.num_input{
+    width:60px;
+    margin-left: 5px;
+    height:45px;
+    border-radius: 23px;
+    border : 1px solid #B7B7B7;
+    
+}
+.search_num p {
+    font-family: Noto Sans KR;
+    font-size: 17px;
+    margin-top: 10px;
+}
+.num_input input{
+    position: relative;
+    width:30px;
+    top:10px;
+    left:-5px;
+    border:none;
+    font-size: 14px;
+    text-align: center;
+    
+}
+.num_input input::placeholder{
+    color: #C3C3C3
+}
+
+
+.search_btn{
+    width: 106px;
+    height:44px;
+    background-color: #191919;
+    border-radius: 23px;
+    margin-right:15px;
+}
+.search_btn p{
+    font-family:Noto Sans KR;
+    font-size: 17px;
+    margin-top: 10px;
+    color:#FFFFFF;
+}
+.reset_btn{
+    width: 138px;
+    height:44px;
+    background-color: #EDEDED;
+    border-radius: 23px;
+    margin-right:15px;
+}
+.reset_btn p{
+    font-family:Noto Sans KR;
+    font-size: 17px;
+    margin-top: 10px;
+}
+    
+}
+
 /* list */
 .auction_list{
     display: flex;
@@ -159,14 +320,48 @@
     width:1450px;
     flex-wrap: wrap;
 }
+@media only screen and (max-width:1024px) {
+    .auction_list{
+        display: flex;
+        position: relative;
+        top:100px;
+        left:2vmin;
+        width:96vmin;
+        flex-wrap: wrap;
+    }
+}
+@media only screen and (max-width:768px) {
+    .auction_list{
+        display: flex;
+        position: relative;
+        top:100px;
+        left:26vmin;
+        width:50vmin;
+        flex-wrap: wrap;
+    }
+}
+
 .auction_ShowWindow{
     width:310px;
     height:753px;
     text-align: center;
     background-color: #F9F9F9;
     border-radius: 14px;
-    margin-right: 50px;
+    margin-left:50px;
     margin-bottom: 30px;
+}
+
+@media only screen and (max-width:768px) {
+    .auction_ShowWindow{
+        width:310px;
+        height:753px;
+        text-align: center;
+        background-color: #F9F9F9;
+        border-radius: 14px;
+        margin-left: 25px;
+        margin-right: 25px;
+        margin-bottom: 30px;
+    }
 }
 .auction_ShowWindow_img{
     object-fit: contain;
@@ -310,33 +505,24 @@
     border-radius: 14px;
 }
 
+@media only screen and (max-width:1024px) {
+    .Auctiondata_Page{
+        position: absolute;
+        top:200px;
+        left:5vmin;
+        width:90vmin;
+        height: 800px;
+        background-color: #F9F9F9;
+        border-radius: 14px;
+    }
+}
 .Main_Image{
     position: absolute;
     top:100px;
     left:197px;
     width:342px;
     height:520px;
-}
-.Sub_Image1{
-    position: absolute;
-    top:164px;
-    left:69px;
-    width:78px;
-    height:120px;
-}
-.Sub_Image2{
-    position: absolute;
-    top:302px;
-    left:69px;
-    width:78px;
-    height:120px;
-}
-.Sub_Image3{
-    position: absolute;
-    top:440px;
-    left:69px;
-    width:78px;
-    height:120px;
+    object-fit: contain;
 }
 
 .Artwork_Artist{
@@ -344,6 +530,22 @@
     top:140px;
     left:632px;
 }
+@media only screen and (max-width:1024px) {
+    .Main_Image{
+        position: absolute;
+        top:10px;
+        left:15vmin;
+        width:60vmin;
+        height:300px;
+        object-fit: contain;
+    }
+    .Artwork_Artist{
+        position: absolute;
+        top:300px;
+        left:10vmin;
+    }
+}
+
 .Auction_Info_Artist{
     font-size: 50px;
     font-family: Noto Sans KR;
@@ -442,6 +644,72 @@
     font-weight: 600;
     font-family: Noto Sans KR;
 }
+
+
+@media only screen and (max-width:1024px) {
+
+     .Auction_Info_artistyear{
+        position: absolute;
+        top:380px;
+        left:10vmin;
+    }
+    .Auction_Info_artistyear p{
+        font-size:  20px;
+        color:#898989;
+        font-family: Noto Sans KR;
+        font-weight:300;
+    }
+    
+    .Auction_Info_subdata{
+        position: absolute;
+        top:400px;
+        left:11vmin;
+    }
+    
+    .Auction_Info_hr1{
+        position: absolute;
+        top:470px;
+        left:5vmin;
+        width:80vmin;
+        height:1px;
+        background-color: #BEBEBE;
+        border:none;
+    }
+    
+    .Auction_Info_enddate_flex{
+        position: absolute;
+        top:490px;
+        left:5vmin;
+        display: flex;
+        width:80vmin;
+    }
+    .Auction_Info_enddate{
+        width:39vmin;
+        text-align: left;
+        margin-left: 1vmin;
+    }
+    .enddate_title{
+        font-size:15px;
+        color: #AAAAAA;
+        font-family: Noto Sans KR;
+    }
+    .enddate_content{
+        font-size: 15px;
+        color: #676767;
+        font-family: Noto Sans KR;
+    }
+    .countdown_title{
+        font-size:15px;
+        color: #AAAAAA;
+        font-family: Noto Sans KR;
+    }
+    .countdown_content{
+        font-size:15px;
+        color: #E33821;
+        font-weight: 600;
+        font-family: Noto Sans KR;
+    }
+}
 .Auction_Info_hr2{
     position: absolute;
     top:450px;
@@ -486,8 +754,14 @@
     width:300px;
     text-align: left;
 }
-
 .Auction_Info_btn{
+    position: absolute;
+    top:550px;
+    left:635px;
+    display: flex;
+    width:700px;
+}
+.Auction_Info_btn2{
     position: absolute;
     top:550px;
     left:635px;
@@ -521,6 +795,96 @@
     font-size: 16px;
     color:#f4f4f4;
 }
+
+
+@media only screen and (max-width:1024px) {
+    .Auction_Info_hr2{
+        position: absolute;
+        top:520px;
+        left:5vmin;
+        width:80vmin;
+        height:1px;
+        background-color: #BEBEBE;
+        border:none
+    }
+    .Auction_Info_price{
+        position: absolute;
+        top:540px;
+        left:6vmin;
+        display: flex;
+        width:80vmin;
+    }
+    .Auction_Info_nowprice{
+        width:39vmin;
+        text-align: left;
+    }
+    .nowprice_title{
+        font-size:16px;
+        color: #5C5C5C;
+        font-family: Noto Sans KR;
+    }
+    .nowprice_content{
+        font-size:16px;
+        color: #5C5C5C;
+        font-family: Noto Sans KR;
+    }
+    .price_title{
+        font-size:16px;
+        color: #5C5C5C;
+        font-family: Noto Sans KR;
+    }
+    .price_content{
+        font-size:16px;
+        color: #5C5C5C;
+        font-family: Noto Sans KR;
+    }
+    .Auction_Info_pricedata{
+        width:300px;
+        text-align: left;
+    }
+    .Auction_Info_btn{
+        position: absolute;
+        top:590px;
+        left:53vmin;
+        display: flex;
+        width:40vmin;
+    }
+    .Auction_Info_btn2{
+        position: absolute;
+        top:590px;
+        left:70vmin;
+        display: flex;
+        width:20vmin;
+    }
+    .Auction_Info_nowbtn{
+        width: 116px;
+        height: 44px;
+        background-color: #A3A3A3;
+        border-radius: 22px;
+        margin-right: 30px;
+    }
+    .Auction_Info_nowbtn p{
+        position: relative;
+        margin-top: 10px;
+        font-size: 16px;
+        color:#f4f4f4;
+    }
+    .Auction_Info_submit{
+        width: 116px;
+        height: 44px;
+        background-color: #191919;
+        border-radius: 22px;
+        margin-right: 30px;
+    }
+    
+    .Auction_Info_submit p{
+        position: relative;
+        margin-top: 10px;
+        font-size: 16px;
+        color:#f4f4f4;
+    }
+}
+
 .Auction_Info_hr3{
     position: absolute;
     top:734px;
@@ -597,6 +961,27 @@
     font-family: Noto Sans KR;
     font-weight: 200;
 }
+
+@media only screen and (max-width:1024px) {
+    .Auction_Info_hr3{
+        visibility:hidden;
+    }
+    
+    .Auction_Info_hr4{
+        visibility: hidden;
+    }
+    .artwork_Info{
+        visibility: hidden;
+    }
+    
+    .artist_Info{
+        visibility: hidden;
+    }
+    
+
+
+}
+
 
 /* 팝업창 */
 
@@ -683,4 +1068,92 @@
 .Popup_content_price{
     width: 110px;
     margin-right: 60px;
+}
+
+
+@media only screen and (max-width:1024px) {
+    .Popup_gray_div{
+        position:absolute;
+        top:152px;
+        left:calc( ( 90vmin - 636px ) / 2 );
+        width: 636px;
+        height:510px;
+        background-color: #2B2B2B;
+        border-radius: 35px;
+        opacity:50%;
+        text-align: left;
+    }
+    .Popup_title{
+        position: absolute;
+        top:162px;
+        left:calc( ( 90vmin - 636px ) / 2 + 3vmin );
+        font-size: 30px;
+        color:  #FFFFFF;
+    }
+    .Popup_btn{
+        opacity: 100%;
+        position: absolute;
+        top:172px;
+        left:calc( ( 90vmin - 636px ) / 2 + 566px );
+    }
+    .Popup_black_div{
+        position:absolute;
+        top:302px;
+        left:calc( ( 90vmin - 636px ) / 2 + 30px );
+        width: 579px;
+        height:345px;
+        background-color: #000000;
+        border-radius: 35px;
+        opacity: 70%;
+        text-align: left;
+    }
+    .popup_box{
+        position:absolute;
+        top:308px;
+        left:calc( ( 90vmin - 636px ) / 2 + 30px );
+    }
+    .Popup_header{
+        display:flex;
+    }
+    .Popup_header p{
+        color:#FFFFFF;
+        font-size: 18px;
+        font-family: Noto Sans KR;
+    }
+    .Popup_header_no{
+        margin-left: 42px;
+    }
+    .Popup_header_ID{
+        margin-left: 64px;
+    }
+    .Popup_header_price{
+        margin-left: 72px;
+    }
+    .Popup_header_time{
+        margin-left: 114px;
+    }
+    
+    .Popup_content{
+        display:flex;
+    }
+    
+    .Popup_content p{
+        color:#FFFFFF;
+        font-size: 15px;
+        font-family: Noto Sans KR;
+    }
+    .Popup_content_no{
+        margin-left:48px;
+    }
+    .Popup_content_ID{
+        margin-left: 72px;
+        width:150px;
+        text-align: center;
+        margin-left:28px;
+        margin-right: 0px;
+    }
+    .Popup_content_price{
+        width: 110px;
+        margin-right: 60px;
+    }
 }

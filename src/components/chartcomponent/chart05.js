@@ -6,8 +6,10 @@ export default function Chart05(props){
   
    
       return (
-        <div>
-          <BarChart width={800} height={300} data={props.data}
+        
+        <div className='Chart05'>
+          <ResponsiveContainer width='100%' aspect={5.0/2.0}>
+          <BarChart data={props.data}
             margin={{
               top: 80,
               right: 30,
@@ -25,6 +27,7 @@ export default function Chart05(props){
             <Bar dataKey="Day" stroke="#191F1D" fill="#191F1D" radius={[15, 15, 0, 0]} />
          
          </BarChart>
+         </ResponsiveContainer>
         </div>
       )
     

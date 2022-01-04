@@ -118,7 +118,6 @@ function MainPage({isLogin, isAdmin}){
         
         <div>
             <VaneTitle isLogin={isLogin} isAdmin={isAdmin} />
-            <Sidebar />
         </div>
         
         <div>
@@ -180,6 +179,7 @@ function MainPage({isLogin, isAdmin}){
                 { !(isLogin==undefined || isLogin=='' || isLogin.length<1) && <Route component={Error404}></Route>}
             </Switch>            
         </div> 
+        <Sidebar />
         
         </BrowserRouter>
     )
