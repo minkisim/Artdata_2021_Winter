@@ -29,8 +29,6 @@ function MyAuction(){
                         if(result2.data.success==false)
                         {
                                 alert('로그인이 필요합니다')
-
-                                
                                 window.location.replace("/loginPage")
                         }
 
@@ -42,8 +40,6 @@ function MyAuction(){
                                         username: result2.data.username,
                                         id : result2.data.id
                                 })
-                                
-                                
                                         /*
                                         console.log(result.data.temp1)
                                         console.log(result.data.temp2)

@@ -17,7 +17,7 @@ axios.defaults.withCredentials = true;
 // 고객 센터 게시물 보기용 코드
 function CSArticle({isLogin, isAdmin}){
     const [results, setResults] = useState()
-
+    const [role, setRole] = useState()
     useEffect(()=>{
         var username
         var indices 
@@ -34,6 +34,15 @@ function CSArticle({isLogin, isAdmin}){
         axios.post(`http://${dev_ver}:4000/api/board/showarticle`,{username : username, indices : indices})
         .then((res)=>{
             setResults(res.data)
+            console.log(res.data)
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+
+        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        .then((res)=>{
+            setRole(res.data.userrole)
             console.log(res.data)
         })
         .catch((err)=>{
@@ -65,10 +74,10 @@ function CSArticle({isLogin, isAdmin}){
         <Link to="/customerService"><div className="CSArticleBtn">
             <p>게시글 목록</p>
         </div></Link>    
-        <Link to={"/csanswer?username="+queryString.parse(location.search).username+"&indices="+queryString.parse(location.search).indices}>
+        { role!=undefined && role === "ROLE_ADMIN" && <Link to={"/csanswer?username="+queryString.parse(location.search).username+"&indices="+queryString.parse(location.search).indices}>
             <div className="CSAnswerBtn">
             <p>게시글 답변</p>
-        </div></Link>    
+        </div></Link>}    
     </div>
 
     </>  
