@@ -1544,23 +1544,90 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         ])
                     });
         
+                                            //유저, 작품, 날짜 조회수 갱신 및 등록
+                                            async function update_user_preference(connection, req, art_id)
+                                            {
+                                                var date = moment().format('YYYY-MM-DD').toString()
+                                                var sql = ""
+                                                /*로그인 확인*/
+                                                if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+                                                {
+                                                    sql = "select * from user_preference where username = ? and art_id = ? and access_time = DATE_FORMAT(?, '%Y-%m-%d')"
+                                                    try{
+                                                        await connection.beginTransaction()
+                                                        var [result] = await connection.query(sql, [req.session.user.username, art_id, date])
+                                                        if(result!=undefined && result[0]!=undefined)
+                                                        {
+                                                            sql = "update user_preference set hits = hits + 1 where username = ? and art_id = ? and access_time = DATE_FORMAT(?, '%Y-%m-%d')"
+                                                        }
+                                                        else{
+                                                            sql = "insert into user_preference values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), 1)"
+                                                        }
+                                                        var [result2] = await connection.query(sql, [req.session.user.username, art_id, date])
+                                                        if(result2 !=undefined && result2.affectedRows>=1)
+                                                        {
+                                                            connection.commit()
+                                                        }
+                                                    }catch(err)
+                                                    {
+                                                        //db 에러시
+                                                        connection.rollback()
+                                                        console.error(err);
+                                                    }
+                                                }
+                                            };
+                                            async function show_user_preference(connection, art_id)
+                                            {
+                                                var date = moment().format('YYYY-MM-DD')
+                                                var sql = "select sum(hits) hits from user_preference where art_id = ? and access_time = ?"
+                                                var returnvalue = {dailynum : 0, totalnum : 0}
+                                                try{
+                                                    var [result] = await connection.query(sql, [art_id, date])
+                                                    if(result!=undefined && result[0]!=undefined)
+                                                    {
+                                                        returnvalue.dailynum = result[0].hits
+                                                    }
+                                                    else
+                                                    {
+                                                        returnvalue.dailynum = 0
+                                                    }
+
+                                                    sql = "select sum(hits) hits from user_preference where art_id = ?"                                                
+                                                    var [result2] = await connection.query(sql, [art_id])
+                                                    if(result2!=undefined && result2[0]!=undefined)
+                                                    {
+                                                        returnvalue.totalnum = result2[0].hits
+                                                    }
+                                                    else
+                                                    {
+                                                        returnvalue.totalnum = 0
+                                                    }
+
+                                                }catch(err)
+                                                {
+                                                    //db 에러시
+                                                    console.error(err); 
+                                                }
+                                                return returnvalue
+                                            };
+
                     app.post('/api/exhibition3/exhibition', async function (req, res) {
                         var connection = await openConnection()
-                        var date = moment().format('YYYY-MM-DD HH:mm:ss');
+                        var date = moment().format('YYYY-MM-DD HH:mm:ss')
                         //작품 id가 url에 있는 경우
                         if(req.body.id !=undefined && req.body.id.length>=1)
                         {
                                 //해당 작품의 정보 반환
                                 let query = "select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where a.art_id = ? AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
                                 try{
-                                    var [result] = await connection.query(query,
-                                        [req.body.id])
+                                    var [result] = await connection.query(query, [req.body.id])
                                         var jsondata = []
                             
                                         if(result != undefined && result[0] !=undefined)
                                         {
+                                            await update_user_preference(connection, req, req.body.id)
+                                            var value = await show_user_preference(connection, req.body.id)
                                             result.forEach((array) => {
-                                                
                                                 var data = {
                                                     artist: array.artist_name,
                                                     artname: array.art_name,
@@ -1568,8 +1635,8 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                     artsize: array.getdate+", " +array.image_size,
                                                     imgUrl: array.image_url,
                                                     musium: array.exhibition_name,
-                                                    people_number: 351,
-                                                    total_people_number: 9510,
+                                                    people_number: value.dailynum,
+                                                    total_people_number: value.totalnum,
                                                     time : date +'기준',
                                                     totaltime: '283:36:41',
                                                     exhibition_id : array.exhibition_id,
@@ -1594,7 +1661,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         else
                         {
                                 //가장 최근에 등록된 작품 보여주기
-                                let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+                                let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id, a.art_id  from  artist r, art a, exhibition e where r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
                                 try{
                                     var [result] = await connection.query(query)
                                    
@@ -1602,8 +1669,9 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     
                                     if(result != undefined && result[0]!=undefined)
                                     {
+                                        await update_user_preference(connection, req, result[0].art_id)
+                                        var value = await show_user_preference(connection, result[0].art_id)
                                         result.forEach((array) => {
-                                            
                                             var data = {
                                                 artist: array.artist_name,
                                                 artname: array.art_name,
@@ -1611,8 +1679,8 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                 artsize: array.getdate+", " +array.image_size,
                                                 imgUrl: array.image_url,
                                                 musium: array.exhibition_name,
-                                                people_number: 351,
-                                                total_people_number: 9510,
+                                                people_number: value.dailynum,
+                                                total_people_number: value.totalnum,
                                                 time : date +'기준',
                                                 totaltime: '283:36:41',
                                                 exhibition_id : array.exhibition_id,
@@ -2657,9 +2725,16 @@ app.post('/api/deleteuser',async (req,res)=>{
                     connection.rollback()
                     res.json({success: false})
                 }
-    
                 else
                 {
+                    query = "delete from user_preference where username = ?"
+                    var [result2] = await connection.query(query, [req.body.username])
+                    if(result2.affectedRows<0)
+                    {
+                        connection.rollback()
+                        res.json({success: false})
+                    }
+
                     //사용자가 소유한 작품의 소유자를 없앰
                     query = "update art set owner_username = null, expired = null where owner_username = ?"
                     var [result2] = await connection.query(query, [req.body.username])

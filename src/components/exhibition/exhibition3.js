@@ -129,26 +129,6 @@ function Exhibition3({match}){
              jsondata.id=query.id
          }
          */
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/exhibition`, jsondata
-        ).
-          then((res)=>{
-         console.log(res.data)
-         setexhibition(res.data)
-          })
-          .catch(()=>{
-          alert('error');
-          });
-
-          
-        axios.get(`http://${dev_ver}:4000/api/exhibition2/chart04`).
-          then((res)=>{
-         // console.log(res.data)
-         setchart04data(res.data)
-          })
-          .catch(()=>{
-          alert('error');
-          });
-
 
           axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
               date:'day'
@@ -243,11 +223,11 @@ function Exhibition3({match}){
                     <Link to={`/exhibition2/${exhibition[0].exhibition_id}`}><p className="artwork_box_musium">{exhibition[0].musium}</p></Link>
                     <div className="exhibition3_people"> 
                         <p className="exhibition3_people_title">금일 전시 관람객</p>
-                        <p className="exhibition3_people_number">{exhibition[0].people_number}</p>
+                        <p className="exhibition3_people_number">{exhibition[0].people_number !== null ? exhibition[0].people_number : 0}</p>
                     </div>
                     <div className="exhibition3_total_people">
                         <p className="exhibition3_total_people_title">총 전시 관람객</p>
-                        <p className="exhibition3_total_people_number">{exhibition[0].total_people_number}</p>
+                        <p className="exhibition3_total_people_number">{exhibition[0].total_people_number !== null ? exhibition[0].total_people_number : 0}</p>
                     </div>
                     <p className="exhibition3_time_line">{exhibition[0].time}</p>
                     
