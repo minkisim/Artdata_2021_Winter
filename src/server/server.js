@@ -1327,6 +1327,24 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     jsondata.push(data)
                                 }
                             })
+
+                            query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
+                            var [result2] = await connection.query(query, [req.body.exhibition])
+                            var sum = Number(0)
+                            if(result2!=undefined && result2[0] != undefined){
+                                value = chart04_user_preference(result2)
+                                value.forEach((it)=>{
+                                    sum+=it
+                                })
+                                jsondata[0].datenumber = sum
+                                
+                                jsondata.push([
+                                    { name: '10-20대', value: value[0] },
+                                    { name: '30-40대', value: value[1] },
+                                    { name: '50-60대', value: value[2] },
+                                    { name: '70대 이상',  value: value[3] }
+                                ])
+                            }
                         }
                         //전시관에 작품이 없는 경우 전시관에 대한 정보만 반환
                         else
@@ -1349,29 +1367,17 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                         
                                         }
                                         jsondata.push(data)
+                                        jsondata.push([
+                                            { name: '10-20대', value: Number(0) },
+                                            { name: '30-40대', value: Number(0) },
+                                            { name: '50-60대', value: Number(0) },
+                                            { name: '70대 이상',  value: Number(0) }
+                                        ])
                                     }
                                     else{
                                         
                                         jsondata.push({notuple:true})
                                     }
-                        }
-
-                        query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
-                        var [result2] = await connection.query(query, [req.body.exhibition])
-                        var sum = Number(0)
-                        if(result2!=undefined && result2[0] != undefined){
-                            value = chart04_user_preference(result2)
-                            value.forEach((it)=>{
-                                sum+=it
-                            })
-                            jsondata[0].datenumber = sum
-                            
-                            jsondata.push([
-                                { name: '10-20대', value: value[0] },
-                                { name: '30-40대', value: value[1] },
-                                { name: '50-60대', value: value[2] },
-                                { name: '70대 이상',  value: value[3] }
-                            ])
                         }
                         res.json(jsondata)
                 }catch(err)
@@ -1416,6 +1422,24 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                 jsondata.push(data)
                             }
                         })
+
+                        query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
+                        var [result2] = await connection.query(query, [exhibition_id])
+                        var sum = Number(0)
+                        if(result2!=undefined && result2[0] != undefined){
+                            value = chart04_user_preference(result2)
+                            value.forEach((it)=>{
+                                sum+=it
+                            })
+                            jsondata[0].datenumber = sum
+                            
+                            jsondata.push([
+                                { name: '10-20대', value: Number(0) },
+                                { name: '30-40대', value: Number(0) },
+                                { name: '50-60대', value: Number(0) },
+                                { name: '70대 이상',  value: Number(0) }
+                            ])
+                        }
                     }
                     //작품수가 가장 많이 전시된 전시관에 작품이 없는 경우
                     else
@@ -1443,28 +1467,18 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     }
             
                                     jsondata.push(data)
+                                    jsondata.push([
+                                        { name: '10-20대', value: value[0] },
+                                        { name: '30-40대', value: value[1] },
+                                        { name: '50-60대', value: value[2] },
+                                        { name: '70대 이상',  value: value[3] }
+                                    ])
                                 }
                                 else{
                                     jsondata.push({notuple:true})
                                 }
                     }
-                    query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
-                        var [result2] = await connection.query(query, [exhibition_id])
-                        var sum = Number(0)
-                        if(result2!=undefined && result2[0] != undefined){
-                            value = chart04_user_preference(result2)
-                            value.forEach((it)=>{
-                                sum+=it
-                            })
-                            jsondata[0].datenumber = sum
-                            
-                            jsondata.push([
-                                { name: '10-20대', value: value[0] },
-                                { name: '30-40대', value: value[1] },
-                                { name: '50-60대', value: value[2] },
-                                { name: '70대 이상',  value: value[3] }
-                            ])
-                        }
+
                     res.json(jsondata)
                 }catch(err)
                 {
