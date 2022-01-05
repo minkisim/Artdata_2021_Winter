@@ -178,7 +178,7 @@
     top:10px;
 }
 
-@media only screen and (max-width:1024px){
+@media only screen and (max-width:768px){
 
     .Bid_back_div{
         position: absolute;
@@ -450,7 +450,7 @@
     font-weight: 700;
 }
 
-@media only screen and (max-width:1024px){
+@media only screen and (max-width:768px){
     .Bid_check{
         position: absolute;
         top:350px;

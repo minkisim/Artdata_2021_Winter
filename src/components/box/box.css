@@ -351,9 +351,10 @@ body{
 
 .artist01_time_line{
   position: absolute;
-  top: 835px;
-  left:40vmin;
-  width:45vmin;
+  top: 840px;
+  left: 35vmin;
+  width:50vmin;
+  font-size: 14px;
   text-align: right;
 }
 .artist01_time_line p{
@@ -405,30 +406,31 @@ body{
 
 .artist01_Artist_people{
   position: absolute;
-  top:800px;
+  top:740px;
   left:5vmin;
-  width:35vmin;
+  width:80vmin;
   height:53px;
   display:flex;
   justify-content: space-between;
   background-color: #181818;
-  border-radius: 15px;
+  border-radius: 10px;
 }
 .artist01_Artist_people p{
   color:#F9F9F9;
 }
 .artist01_Artist_people_name{
-  font-size: 9px;
-  margin-left: 2px;
-  margin-top: 17px;
-  width:25vmin;
+  font-size: 18px;
+  margin-left: 15px;
+  margin-top: 14px;
+  width:50vmin;
+  text-align: left;
   font-family: Noto Sans KR;
 }
 .artist01_Artist_people_num{
-  font-size:16px;
-  margin-top: 15px;
+  font-size:20px;
+  margin-top: 14px;
   margin-right: 15px;
-  width:10vmin;
+  width:30vmin;
   height:30px;
   text-align: right;
   font-family: Lato;
@@ -437,29 +439,31 @@ body{
 .artist01_Artist_time{
   position: absolute;
   top:800px;
-  left:45vmin;
-  width:44vmin;
+  left:5vmin;
+  width:80vmin;
   height:53px;
   display:flex;
   justify-content: space-between;
   background-color: #181818;
-  border-radius: 15px;
+  border-radius: 10px;
 }
 .artist01_Artist_time p{
   color:#F9F9F9;
 }
 
 .artist01_Artist_time_name{
-  font-size: 9px;
-  margin-top: 16px;
-  margin-left: 0px;
-  width: 33vmin;
+  font-size: 18px;
+  margin-top: 14px;
+  margin-left: 15px;
+  text-align: left;
+  width: 50vmin;
   font-family: Noto Sans KR;
 }
 .artist01_Artist_time_num{
-  font-size:13px;
-  margin-top: 16px;
-  margin-right: 2px;
+  font-size:20px;
+  margin-top: 15px;
+  margin-right: 15px;
+  width: 30vmin;
   font-family: Lato;
 }
 

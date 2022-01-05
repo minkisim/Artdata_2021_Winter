@@ -8,15 +8,15 @@ export default function Chart05(props){
       return (
         
         <div className='Chart05'>
-          <ResponsiveContainer width='100%' aspect={5.0/2.0}>
+          <ResponsiveContainer width='100%' height={'100%'}>
           <BarChart data={props.data}
             margin={{
-              top: 80,
-              right: 30,
-              left: 30,
+              top: 30,
+              right: 10,
+              left: 0,
               bottom: 10,
             }}
-            barSize={15}
+            barSize={10}
             
           >
             <CartesianGrid strokeDasharray="5 5" />
