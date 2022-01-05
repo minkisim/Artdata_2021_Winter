@@ -115,7 +115,6 @@ function MainPage({isLogin, isAdmin}){
 
     return (
         <BrowserRouter> 
-        
         <div>
             <VaneTitle isLogin={isLogin} isAdmin={isAdmin} />
         </div>

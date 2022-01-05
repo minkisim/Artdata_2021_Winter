@@ -38,7 +38,7 @@ body {
     margin-left: 0px;
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .show_window_flexbox2 {
         position: absolute;
         top: 150px;
@@ -54,18 +54,17 @@ body {
     }
 
 }
-@media only screen and (max-width:900px) {
+@media only screen and (max-width:768px) {
     .show_window_flexbox2 {
         position: absolute;
         top: 150px;
-        left: calc( ( 100vmin - 600px ) / 2 );
-        width: 600px;
-    
+        left: calc( ( 100vmin - 420px ) / 2 );
+        width: 420px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
-        margin-right: 37px;
+        margin-right: 0px;
         margin-left: 0px;
     }
 
@@ -111,12 +110,12 @@ body {
 }
 
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .exhibition2 {
         position: absolute;
-        top: 150px;
-        left: 10vmin;
-        height: 850px;
+        top: 180px;
+        left: 5vmin;
+        height: 820px;
         width: 80vmin;
     }
     
@@ -130,21 +129,21 @@ body {
     .exhibition2_box {
         position: absolute;
         top: 40px;
-        width: 80vmin;
-        height: 810px;
+        width: 90vmin;
+        height: 790px;
         background: linear-gradient(to top, #F9F9F9 99%, #181818 1%);
         border-radius: 15px;
     }
     
     .exhibition2_img {
         position: absolute;
-        top: 40px;
-        left: 40vmin;
-        width: 35vmin;
+        top: 20px;
+        left: 45vmin;
+        width: 40vmin;
         object-fit: contain;
     }
     .exhibition2_img img{
-        width: 35vmin;
+        width: 40vmin;
         object-fit: contain;
     }
 }
@@ -166,6 +165,7 @@ body {
     color: #F9F9F9;
     padding-left: 10px;
     padding-top: 3px;
+    width:60px;
 }
 
 .exhibition2_data_box1 .data_box_number {
@@ -191,6 +191,7 @@ body {
 .exhibition2_data_box2 .data_box_name {
     font-size: 9px;
     color: #F9F9F9;
+    width:80px;
     padding-left: 10px;
     padding-top: 3px;
 }
@@ -215,13 +216,13 @@ body {
     font-size: 7px;
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .exhibition2_data_box1 {
-        width: 25vmin;
+        width: max(25vmin,140px);
         height: 38px;
         position: absolute;
         top: 720px;
-        left: 8vmin;
+        left: 4vmin;
         background-color: #191919;
         border-radius: 15px;
         display: flex;
@@ -236,19 +237,19 @@ body {
     }
     
     .exhibition2_data_box1 .data_box_number {
-        font-size: 19px;
+        font-size: 15px;
         color: #F9F9F9;
         margin: 0px;
         padding-right: 15px;
-        padding-top: 5px;
+        padding-top: 8px;
     }
     
     .exhibition2_data_box2 {
-        width: 30vmin;
+        width: max(30vmin,160px);
         height: 38px;
         position: absolute;
         top: 720px;
-        left: 44vmin;
+        left: calc( 140px + 6vmin);
         background-color: #191919;
         border-radius: 15px;
         display: flex;
@@ -258,28 +259,30 @@ body {
     .exhibition2_data_box2 .data_box_name {
         font-size: 9px;
         color: #F9F9F9;
-        padding-left: 10px;
+        padding-left: 5px;
         padding-top: 3px;
     }
     
     .exhibition2_data_box2 .data_box_number {
-        font-size: 19px;
+        font-size: 15px;
         color: #F9F9F9;
         margin: 0px;
         padding-right: 15px;
-        padding-top: 5px;
+        padding-top: 8px;
     }
     
     .data_date {
         position: absolute;
         top: 755px;
-        left: 276px;
-        width: 30vmin;
+        left: calc( 110px + 5vmin);
+        width: 170px;
         text-align: right;
     }
     
     .data_date p {
         font-size: 7px;
+        display: block;
+        white-space: nowrap;
     }
 
 }
@@ -328,7 +331,53 @@ body {
     color: #F9F9F9;
     font-size: 14px;
 }
-
+@media screen and (max-width:768px) {
+    .exhibition2_artist {
+        position: absolute;
+        top: 110px;
+        left: 5vmin;
+        width: 30vmin;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: right;
+    }
+    
+    .exhibition2_day {
+        position: absolute;
+        top: 170px;
+        left: 5vmin;
+        width: 30vmin;
+        font-size: 10px;
+        text-align: right;
+    }
+    
+    .exhibition2_musium {
+        position: absolute;
+        top: 182px;
+        left:  5vmin;
+        width: 30vmin;
+    
+        font-size: 10px;
+        text-align: right;
+    }
+    
+    .exhibition2_btn1 {
+        position: absolute;
+        left: 5vmin;
+        top: 222px;
+        width: 30vmin;
+        height: 37px;
+        border-radius: 15px;
+        background-color: #191919;
+    }
+    
+    .exhibition2_btn1 p {
+        margin-top: 10px;
+        margin-bottom: 0px;
+        color: #F9F9F9;
+        font-size: 14px;
+    }
+}
 .exhibition2_textTitle {
     position: absolute;
     left: 40px;
@@ -351,6 +400,32 @@ body {
     font-size: 15px;
     background-color: #F9F9F9;
     overflow:auto;
+}
+
+@media screen and (max-width:768px) {
+    .exhibition2_textTitle {
+        position: absolute;
+        left: 5vmin;
+        top: 400px;
+        width:80vmin;
+        font-size: 14px;
+        font-family: Noto Sans KR;
+        text-align: left;
+        font-weight: 600;
+    }
+    .exhibition2_textArea {
+        position: absolute;
+        left: 5vmin;
+        top: 460px;
+        width: 80vmin;
+        height: 234px;
+        border: none;
+        text-align: left;
+        font: Noto Sans KR;
+        font-size: 12px;
+        background-color: #F9F9F9;
+        overflow:auto;
+    }
 }
 
 .exhibition2_textArea:focus {
@@ -450,31 +525,32 @@ body {
 
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
 
     .rank_title {
         position: absolute;
         top: 1000px;
-        left: 12vmin;
-        font-size: 15px;
+        left: 8vmin;
+        font-size: 14px;
         font-family: Noto Sans KR;
         font-weight: 700;
     }
     
     .rank_table {
-        width: 80vmin;
+        width: 90vmin;
         height: 322px;
         background: linear-gradient(to top, #F9F9F9 86%, #181818 14%);
         border-radius: 15px;
         position: absolute;
         top: 1040px;
-        left: 10vmin;
+        left: 5vmin;
     }
     
     .table_header {
         display: flex;
         flex-direction: row;
-        width: 80vmin;
+        justify-content: flex-start;
+        width: 90vmin;
     }
     
     .table_header div {
@@ -484,26 +560,34 @@ body {
     .table_rank {
         margin-top: 15px;
         margin-bottom: 20px;
-        margin-left: 30px;
-        margin-right: 20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:50px;
+        text-align: center;
     }
     
     .table_font {
-        font-size: 12px;
+        font-size: 10px;
         margin: 0px;
         font-family: Lato;
-    
     }
     
     .table_art {
         margin-top: 15px;
-        margin-right: 20vmin;
         margin-bottom: 20px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:250px;
+        text-align: center;
     }
     
     .table_time {
         margin-top: 15px;
         margin-bottom: 20px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:150px;
+        text-align: center;
     }
     
     .table_body {
@@ -516,15 +600,20 @@ body {
     
     .body_rank {
         margin-top: 10px;
-        margin-left: 37px;
-        margin-right: 5vmin;
+        margin-bottom: 5px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:11vmin;
+        text-align: center;
     }
     
     .body_art {
         margin-top: 10px;
-        margin-left: 40px;
-        width: 31vmin;
-        text-align: left;
+        margin-bottom: 5px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:49vmin;
+        text-align: center;
         
     }
     .body_art p{
@@ -535,14 +624,17 @@ body {
     
     .body_time {
         margin-top: 10px;
-        margin-left:45px;
+        margin-bottom: 5px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:30vmin;
+        text-align: center;
     }
     
     .body_font {
-        font-size: 16px;
+        font-size: 12px;
         margin: 0px;
         font-family: Lato;
-    
     }
 }
 
@@ -589,7 +681,7 @@ body {
 
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .customer_graph {
         position: absolute;
         top: 1440px;
@@ -614,7 +706,7 @@ body {
         top: calc(1500px + 40vmin);
         left: 10vmin;
         width: 80vmin;
-        height: 40vmin;
+        height: 60vmin;
         background: linear-gradient(to top, #F9F9F9 98%, #181818 2%);
         border-radius: 15px;
     }
@@ -622,7 +714,7 @@ body {
     .old_title {
         position: absolute;
         top: calc(1460px + 40vmin);
-        left: 10vmin;
+        left: 5vmin;
         font-size: 15px;
         font-family: Noto Sans KR;
         font-weight: 700;
@@ -818,7 +910,7 @@ body {
 
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
 
     .exhibition3_simpleSlider {
         position: absolute;
@@ -827,9 +919,7 @@ body {
         width: 80vmin;
         height: 200px;
     }
-    .show_window4{
-        margin-left: 2vmin;
-    }
+  
     
     .exhibition3_artwork {
         position: absolute;
@@ -941,26 +1031,26 @@ body {
     }
     
     .exhibition3_people_title {
-        font-size: 12px;
+        font-size: 10px;
         color: #F9F9F9;
-        padding-left: 8px;
+        padding-left: 0px;
         font-family: Note Sans KR;
         padding-top: 14px;
         margin: 0px;
-        width:100px;
+        width:25vmin;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
     }
     
     .exhibition3_people_number {
-        font-size: 24px;
+        font-size: 16px;
         color: #F9F9F9;
         font-family: Lato;
         padding-right: 10px;
-        padding-top: 6px;
+        padding-top: 10px;
         margin: 0px;
-        width:80px;
+        width:10vmin;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
@@ -981,11 +1071,12 @@ body {
     }
     
     .exhibition3_total_people_title {
-        font-size: 12px;
+        font-size: 10px;
         color: #F9F9F9;
-        padding-left: 10px;
+        width:26vmin;
         font-family: Note Sans KR;
-        padding-top: 15px;
+        padding-top: 14px;
+        padding-left: 0px;
         margin: 0px;
         overflow:hidden;
          text-overflow:ellipsis;
@@ -993,13 +1084,13 @@ body {
     }
     
     .exhibition3_total_people_number {
-        font-size: 24px;
+        font-size: 16px;
         color: #F9F9F9;
         font-family: Lato;
-        padding-right: 10px;
-        padding-top: 6px;
+        padding-right: 5px;
+        padding-top: 9px;
         margin: 0px;
-        width:90px;
+        width:70px;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
@@ -1054,7 +1145,7 @@ body {
 
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
 
     .exhibition3_old {
         position: absolute;
@@ -1172,12 +1263,12 @@ body {
     width:100%
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .art_cumulative_time {
         position: absolute;
         top: 1300px;
         left: 0;
-        width: 100vmin;
+        width: 190vmin;
         height: 400px;
     }
     
@@ -1186,14 +1277,15 @@ body {
         font-size: 16px;
         font-family: Noto Sans KR;
         margin-top:0px;
-        margin-left: 20px;
+        margin-left: calc( 5vmin + 20px );
         font-weight: 600;
     }
     
     .cum_time_graph_div {
         position: absolute;
         top: 35px;
-        width: 100vmin;
+        left:5vmin;
+        width: 90vmin;
         height: 360px;
         background: linear-gradient(to top, #F9F9F9 85%, #181818 15%);
         border-radius: 15px;
@@ -1205,13 +1297,13 @@ body {
         top: 10px;
         text-align: center;
         display: flex;
-        width: 95vmin;
+        width: 85vmin;
         justify-content: space-between;
     }
     
     .title_flex .time {
-        font-size: 24px;
-        padding-top: 2px;
+        font-size: 18px;
+        padding-top: 6px;
         font-family: Lato;
     
     }
@@ -1225,14 +1317,14 @@ body {
     }
     
     .title_flex_left {
-        width: 240px;
+        width: 45vmin;
         display: flex;
-        margin-left: 20px;
+        margin-left: 5px;
         justify-content: space-between;
     }
     
     .title_flex_right {
-        width: 250px;
+        width: 40vmin;
         display: flex;
         margin-left: 20px;
         justify-content: space-between;
@@ -1241,13 +1333,13 @@ body {
     
     .title_flex_right p {
         padding-top: 8px;
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .art_cumulative_time_graph {
         position: absolute;
         top: 50px;
-        width: 100vmin;
+        width: 90vmin;
         height: 300px;
     }
 }

@@ -12,6 +12,17 @@
     font-size: 16px;
     padding: 10px 5px;
     font-weight: bold;
+    white-space: nowrap;
+  }
+  @media screen and (max-width:768px) {
+    .common-table-header-column {
+      background-color: #e7e7e7;
+      padding: 0;
+      font-size: 14px;
+      padding: 10px 2px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
   }
    
   .common-table-row:hover {
@@ -32,4 +43,22 @@
   th, td {
     border-bottom: 1px solid #444444;
     padding: 10px;
+  }
+
+  @media screen and (max-width:768px) {
+    .common-table-column {
+      padding: 10px 2px;
+      font-size: 12px;
+    }
+  
+  
+    table {
+      width: 100%;
+      border-top: 1px solid #444444;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid #444444;
+      padding: 10px 2px;
+    }
   }

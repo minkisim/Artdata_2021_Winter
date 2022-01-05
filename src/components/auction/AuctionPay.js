@@ -260,7 +260,7 @@ export default function AuctionPay(){
                         {clickcheck ? <p className="warning_text2">※ 취소가 불가능 하므로, 가격 확인 후 결제 해주세요.</p>
                         : <p className="warning_text2">※ 약관에 체크를 하신 후 결제를 진행 해주세요.</p>}
                     </div>
-                    <div className="Bid_check"> 
+                    <div className="Bid_check2"> 
                         <div className="Bid_check_flex2"> 
                             <input type="checkbox" checked={clickcheck ? true:false} onChange={click_check}/>
                             <p>※ 아래의 내용과 약관을 확인했으며, 동의합니다.</p>

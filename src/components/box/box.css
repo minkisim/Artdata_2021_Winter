@@ -205,8 +205,6 @@ body{
 
 
 
-
-
 .artist01_Artist_Fav_title{
   position: absolute;
   top:123px;
@@ -337,31 +335,133 @@ body{
 }
 
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
   
   
 .artist01_Artist_title{
   position: absolute;
-  top:160px;
+  top:200px;
   width:300px;
-  left:calc(( 100vmin - 620px ) / 2 + 2vmin );
+  left:7vmin;
   font-size:18px;
   font-weight: 600;
   font-family: Noto Sans KR;
   margin:0px;
 }
 
+.artist01_time_line{
+  position: absolute;
+  top: 835px;
+  left:40vmin;
+  width:45vmin;
+  text-align: right;
+}
+.artist01_time_line p{
+  font-size: 10px;
+}
 .artist01_Artist_Info_div{
   position: absolute;
-  top:200px;
-  left:calc(( 100vmin - 620px ) / 2 );
+  top:225px;
+  left:5vmin;
   height: 949px;
-  width:620px;
+  width:90vmin;
   border-radius: 15px;
   background: linear-gradient(to top,#F9F9F9 99%,#181818 1%);
 }
+.artist01_Artist_name{
+  position: absolute;
+  top:35px;
+  left:5vmin;
+  text-align: left;
+  width:40vmin;
+  font-size: 30px;
+  margin: 0px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.artist01_Artist_button{
+  position: absolute;
+  top:25px;
+  left:53vmin;
+  width:150px;
+  text-align: right;
+  font-size:16px;
+}
+.artist01_Artist_textarea{
+  position: absolute;
+  top:120px;
+  left:7vmin;
+  width:80vmin;
+  height:358px;
+  border:none;
+  background-color: #F9F9F9;
+  font-family: Noto Sans KR;
+  font-size: 14px;
+  font-weight: lighter;
+  overflow:auto;
+  text-align: left;
+}
 
+.artist01_Artist_people{
+  position: absolute;
+  top:800px;
+  left:5vmin;
+  width:35vmin;
+  height:53px;
+  display:flex;
+  justify-content: space-between;
+  background-color: #181818;
+  border-radius: 15px;
+}
+.artist01_Artist_people p{
+  color:#F9F9F9;
+}
+.artist01_Artist_people_name{
+  font-size: 9px;
+  margin-left: 2px;
+  margin-top: 17px;
+  width:25vmin;
+  font-family: Noto Sans KR;
+}
+.artist01_Artist_people_num{
+  font-size:16px;
+  margin-top: 15px;
+  margin-right: 15px;
+  width:10vmin;
+  height:30px;
+  text-align: right;
+  font-family: Lato;
+}
 
+.artist01_Artist_time{
+  position: absolute;
+  top:800px;
+  left:45vmin;
+  width:44vmin;
+  height:53px;
+  display:flex;
+  justify-content: space-between;
+  background-color: #181818;
+  border-radius: 15px;
+}
+.artist01_Artist_time p{
+  color:#F9F9F9;
+}
+
+.artist01_Artist_time_name{
+  font-size: 9px;
+  margin-top: 16px;
+  margin-left: 0px;
+  width: 33vmin;
+  font-family: Noto Sans KR;
+}
+.artist01_Artist_time_num{
+  font-size:13px;
+  margin-top: 16px;
+  margin-right: 2px;
+  font-family: Lato;
+}
 
 .artist01_Artist_Fav_title{
   position: absolute;
@@ -423,8 +523,8 @@ body{
 .Art_like_title{
   position: absolute;
   top:45px;
-  left:35px;
-  width:70vmin;
+  left:5vmin;
+  width:80vmin;
   display: flex;
   justify-content: space-between;
 }
@@ -439,14 +539,14 @@ body{
 .Art_like_num{
   position: absolute;
   top:70px;
-  left:30px;
-  width:71vmin;
+  left:5vmin;
+  width:81vmin;
   display: flex;
   justify-content: space-between;
 }
 
 .Art_like_num p{
-  font-size: 33px;
+  font-size: 26px;
   margin: 0px;
   font-family: Lato;
   font-weight: 500;
@@ -455,8 +555,8 @@ body{
 .artist01_Art_Like_div{
   position: absolute;
   top:2200px;
-  left:10vmin;
-  width:80vmin;
+  left:5vmin;
+  width:90vmin;
   height:220px;
   border-radius: 15px;
   background: linear-gradient(to top,#F9F9F9 97%,#181818 3%);
@@ -465,8 +565,8 @@ body{
 .artist01_Art_Like_title{
   position: absolute;
   top:2170px;
-  left:6vmin;
-  width:200px;
+  left:7vmin;
+  width:100px;
   font-size: 16px;
   font-family: Noto Sans KR;
   font-weight: 600;

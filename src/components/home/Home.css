@@ -63,7 +63,7 @@ body{
     font-weight: 300;
   }
   
-  @media screen and (max-width:1024px){
+  @media screen and (max-width:768px){
     .Title_Page_back{
       position: absolute;
       top:200px;
@@ -75,7 +75,7 @@ body{
     
     .Title_Page_div{
       position: absolute;
-      top: calc( 150px+ ( 100vmin / 16 ) * 9 / 6);
+      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6);
       left:0vmin;
       width:100vmin;
       height: calc( 100vmin / 16 * 6 );
@@ -85,24 +85,24 @@ body{
     }
     .Title_Page_p1{
       position: absolute;
-      top:calc( 180px+ ( 100vmin / 16 ) * 9 / 6 * 3 / 2);
+      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 10vmin );
       left:10vmin;
       font-family: Noto sans KR;
       width:80vmin;
       text-align: center;
-      font-size: 45px;
+      font-size: min( 4vmin, 30px);
       margin-top: 0px;
       color: #191919;
       white-space : nowrap;
     }
     .Title_Page_p2{
       position: absolute;
-      top:calc( 180px + ( 100vmin / 16 ) * 9 / 6 * 12 / 4);
+      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 14vmin );
       left:20vmin;
       font-family: Noto sans KR;
       width:60vmin;
       text-align: center;
-      font-size: 28px;
+      font-size: min( 3vmin, 24px);
  
       font-weight: 300;
       color: #191919;
@@ -110,7 +110,7 @@ body{
     }
     .Title_Page_btn{
       position: absolute;
-      top:calc( 180px + ( 100vmin / 16 ) * 9 / 6 * 17 / 4 );
+      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 26vmin );
       left: max( calc( (100vmin - 22vmin) / 2 ) , calc( (100vmin - 190px) / 2 ) );
       width: min( 22vmin , 190px );
       height: min(7vmin, 70px);
@@ -119,7 +119,7 @@ body{
     
     }
     .Title_Page_btn p{
-      margin-top: 10px;
+      margin-top: 5px;
       font-family: Noto Sans KR;
       font-size:3vmin;
       color:#ffffff;
@@ -136,11 +136,11 @@ body{
 .Weekly{
     position: absolute;
     top:195px;
-    left:290px;
+    left:320px;
     font-size:16px;
     font-weight:bold;
 }
-.show_window_flexbox2{
+.home_window_flexbox2{
     position: absolute;
     top:226px;
     left:285px;
@@ -159,6 +159,34 @@ body{
   
 }
 
+@media screen and (max-width:768px) {
+      
+    .Weekly{
+      position: absolute;
+      top:200px;
+      left:5vmin;
+      font-size:16px;
+      font-weight:bold;
+    }
+    .home_window_flexbox2{
+      position: absolute;
+      top:230px;
+      left:5vmin;
+      width: 90vmin;
+      height: 30vmin;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-right:37px;
+      margin-left:0px;
+    }  
+
+    .home_artwork_div{
+    position: absolute;
+
+    }
+}
 
 /* Home2 Part*/
 

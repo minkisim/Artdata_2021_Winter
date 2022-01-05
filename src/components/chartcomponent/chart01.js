@@ -15,10 +15,8 @@ function Chart01(props){
         <div>
             <div className="graph_1_title">주간 전시별 관람 정보 비교</div>
             <div className="graph1">
-        
+            <ResponsiveContainer width='90%' aspect={4.0/2.5}>
                 <BarChart layout="vertical"
-                width={750}
-                height={430}
                 data={props.data}
                 margin={{
                     top: 50,
@@ -41,7 +39,7 @@ function Chart01(props){
                 <LabelList dataKey='전시 관람객' position="right"/>
                 </Bar>
                 </BarChart>
-           
+                </ResponsiveContainer>
             </div>
         </div>
     )

@@ -128,7 +128,22 @@ function SignupPage({history}){
                     <input type="text" placeholder="E-Mail" maxLength="30" onChange={(e) => setEmail(e.target.value)}/>
                     
                     <input maxLength="15" type="text" placeholder="Phone" onChange={(e) => setPhone(e.target.value)}/>
-                    
+                    <select>
+                        <option value="1">10대</option>
+                        <option value="2">20대</option>
+                        <option value="3">30대</option>
+                        <option value="4">40대</option>
+                        <option value="5">50대</option>
+                        <option value="6">60대</option>
+                        <option value="7">60대</option>
+                        <option value="8">70대</option>
+                        <option value="9">80대</option>
+                        <option value="10">90대</option>
+                    </select>
+                    <select>
+                        <option value="1">남성</option>
+                        <option value="1">여성</option>
+                    </select>
                     <div className="signup_btn" onClick={joinForm}><p>Sign Up</p></div>
                 </div>
             </div>

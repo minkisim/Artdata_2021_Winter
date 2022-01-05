@@ -66,7 +66,7 @@ export default function Home( ){
         <div>
            
             <div className="Weekly">Weekly exhibition</div>
-            <div className="show_window_flexbox2">
+            <div className="home_window_flexbox2">
                           
             {inputData[0] ? <Link to={`/exhibition3/${inputData[0].art_id}`}><ShowWindow2 artdata={inputData[0]}  /></Link>   :null}
             {inputData[1] ? <Link to={`/exhibition3/${inputData[1].art_id}`}><ShowWindow2 artdata={inputData[1]}  /></Link>   :null}

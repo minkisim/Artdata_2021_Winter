@@ -103,7 +103,6 @@ function Artist01({match}){
                 <p className="artist01_Artist_title">Artist</p>       
                 <div className="artist01_Artist_Info_div">
                     <p className="artist01_Artist_name">{artistdata[0].name}</p>
-                    <p className="artist01_Artist_button">&gt;&gt; Artist’s website</p>
                     <div className="artist01_Artist_textarea">
                         {artistdata[0].textArea}
                     </div>
@@ -112,7 +111,7 @@ function Artist01({match}){
                         <p className="artist01_Artist_people_num">{artistdata[0].people_num}</p>
                     </div> 
                     <div className="artist01_Artist_time">
-                        <p className="artist01_Artist_time_name">누적 전시 관람 체류 시간</p>
+                        <p className="artist01_Artist_time_name">누적 전시 관람 시간</p>
                         <p className="artist01_Artist_time_num">{artistdata[0].totaltime}</p>
                     </div>
                     <p className="artist01_time_line">{artistdata[0].timeline}</p>

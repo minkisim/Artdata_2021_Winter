@@ -12,7 +12,7 @@ body {
     left: 304px;
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .myPage_Page {
         position: absolute;
         top: 200px;
@@ -121,6 +121,35 @@ body {
     margin-bottom: 10px;
     margin-top: 5px;
 }
+@media screen and (max-width:768px) {
+    .personal_data_title {
+        position: relative;
+        width: 90vmin;
+        text-align: left;
+        margin-left: 0px;
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-family: Noto Sans KR;
+    }
+    
+    .personal_data_div {
+        width: 90vmin;
+        height: 100px;
+        background: linear-gradient(to top, #F9F9F9 90%, #181818 10%);
+        border-radius: 15px;
+        text-align: left;
+    }
+    
+    .personal_data_div p {
+        position: relative;
+        top: 20px;
+        left: 30px;
+        font-size: 17px;
+        font-family: Noto Sans KR;
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+}
 
 
 .collection {
@@ -194,7 +223,7 @@ body {
     margin-right: 105px;
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .collection {
         position: relative;
         top:10px;
@@ -203,41 +232,47 @@ body {
         border-radius: 15px;
         text-align: center;
         background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
-        font-size: 18px;
+        font-size: 14px;
     }
     .collect_num{
-        margin-right: 4vmin;
-        width:40px;
+        width:10vmin;
         margin-left: 0px;
-        text-align: left;
+        margin-right: 0px;
         font-family: Noto Sans KR;
+
     }
     .collect_art{
-        width:30vmin;
-        margin-right:8vmin;
-        text-align: left;
+        width:40vmin;
+        margin-left: 0px;
+        margin-right: 0px;
+
         font-family: Noto Sans KR;
     }
     .collect_artist{
-        width:15vmin;
-        text-align: left;
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
         font-family: Noto Sans KR;
-        margin-right: 5vmin;
+    }
+    .collect_day{
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
+        font-family: Noto Sans KR;
     }
     .collection_header_flex {
         position: relative;
         width: 90vmin;
         top: 0px;
-        left: 50px;
+        left: 0px;
         height: 40px;
-        
         display: flex;
         text-align: center;
         color:#F9F9F9;
     }
     
     .collection_header_flex p {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: 500;
         margin-top: 15px;
     }
@@ -246,35 +281,37 @@ body {
         position: relative;
         top: 20px;
         width: 90vmin;
-        left: 5vmin;
+        left: 0;
         height: 40px;
-        
         display: flex;
         text-align: center;
-        
         background-color: #F9F9F9;
         border-radius: 15px;
     }
     
     .data_num {
-        margin-right:6vmin;
+        width:10vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     
     .data_picture1{
-        width:30vmin;
-        text-align: left;
-        margin-right:8vmin;
+        width:40vmin;
+        margin-left: 0px;
+        margin-right: 0px;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
     }
     .data_artist1{
-        width:16vmin;
-        text-align: left;
-        margin-right: 5vmin;
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     .data_Link1{
-        width:9vmin;
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
 }
 
@@ -314,7 +351,7 @@ body {
     margin-right: 120px;
 }
 
-@media only screen and (max-width:1024px) {
+@media only screen and (max-width:768px) {
     .like_art {
         width: 90vmin;
         text-align: left;
@@ -323,37 +360,49 @@ body {
         top: 10px;
         height: 300px;
         background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
-        font-size: 18px;
+        font-size: 14px;
         margin-bottom: 300px;
     }
     .like_art_num{
-        margin-right:5vmin;
+        width:10vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     .like_art_art{
-        width: 32.5vmin;
-        text-align: left;
-        margin-right: 5vmin;
+        width:40vmin;
+        margin-left: 0px;
+        margin-right: 0px;
         font-family: Noto Sans KR;
     }
     .like_art_artist{
-        width:10vmin;
-        text-align: left;
-        margin-right: 7vmin;
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .like_art_Charge2{
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     
     
     .data_picture2{
-        width:29vmin;
-        text-align: left;
-        margin-right:9vmin;
+        width:40vmin;
+        margin-left: 0px;
+        margin-right: 0px;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
     }
     .data_artist2{
-        width:10vmin;
-        text-align: left;
-        margin-right: 7vmin;
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .data_Charge2{
+        width:20vmin;
+        margin-left: 0px;
+        margin-right: 0px;
     }
 
 }
@@ -519,29 +568,31 @@ body {
 }
 
 
-@media screen  and (max-width:1024px){
+@media screen  and (max-width:768px){
     .Transfer_Page{
         position: absolute;
-        top:180px;
-        left:5vmin;
+        top:200px;
+        left:3vmin;
     }
     .Owner_table{
         background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
         border-radius: 15px;
         position: relative;
         top:0px;
-        width: 700px;
+        width: 94vmin;
         height: 200px;
     }
     .Owner_table_header{
         position: relative;
         top:0px;
         display: flex;
+        justify-content: center;
+        width:90vmin;
     }
     .Owner_table_header p{
         color:#F9F9F9;
         font-family: Noto Sans KR;
-        font-size:16px;
+        font-size:14px;
         font-weight: 600;
     }
     
@@ -549,63 +600,72 @@ body {
         overflow-y: auto;
         height: 150px;
     }
-    
-    
+        
     .Owner_table_contents{
         position: relative;
         top:0px;
         display: flex;
+        justify-content: center;
+        width:90vmin;
     }
     .Owner_table_contents p{
-        font-size:14px;
+        font-size:12px;
     }
     .Owner_header_num{
-        position: relative;
-        left:20px;
-        width:50px;
-        text-align: left;
-        margin-top:10px;
-        margin-right:130px;
+        margin-left: 0px;
+        margin-right: 0px;
+        left:2px;
+        width:8vmin;
     }
     .Owner_header_artwork
     {
-        margin-top:10px;
-        margin-right:230px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:42vmin;
     }
     .Owner_header_artist
     {
-        margin-top:10px;
-        margin-right:140px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:20vmin;
     }
     .Owner_header_transfer
     {
         margin-top:10px;
-        margin-right:0px
+        margin-left: 0px;
+        margin-right: 0px;
+        width:20vmin;
     }
     .Owner_content_num
-    {
-        position: relative;
+    {   
         margin-top:10px;
-        left:32px;
-        margin-right:50px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:8vmin;
+        left: 0px;
     }
     .Owner_content_artwork
     {
         margin-top:10px;
+        margin-left: 0px;
+        margin-right: 0px;
         text-align: center;
-        width:300px
+        width:42vmin;
     }
     .Owner_content_artist
     {
         margin-top:10px;
-        
+        margin-left: 0px;
+        margin-right: 0px;
         text-align: center;
-        width:236px;
-        margin-right: 50px;
+        width:20vmin;
     }
     .Owner_content_btn{
-        position: relative;
+     
         top:10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:20vmin;
     }
 }
 .people_header_name{
@@ -656,4 +716,75 @@ body {
     margin-right:0px;
     width:162px;
     color:#181818;
+}
+
+@media screen and (max-width:768px) {
+    .people_header_name{
+        margin-left: 0px;
+        margin-right: 0px;
+        left:0px;
+        width:20vmin;
+        color:#181818;
+    }
+    .people_header_email{
+
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:40vmin;
+        color:#181818;
+    }
+    .people_header_idCode{
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:30vmin;
+        color:#181818;
+    }
+    .people_table_content{
+        display: flex;
+        width:90vmin;
+        text-align: center;
+        justify-content: center;
+    }
+    .people_table_name{
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:20vmin;
+        color:#181818;
+    }
+    .people_table_email{
+        position: relative;
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:40vmin;
+        color:#181818;
+    }
+    .people_table_idCode{
+        margin-top: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+        width:30vmin;
+        color:#181818;
+    }
+
+.people_table{
+    position: relative;
+    top:20px;
+    left:2vmin;
+    width:90vmin;
+    height:150px;
+    background: linear-gradient(to top, #F9F9F9 75%, #181818 25%);
+    border-radius: 15px;
+}
+
+.people_table_header{
+    display: flex;
+    background-color: #F9F9F9;
+    width: 90vmin;
+    text-align: center;
+    justify-content: center;
+}
 }

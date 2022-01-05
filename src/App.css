@@ -20,7 +20,7 @@ body{
 @media only screen and (max-width:500px)  {
   .art_data_title{
     position: absolute;
-    top:1vh;
+    
   }
 }
 
@@ -41,7 +41,7 @@ a { text-decoration: none; color: black; }
 .art_data_title .logo img{
   width:134px;
 }
-@media only screen and (max-width:1024px)  {
+@media only screen and (max-width:768px)  {
   .art_data_title{
     position: absolute;
     top:20px;
@@ -56,6 +56,9 @@ a { text-decoration: none; color: black; }
     width:90px;
   }
   .menu_bar{
+    visibility: hidden;
+  }
+  .search_bar{
     visibility: hidden;
   }
 
@@ -141,14 +144,14 @@ a { text-decoration: none; color: black; }
   margin: 10px;
 }
 
-@media only screen and (max-width:1024px)  {
+@media only screen and (max-width:768px)  {
 
   .user_icon .icon_sample{
     position: absolute;
-    top: 50px;
-    left: 77vmin;
-    width: 40px;
-    height: 40px;
+    top: 45px;
+    left: 66vmin;
+    width: 30px;
+    height: 30px;
     border-radius: 70%;
     margin-top:7px;
     background-color: #888888;
@@ -156,18 +159,17 @@ a { text-decoration: none; color: black; }
   
   .title_login_btn{
     position: absolute;
-    top:55px;
-    left:86vmin;
-    width:100px;
-    height:40px;
+    top:50px;
+    left:77vmin;
+    width:80px;
+    height:35px;
     background-color: #181818;
     border-radius: 20px;
   }
   
   .title_login_btn p{
     color:#e0e0e0;
-    font-size:16px;
-    margin: 10px;
+    font-size:12px;
   }
 
 }

@@ -30,11 +30,7 @@ function VaneTitle({isLogin,isAdmin}){
 
     function mainSearch()
     {
-      if(search.length<=0)
-      {
-        alert('검색할 내용을 입력하십시오')
-        return false
-      }
+      
       
       axios.post(`http://${dev_ver}:4000/api/mainsearch`,{check:id, name:search})
       .then((result)=>{

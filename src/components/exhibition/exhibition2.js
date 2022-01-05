@@ -134,7 +134,7 @@ function Exhibition2({match}){
                     </div>
                     <div className="exhibition2_data_box1">
                         <div>
-                            <p className="data_box_name">금일 전시 관람객</p>
+                            <p className="data_box_name">전시 관람객</p>
                         </div>
                         <div>
                             <p className="data_box_number">{exhibition[0].datenumber}</p>
@@ -142,7 +142,7 @@ function Exhibition2({match}){
                     </div>
                     <div className="exhibition2_data_box2">
                         <div>
-                            <p className="data_box_name">금일 전시 관람 체류 시간</p>
+                            <p className="data_box_name">전시 관람 시간</p>
                         </div>
                         <div>
                             <p className="data_box_number">{exhibition[0].totalnumber}</p>
@@ -157,7 +157,7 @@ function Exhibition2({match}){
                 <div className="table_header">
                     <div className="table_rank"><p className="table_font">순위</p></div>
                     <div className="table_art"><p className="table_font">작품</p></div>
-                    <div className="table_time"><p className="table_font">관람 누적 체류 시간</p></div>
+                    <div className="table_time"><p className="table_font">관람 누적 시간</p></div>
                 </div>
                 { rankdata[0]!=null &&  rankdata[0].art != '' && rankdata.map( part => 
                     <div className="table_body">

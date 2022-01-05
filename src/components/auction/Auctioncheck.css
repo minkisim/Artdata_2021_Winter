@@ -179,24 +179,23 @@
 }
 
 @media only screen and (max-width:1024px){
+
     .Bid_back_div{
         position: absolute;
         top:80px;
-        left: calc( ( 90vmin - 700px ) / 2 );
-        width:700px;
-        height:500px;
+        left: 0vmin;
+        width:90vmin;
+        height:600px;
         background-color: #F9F9F9;
         border: 3px black solid;
     }
 
-    
-
 .Bid_back_div2{
     position: absolute;
     top:80px;
-    left:calc( ( 90vmin - 700px ) / 2 );
-    width:700px;
-    height:340px;
+    left:0vmin;
+    width:90vmin;
+    height:570px;
     background-color: #F9F9F9;
     border: 3px black solid;
 }
@@ -204,35 +203,37 @@
 .Bid_btn{
     position: absolute;
     top:0px;
-    left:650px;
+    left:80vmin;
+    width: 10vmin;
+    object-fit: cover;
 }
 .Bid_title{
     text-align: left;
-    width: 702px;
+    width: 90vmin;
     height: 50px;
     background-color: #000000;
 }
 .Bid_title span{
     position: relative;
-    top:5px;
-    left:15px;
-    font-size:22px;
+    top:10px;
+    left:10px;
+    font-size:16px;
     font-family: Noto Sans KR;
     color:#F9F9F9;
 }
 .Bid_price{
     position: relative;
     top:20px;
-    left:30px;
+    left:5vmin;
     text-align: left;
-    width:290px;
+    width:80vmin;
     height:170px;
     border: 2px #a8a8a8 solid; 
 }
 
 .Bid_price_title{
     position: relative;
-    width:270px;
+    width:75vmin;
     height:30px;
     top:10px;
     left:10px;
@@ -242,7 +243,7 @@
 
 .Bid_price_title2{
     position: relative;
-    width:270px;
+    width:75vmin;
     height:30px;
     top:10px;
     left:10px;
@@ -254,37 +255,36 @@
     position: relative;
     top:18px;
     left:10px;
-    width:252px;
+    width:71vmin;
     height:40px;
     text-align: right;
-    padding-right: 10px;
-    font-size:21px
+    font-size:18px
 }
 .Bid_price_block{
     position: relative;
     top:10px;
     left:10px;
-    width:262px;
+    width:72vmin;
     height:40px;
     text-align: right;
     padding-right: 50px;
 }
 .Bid_price_block p{
-    font-size: 16px;
+    font-size: 14px;
     font-family: Noto Sans KR;
 }
 .warning_text{
     position: relative;
     top:30px;
-    left:10px;
+    left:5px;
     margin: 0px;
     font-size: 12px;
     color:#d12710;
 }
 .warning_text2{
     position: relative;
-    top:25px;
-    left:10px;
+    top:30px;
+    left:5px;
     margin: 0px;
     font-size: 12px;
     color:#d12710;
@@ -293,7 +293,7 @@
     position: relative;
     top:25px;
     left:10px;
-    width: 270px;
+    width: 75vmin;
     height:40px;
     text-align: center;
     background-color: #000000;
@@ -302,7 +302,7 @@
     position: relative;
     top:25px;
     left:10px;
-    width: 270px;
+    width: 75vmin;
     height:40px;
     text-align: center;
     background-color: #e8e8e8;
@@ -342,8 +342,24 @@
     margin-top:1px;
     margin-bottom: 0px;
     margin-right:5px;
-    zoom: 1.5;
-    
+    zoom: 1.5; 
+}
+
+.Bid_check2{
+    position: absolute;
+    top:50px;
+    left:410px;
+    text-align: left;
+}
+.Bid_check2 p{
+    margin:0px;
+    font-size:14px;
+}
+.Bid_check2 input{
+    margin-top:1px;
+    margin-bottom: 0px;
+    margin-right:5px;
+    zoom: 1.5; 
 }
 .Bid_check_flex{
     position: relative;
@@ -437,13 +453,14 @@
 @media only screen and (max-width:1024px){
     .Bid_check{
         position: absolute;
-        top:50px;
-        left:325px;
+        top:350px;
+        left:2vmin;
         text-align: left;
     }
+
     .Bid_check p{
         margin:0px;
-        font-size:14px;
+        font-size:12px;
     }
     .Bid_check input{
         margin-top:1px;
@@ -452,24 +469,42 @@
         zoom: 1.5;
         
     }
+
+    .Bid_check2{
+        position: absolute;
+        top:250px;
+        left:2vmin;
+        text-align: left;
+    }
+    .Bid_check2 p{
+        margin:0px;
+        font-size:12px;
+    }
+    .Bid_check2 input{
+        margin-top:1px;
+        margin-bottom: 0px;
+        margin-right:5px;
+        zoom: 1.5; 
+    }
     .Bid_check_flex{
         position: relative;
         top:20px;
         left:10px;
+        width:80vmin;
         display: flex;
     }
     .Bid_check_flex p{
         color:#d12710;
-        font-size: 15px;
+        font-size: 13px;
     }
     .Bid_check_textArea{
         position: relative;
         top:30px;
         left:20px;
-        width:345px;
+        width:75vmin;
     }
     .Bid_check_textArea p{
-        font-size: 12px;
+        font-size: 11px;
         font-family: Noto Sans KR;
     }
     
@@ -487,7 +522,7 @@
         position: relative;
         top:30px;
         left:20px;
-        width:345px;
+        width:75vmin;
     }
     .Bid_check_textArea2 p{
         font-size: 13px;
@@ -496,8 +531,8 @@
     .Bid_check_btn{
         position: relative;
         top:40px;
-        left:25px;
-        width: 330px;
+        left:3vmin;
+        width: 80vmin;
         height:24px;
         border: 2px #a8a8a8 solid;
         text-align: center;
@@ -508,9 +543,9 @@
     }
     .Bid_now{
         position: relative;
-        top:50px;
-        left:30px;
-        width:290px;
+        top:30px;
+        left:5vmin;
+        width:80vmin;
         height:100px;
         border: 2px #a8a8a8 solid; 
     }

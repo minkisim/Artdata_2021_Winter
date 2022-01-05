@@ -205,7 +205,7 @@ function MyAuction(){
                                 <div><p className="like_art_num">번호</p></div>
                                 <div><p className="like_art_art">작품명</p></div>
                                 <div><p className="like_art_artist">작가명</p></div>
-                                <div><p>결제</p></div>
+                                <div><p className='like_art_Charge2'>결제</p></div>
                                 
                         </div>
                         {/*이 데이터의 반복 */}
@@ -215,7 +215,7 @@ function MyAuction(){
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture2">{data.artname}</p></div>
                                         <div><p className="data_artist2">{data.artist}</p></div>
-                                        <div><a href={`/auctionpay?id=${data.artwork_id}`}><p>결제</p></a></div>
+                                        <div><a href={`/auctionpay?id=${data.artwork_id}`}><p className='data_Charge2'>결제</p></a></div>
                                 </div>
                         
                         )}
