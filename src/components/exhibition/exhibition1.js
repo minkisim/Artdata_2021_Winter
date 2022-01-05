@@ -21,7 +21,7 @@ function Exhibition(){
         then((res)=>{
             
             setdata(res.data);
-            console.log(res.data)
+            //console.log(res.data)
         })
         .catch(()=>{
         alert('error');

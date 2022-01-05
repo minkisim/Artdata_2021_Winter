@@ -1,3 +1,4 @@
+drop table user_preference;
 drop table auction cascade;
 drop table user_bid cascade;
 drop table art cascade;
@@ -6,7 +7,7 @@ drop table board cascade;
 drop table artuser cascade;
 drop table exhibition cascade;
 drop table notification cascade;
-drop table user_preference;
+
 
 create table artuser (
 	username	varchar(30)	not null,
@@ -125,6 +126,8 @@ create table user_preference (
 	art_id		int			not null,
 	access_time	date			not null,
 	hits		int			not null default 0,
+	gender		varchar(1)	check(gender = 'm' or gender = 'f'),
+	age		int			not null,
 	primary key (username, art_id, access_time),
 	foreign key (username) references artuser(username) on delete cascade,
 	foreign key (art_id) references art(art_id) on delete cascade

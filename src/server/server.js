@@ -6,18 +6,20 @@ const cors = require("cors");
 //mysql추가사항
 var mysql = require('mysql2/promise')
 //var mysql_dbConfig = require('./config/db') 
-
+const pool = mysql.createPool({
+    host : "localhost",
+    user : "vane",
+    password : "vane2021@@",
+    database : "nodedb",
+    port : "3306",
+    connectionLimit:50
+})
 
 async function openConnection(connection)
 {
+    try{
     //동기 db연결, 질의 결과를 대기
-    const pool = mysql.createPool({
-        host : "localhost",
-        user : "vane",
-        password : "vane2021@@",
-        database : "nodedb",
-        port : "3306"
-    })
+
     
     var connection = await pool.getConnection(async conn => conn)
     /*
@@ -41,11 +43,17 @@ async function openConnection(connection)
         
     })
     */
+    }catch(err)
+    {
+        console.log(err)
+    }
     return connection
 }
 
 async function closeConnection(connection)
 {
+    try{
+    
     await connection.release()
    /*
    await connection.end((err)=>{
@@ -59,6 +67,11 @@ async function closeConnection(connection)
     }
    })
    */
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
 }
 
 
@@ -179,7 +192,7 @@ app.use(cookieParser());
 
 var _storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        if(file.mimetype=='image/png' || file.mimetype=='image/jpeg')
+        if(file.mimetype=='image/png' || file.mimetype=='image/jpeg' || file.mimetype == 'image/gif')
             cb(null, 'public/img/') // cb 콜백함수를 통해 전송된 파일 저장 디렉토리 설정
 
         else if(file.mimetype=='application/pdf')
@@ -361,6 +374,7 @@ app.post('/api/artist_upload/search',async (req,res)=>{
 
 app.post('/api/imgupload',async (req,res) => {
     var connection = await openConnection()
+    var date = moment().format('YYYY-MM-DD').toString()
     //작품 업로드 혹은 등록
 
     //업로드할 작품 id가 입력되지 않았을때
@@ -377,7 +391,7 @@ app.post('/api/imgupload',async (req,res) => {
                 var idnum
                 //질의 결과가 존재할 경우
                 //+1한 값
-                if(result.rows!=undefined)
+                if(result!=undefined && result[0]!=undefined)
                 {
                     idnum = result[0].art_id+1
                     console.log("추가 : "+idnum)
@@ -396,7 +410,7 @@ app.post('/api/imgupload',async (req,res) => {
                         [
                             idnum,
                             req.body.artname,
-                            null,
+                            date,
                             req.body.imagesize,
                             req.body.imageurl,
                             req.body.imagetype,
@@ -875,7 +889,7 @@ app.post('/api/joinForm', async (req,res)=>
 {
     var connection = await openConnection()
         //회원 정보 등록
-        let query = "insert into artuser values (?, ?, ?, ?, ?, ?)"
+        let query = "insert into artuser values (?, ?, ?, ?, ?, ?, ?, ?)"
         try{
             var [result] = await connection.query(query, [
                 req.body.username,
@@ -883,7 +897,10 @@ app.post('/api/joinForm', async (req,res)=>
                 req.body.password,
                 req.body.email,
                 req.body.phone,
-                "ROLE_USER"])
+                "ROLE_USER",
+                req.body.gender !== 0 ? req.body.gender : null,
+                req.body.age
+            ])
                 //회원 정보 등록
                 if(result != undefined && result.affectedRows>=1)
                 {
@@ -919,7 +936,7 @@ app.post('/api/loginForm', async (req,res)=>
         var uname = req.body.username
         
         //사용자명으로 비밀번호, 사용자 권한 알아내기
-        let sql = "select username, name, password, email,  role from artuser where username = ?";
+        let sql = "select username, name, password, email,  role, gender, age from artuser where username = ?";
         console.log(uname.trim());
         //uname.trim()으로 공백 지운
         //사용자의 아이디 입력값으로
@@ -947,6 +964,8 @@ app.post('/api/loginForm', async (req,res)=>
                     email: result[0].email,
                     name : result[0].name,
                     role: roles = result[0].role.toUpperCase(),
+                    gender: result[0].gender,
+                    age: result[0].age,
                     success:true,
                     authorized: true
                 };
@@ -1130,23 +1149,29 @@ app.get('/api/home3/graph', async function (req, res) {
     var connection = await openConnection()
  //HOME3의 그래프에 사용될
  //가장 최근에 등록한 작품 5개의 정보 가져오기
-        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from ( select art_name, Remaintime ,Audience_number  from art a order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
+        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from ( select art_name, Remaintime ,Audience_number, art_id  from art a order by art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
         try{
             var [result] = await connection.query(query)
             var jsondata = []
            //질의 결과가 있을 때
             if(result != undefined && result[0]!=undefined)
             {
-                result.forEach((array)=>{
+                
+                await result.forEach(async(array,index)=>{
+                    var value = await show_user_preference(connection, array.art_id)
+                   
                     var data = {name : array.art_name,
                         '전시 관람 체류 시간' : array.Remaintime,
-                        '전시 관람객': array.Audience_number}
-    
-                    //console.log('\n')
+                        '전시 관람객': value.totalnum !== null ? value.totalnum : 0}
                     jsondata.push(data)
+                    if(index==4)
+                    {
+                        res.json(jsondata)
+                    }
+                   
                 })
+                
             }
-            res.json(jsondata)
         }catch(err)
         {
             //db 에러시
@@ -1278,35 +1303,34 @@ app.get('/api/exhibition1/data', async function (req, res) {
                 try{
                     var [result] = await connection.query(query,
                         [req.body.exhibition])
-    
-                        var jsondata = []
-            
+                    var jsondata = []
+                    var value = [Number(0), Number(0), Number(0), Number(0)]
                         //전시관에 작품이 존재할 때
                         if(result != undefined && result[0] != undefined )
                         {
                             result.forEach((rows,i) => {
-                                var data = {
-                                    artist:rows.artist_name,
-                                    day:'apr 10 - may 11, 2021',
-                                    musium: rows.exhibition_name,
-                                    img:rows.image_url,
-                                    artworkUrl: '/exhibition3/'+rows.art_name,
-                                    textTitle: rows.Art_id,
-                                    textArea: rows.Exhibition_data,
-                                    datenumber:351,
-                                    totalnumber:'194:36:41',
-                                    time:'2020. 02. 08 PM 14:00 기준'
-                                
+                                if(i==0)
+                                {
+                                    var data = {
+                                        artist:rows.artist_name,
+                                        day:'apr 10 - may 11, 2021',
+                                        musium: rows.exhibition_name,
+                                        img:rows.image_url,
+                                        artworkUrl: '/exhibition3/'+rows.Art_id,
+                                        textTitle: rows.Art_id,
+                                        textArea: rows.Exhibition_data,
+                                        datenumber:Number(0),
+                                        totalnumber:'194:36:41',
+                                        time:'2020. 02. 08 PM 14:00 기준'
+                                    
+                                    }
+                                    jsondata.push(data)
                                 }
-                                jsondata.push(data)
                             })
-    
-                            res.json(jsondata)
                         }
                         //전시관에 작품이 없는 경우 전시관에 대한 정보만 반환
                         else
                         {
-                            
                             let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id = ?"
                             var [result2] = await connection.query(q,[req.body.exhibition])
                                     if(result2 != undefined && result2[0] != undefined)
@@ -1319,22 +1343,37 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                             artworkUrl:'#',
                                             textTitle: '해당 전시관에 진행중인 내용이 없습니다',
                                             textArea: result2[0].exhibition_data,
-                                            datenumber:351,
+                                            datenumber:Number(0),
                                             totalnumber:'194:36:41',
                                             time:'2020. 02. 08 PM 14:00 기준'
                                         
                                         }
-                
                                         jsondata.push(data)
                                     }
                                     else{
                                         
                                         jsondata.push({notuple:true})
                                     }
-                                  console.log(jsondata)
-                                 res.json(jsondata)
-    
                         }
+
+                        query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
+                        var [result2] = await connection.query(query, [req.body.exhibition])
+                        var sum = Number(0)
+                        if(result2!=undefined && result2[0] != undefined){
+                            value = chart04_user_preference(result2)
+                            value.forEach((it)=>{
+                                sum+=it
+                            })
+                            jsondata[0].datenumber = sum
+                            
+                            jsondata.push([
+                                { name: '10-20대', value: value[0] },
+                                { name: '30-40대', value: value[1] },
+                                { name: '50-60대', value: value[2] },
+                                { name: '70대 이상',  value: value[3] }
+                            ])
+                        }
+                        res.json(jsondata)
                 }catch(err)
                 {
                     //db 에러시
@@ -1349,31 +1388,34 @@ app.get('/api/exhibition1/data', async function (req, res) {
         //접속한 url에 전시관 id가 존재하지 않을 때
         else{
                 //작품수가 가장 많이 전시된 전시관의 작품 정보 가져오기
-                let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data from (select * from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id, x.Exhibition_name, x.Exhibition_data, count(*) artnum from exhibition x, art aa where x.Exhibition_id = aa.Exhibition_id group by x.Exhibition_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1) e, art a, artist r where e.exhibition_id = a.exhibition_id and a.Artist_id = r.Artist_id"
+                let query = "select r.artist_name, e.exhibition_name, a.image_url, a.art_name, a.Art_id, e.Exhibition_data, e.exhibition_id from (select * from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id, x.Exhibition_name, x.Exhibition_data, count(*) artnum from exhibition x, art aa where x.Exhibition_id = aa.Exhibition_id group by x.Exhibition_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1) e, art a, artist r where e.exhibition_id = a.exhibition_id and a.Artist_id = r.Artist_id"
                 try{
                     var [result] = await connection.query(query)
                     var jsondata = []
+                    var exhibition_id
                     //전시관에 작품이 있을 때
                     if(result != undefined && result[0] != undefined )
                     {
+                        exhibition_id = result[0].exhibition_id
                         result.forEach((rows,i) => {
-                            var data = {
-                                artist:rows.artist_name,
-                                day:'apr 10 - may 11, 2021',
-                                musium: rows.exhibition_name,
-                                img:rows.image_url,
-                                artworkUrl: '/exhibition3/'+rows.art_name,
-                                textTitle: rows.Art_id,
-                                textArea: rows.Exhibition_data,
-                                datenumber:351,
-                                totalnumber:'194:36:41',
-                                time:'2020. 02. 08 PM 14:00 기준'
-                            
+                            if(i==0)
+                            {
+                                var data = {
+                                    artist:rows.artist_name,
+                                    day:'apr 10 - may 11, 2021',
+                                    musium: rows.exhibition_name,
+                                    img:rows.image_url,
+                                    artworkUrl: '/exhibition3/'+rows.Art_id,
+                                    textTitle: rows.Art_id,
+                                    textArea: rows.Exhibition_data,
+                                    datenumber:Number(0),
+                                    totalnumber:'194:36:41',
+                                    time:'2020. 02. 08 PM 14:00 기준',
+                                    exhibition_id:rows.exhibition_id
+                                }
+                                jsondata.push(data)
                             }
-
-                            jsondata.push(data)
                         })
-                        res.json(jsondata)
                     }
                     //작품수가 가장 많이 전시된 전시관에 작품이 없는 경우
                     else
@@ -1381,10 +1423,11 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         //가장 최근 등록된 전시관 정보 가져오기
                         //작품이 가장 많이 전시된 전시관의 작품수가 0이므로
                         //모든 전시관의 작품수가 0이란 의미 
-                        let q = "select e.exhibition_name, e.exhibition_data from exhibition e where e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
+                        let q = "select e.exhibition_name, e.exhibition_data, e.exhibition_id from exhibition e where e.exhibition_id in (select exhibition_id from (select t.*, @rownum := @rownum + 1 rownum  from (select x.exhibition_id from exhibition x order by x.exhibition_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
                         var result2 = await connection.query(q,[req.body.exhibition])
                                 if(result2 != undefined && result2[0] != undefined)
                                 {
+                                    exhibition_id = result2[0].exhibition_id
                                     var data = {
                                         artist:'작품 없음',
                                         day:'apr 10 - may 11, 2021',
@@ -1393,21 +1436,36 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                         artworkUrl:'#',
                                         textTitle: '해당 전시관에 진행중인 내용이 없습니다',
                                         textArea: result2[0].exhibition_data,
-                                        datenumber:351,
+                                        datenumber:Number(0),
                                         totalnumber:'194:36:41',
-                                        time:'2020. 02. 08 PM 14:00 기준'
-                                    
+                                        time:'2020. 02. 08 PM 14:00 기준',
+                                        exhibition_id:exhibition_id
                                     }
             
                                     jsondata.push(data)
                                 }
                                 else{
-                                    
                                     jsondata.push({notuple:true})
                                 }
-                              console.log(jsondata)
-                             res.json(jsondata)
                     }
+                    query = "select p.age, sum(p.hits) hits from user_preference p, art a where a.exhibition_id = ? and a.art_id = p.art_id group by p.age order by p.age"
+                        var [result2] = await connection.query(query, [exhibition_id])
+                        var sum = Number(0)
+                        if(result2!=undefined && result2[0] != undefined){
+                            value = chart04_user_preference(result2)
+                            value.forEach((it)=>{
+                                sum+=it
+                            })
+                            jsondata[0].datenumber = sum
+                            
+                            jsondata.push([
+                                { name: '10-20대', value: value[0] },
+                                { name: '30-40대', value: value[1] },
+                                { name: '50-60대', value: value[2] },
+                                { name: '70대 이상',  value: value[3] }
+                            ])
+                        }
+                    res.json(jsondata)
                 }catch(err)
                 {
                     //db 에러시
@@ -1533,16 +1591,6 @@ app.get('/api/exhibition1/data', async function (req, res) {
                           }
                     ])
                 });
-
-                app.get('/api/exhibition2/chart04', function (req, res) {
-                    res.json(
-                        [
-                            { name: '10-20대', value: 600 },
-                            { name: '30-40대', value: 230 },
-                            { name: '50-60대', value: 150 },
-                            { name: '70대 이상',  value: 70 }
-                        ])
-                    });
         
                                             //유저, 작품, 날짜 조회수 갱신 및 등록
                                             async function update_user_preference(connection, req, art_id)
@@ -1561,9 +1609,9 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                             sql = "update user_preference set hits = hits + 1 where username = ? and art_id = ? and access_time = DATE_FORMAT(?, '%Y-%m-%d')"
                                                         }
                                                         else{
-                                                            sql = "insert into user_preference values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), 1)"
+                                                            sql = "insert into user_preference values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), 1, ?, ?)"
                                                         }
-                                                        var [result2] = await connection.query(sql, [req.session.user.username, art_id, date])
+                                                        var [result2] = await connection.query(sql, [req.session.user.username, art_id, date, req.session.user.gender, req.session.user.age])
                                                         if(result2 !=undefined && result2.affectedRows>=1)
                                                         {
                                                             connection.commit()
@@ -1576,6 +1624,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                     }
                                                 }
                                             };
+                                            //금일 조회, 총 조회 질의
                                             async function show_user_preference(connection, art_id)
                                             {
                                                 var date = moment().format('YYYY-MM-DD')
@@ -1608,8 +1657,38 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                     //db 에러시
                                                     console.error(err); 
                                                 }
+
+                                                returnvalue.dailynum !== null ? returnvalue.dailynum : 0
+                                                returnvalue.totalnum !== null ? returnvalue.totalnum : 0
                                                 return returnvalue
                                             };
+                                            //chart04용 데이터 반환, 나이별 조회 목록
+                                            function chart04_user_preference(result)
+                                            {
+                                                var value = [Number(0), Number(0), Number(0), Number(0)]
+                                                result.forEach((it)=>{
+                                                    switch(true)
+                                                    {
+                                                        case(it.age<30):
+                                                        value[0] = Number(value[0]) + Number(it.hits)
+                                                        break
+                                                        
+                                                        case(it.age<50):
+                                                        value[1] = Number(value[1]) +  Number(it.hits)
+                                                        break
+                
+                                                        case(it.age<70):
+                                                        value[2] = Number(value[2]) +  Number(it.hits)
+                                                        break
+                
+                                                        default:
+                                                        value[3] = Number(value[3]) +  Number(it.hits)
+                                                        break
+                                                    }
+                                                })
+
+                                                return value
+                                            }
 
                     app.post('/api/exhibition3/exhibition', async function (req, res) {
                         var connection = await openConnection()
@@ -1618,7 +1697,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         if(req.body.id !=undefined && req.body.id.length>=1)
                         {
                                 //해당 작품의 정보 반환
-                                let query = "select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id  from  artist r, art a, exhibition e where a.art_id = ? AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
+                                let query = "select r.artist_name , a.art_name, a.image_type, DATE_FORMAT(a.release_date,'%Y-%m-%d') getdate, a.image_size, a.image_url, e.exhibition_name, e.exhibition_id, r.artist_id, a.art_id  from  artist r, art a, exhibition e where a.art_id = ? AND r.artist_id = a.artist_id AND a.exhibition_id = e.exhibition_id"
                                 try{
                                     var [result] = await connection.query(query, [req.body.id])
                                         var jsondata = []
@@ -1635,12 +1714,13 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                     artsize: array.getdate+", " +array.image_size,
                                                     imgUrl: array.image_url,
                                                     musium: array.exhibition_name,
-                                                    people_number: value.dailynum,
-                                                    total_people_number: value.totalnum,
+                                                    people_number: Number(value.dailynum),
+                                                    total_people_number: Number(value.totalnum),
                                                     time : date +'기준',
                                                     totaltime: '283:36:41',
                                                     exhibition_id : array.exhibition_id,
-                                                    artist_id : array.artist_id
+                                                    artist_id : array.artist_id,
+                                                    art_id : array.art_id
                                                 }
                                                 jsondata.push(data)
                                             })
@@ -1679,12 +1759,13 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                 artsize: array.getdate+", " +array.image_size,
                                                 imgUrl: array.image_url,
                                                 musium: array.exhibition_name,
-                                                people_number: value.dailynum,
-                                                total_people_number: value.totalnum,
+                                                people_number: Number(value.dailynum),
+                                                total_people_number: Number(value.totalnum),
                                                 time : date +'기준',
                                                 totaltime: '283:36:41',
                                                 exhibition_id : array.exhibition_id,
-                                                artist_id : array.artist_id
+                                                artist_id : array.artist_id,
+                                                art_id : array.art_id
                                             }
                                             jsondata.push(data)
                                         })
@@ -1702,6 +1783,37 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         }
                         await closeConnection(connection)
                     });
+
+                    app.post('/api/exhibition3/chart04', async function (req, res){
+                        var connection = await openConnection()
+
+                        var query = "select age, sum(hits) hits from user_preference where art_id = ? group by age order by age"
+
+                        try{
+                            var [result] = await connection.query(query,req.body.art_id)
+                            var value = [Number(0),Number(0),Number(0),Number(0)]
+                            if(result!=undefined && result[0]!=undefined)
+                            {
+                                value = chart04_user_preference(result)
+
+                            }
+                            res.json(
+                                [
+                                    { name: '10-20대', value: value[0] },
+                                    { name: '30-40대', value: value[1] },
+                                    { name: '50-60대', value: value[2] },
+                                    { name: '70대 이상',  value: value[3] }
+                                ])
+                        }catch(err)
+                        {
+                            //db 에러시
+                            console.error(err); 
+                            res.status(200).json({
+                              success:false
+                           })
+                        }
+                        await closeConnection(connection)
+                    })
 
                         app.post('/api/exhibition3/chart05', function (req, res) {
                             console.log(req.body.date)
@@ -1869,6 +1981,8 @@ app.get('/api/exhibition1/data', async function (req, res) {
                             }
                         });
 
+                        
+
                                 app.post('/api/artist01/slider', async function (req, res) {
                                     var connection = await openConnection()
                                             //작가 id가 url에 있을 경우
@@ -1939,6 +2053,8 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                             }
                                             await closeConnection(connection)
                                     });
+
+
                                    
                                     app.post('/api/artist01/artist', async function (req, res) {
                                         var connection = await openConnection()
@@ -1956,13 +2072,32 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                                         name: rows.artist_name,
                                                                         btnUrl: '#',
                                                                         textArea: rows.Artist_info,
-                                                                        people_num: '35121',
+                                                                        people_num: Number(0),
                                                                         totaltime: '1894:36:41',
                                                                         timeline: date+' 기준',
                                                                         like: '60'
                                                                     })
                                                                 })
                                                             }
+
+                                                            query = "select a.artist_id, p.age, sum(p.hits) hits from user_preference p, art a where a.art_id = p.art_id and a.artist_id = ? group by a.artist_id, p.age order by p.age"
+                                                            var [result2] = await connection.query(query, [req.body.id])
+                                                            var people_num = Number(0)
+                                                            if(result2!=undefined && result2[0]!=undefined)
+                                                            {
+                                                                var value = chart04_user_preference(result2)
+                                                                
+                                                                jsondata.push(
+                                                                    [
+                                                                        { name: '10-20대', value: value[0] },
+                                                                        { name: '30-40대', value: value[1] },
+                                                                        { name: '50-60대', value: value[2] },
+                                                                        { name: '70대 이상',  value: value[3] }
+                                                                    ])
+                                        
+                                                            }
+                                                            jsondata[0].people_num = people_num
+
                                                             res.json(jsondata)
                                                         }catch(err)
                                                         {
@@ -1976,7 +2111,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                     
                                                     else
                                                     {
-                                                        var query = "select t.artist_name, t.Artist_info from artist t where t.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
+                                                        var query = "select t.artist_name, t.Artist_info, t.artist_id from artist t where t.artist_id IN (select artist_id from (select t.*, @rownum := @rownum + 1 rownum  from (select k.artist_id, COUNT(y.art_id) artnum from artist k, art y where y.artist_id = k.artist_id group by k.artist_id order by artnum desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1)"
                                                         try{
                                                             var [result] = await connection.query(query)
                                                             var jsondata = []
@@ -1987,13 +2122,31 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                                             name: rows.artist_name,
                                                                             btnUrl: '#',
                                                                             textArea: rows.Artist_info,
-                                                                            people_num: '35121',
+                                                                            people_num: Number(0),
                                                                             totaltime: '1894:36:41',
                                                                             timeline: date+' 기준',
                                                                             like: '60'
                                                                         })
                                                                     })
+
+                                                                    query = "select a.artist_id, p.age, sum(p.hits) hits from user_preference p, art a where a.art_id = p.art_id and a.artist_id = ? group by a.artist_id, p.age order by p.age"
+                                                                    var [result2] = await connection.query(query, [result[0].artist_id])
+                                                                    var people_num = Number(0)
+                                                                    if(result2!=undefined && result2[0]!=undefined)
+                                                                    {
+                                                                        var value = chart04_user_preference(result2)
+                                                                        
+                                                                        jsondata.push(
+                                                                            [
+                                                                                { name: '10-20대', value: value[0] },
+                                                                                { name: '30-40대', value: value[1] },
+                                                                                { name: '50-60대', value: value[2] },
+                                                                                { name: '70대 이상',  value: value[3] }
+                                                                            ])
+                                                
+                                                                    }
                                                                 }
+                                                                jsondata[0].people_num = people_num
                                                                 res.json(jsondata)
                                                         }catch(err)
                                                         {

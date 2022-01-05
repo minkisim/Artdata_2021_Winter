@@ -4,8 +4,12 @@ import './login.css';
 import { useForm } from 'react-hook-form';
 
 import {dev_ver} from './global_const';
-// 회원가입 용 페이지 구성 코드
+// 회원가입용 페이지 구성 코드
 function SignupPage({history}){
+    const genderselection = ["선택 없음", "남성", "여성"]
+    const genderval = [0, 'm', 'f']
+    const agenum = ["10대","20대","30대","40대","50대","60대","70대","80대","90대"]
+    const ageval = [10,20,30,40,50,60,70,80,90]
     const { handleSubmit, register, watch, errors } = useForm();
 
     const [username, setUsername] = useState('');
@@ -14,6 +18,8 @@ function SignupPage({history}){
     const [passwordcheck, setPasswordcheck] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    const [gender, setGender] = useState(0)
+    const [age, setAge] = useState(10)
 
     const [isIdChecked, setIsIdChecked] = useState('no');
 
@@ -66,7 +72,9 @@ function SignupPage({history}){
             name:name,
             password: password,
             email: email,
-            phone:phone
+            phone:phone,
+            gender:gender,
+            age:age
         })
         .then((result) =>
         {
@@ -126,24 +134,18 @@ function SignupPage({history}){
                     <input maxLength="20" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
                     <input maxLength="20" type="password" placeholder="Password check" onChange={(e) => setPasswordcheck(e.target.value)}/>
                     <input type="text" placeholder="E-Mail" maxLength="30" onChange={(e) => setEmail(e.target.value)}/>
-                    
+                    <select onChange={e=>{setGender(e.target.value)}}>
+                        {genderselection.map((item, i)=>(
+                            <option value={genderval[i]}>{item}</option>
+                        ))}
+                    </select>
+                    <select onChange={e=>{setAge(e.target.value)}}>
+                        {agenum.map((item, i)=>(
+                            <option value={ageval[i]}>{item}</option>
+                        ))}
+                    </select>
                     <input maxLength="15" type="text" placeholder="Phone" onChange={(e) => setPhone(e.target.value)}/>
-                    <select>
-                        <option value="1">10대</option>
-                        <option value="2">20대</option>
-                        <option value="3">30대</option>
-                        <option value="4">40대</option>
-                        <option value="5">50대</option>
-                        <option value="6">60대</option>
-                        <option value="7">60대</option>
-                        <option value="8">70대</option>
-                        <option value="9">80대</option>
-                        <option value="10">90대</option>
-                    </select>
-                    <select>
-                        <option value="1">남성</option>
-                        <option value="1">여성</option>
-                    </select>
+                    
                     <div className="signup_btn" onClick={joinForm}><p>Sign Up</p></div>
                 </div>
             </div>

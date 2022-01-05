@@ -58,30 +58,38 @@ function Exhibition2({match}){
         ]
     )
 
-    useEffect(() => {
+    useEffect(async () => {
         let jsondata = {}
+        var exnum
         if(match.params.exhibition != null && match.params.exhibition != undefined && match.params.exhibition.length>=1)
         {
             jsondata.exhibition = match.params.exhibition
             
         }
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
-          
-            console.log(res.data[0])
+        await axios.post(`http://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
+            console.log(res.data[1])
             if(res.data[0].notuple)
             {
                 alert("존재하지 않는 전시관입니다.")
                 window.location.replace("/")
             }
             else
+               {
+                exnum = res.data[0].exhibition_id
                 setexhibition(res.data);
+                setchart04data(res.data[1]);
+               } 
             
         })
         .catch(()=>{
         alert('error');
         });
 
+        if(exnum == undefined)
+        {
+            exnum = match.params.exhibition
+        }
         
         axios.post(`http://${dev_ver}:4000/api/exhibition2/rank`,jsondata).
         then((res)=>{
@@ -94,6 +102,7 @@ function Exhibition2({match}){
         alert('error');
         });
 
+
         axios.get(`http://${dev_ver}:4000/api/exhibition2/chart03/day`).
         then((res)=>{
             
@@ -103,19 +112,7 @@ function Exhibition2({match}){
         })
         .catch(()=>{
         alert('error');
-        });
-        
-        axios.get(`http://${dev_ver}:4000/api/exhibition2/chart04`).
-        then((res)=>{
-            
-       // console.log(res.data)
-            setchart04data(res.data);
-            
         })
-        .catch(()=>{
-        alert('error');
-        });
-
     },[match.params.exhibition])   
     // 사이드바 Artdata>Exhibition 버튼 대응 뷰 html(전시관 소개)
     return(
