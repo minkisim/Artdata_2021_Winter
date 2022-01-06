@@ -17,7 +17,7 @@ body{
   top:62px;
 }
 
-@media only screen and (max-width:500px)  {
+@media only screen and (max-width:768px)  {
   .art_data_title{
     position: absolute;
     
@@ -56,10 +56,22 @@ a { text-decoration: none; color: black; }
     width:90px;
   }
   .menu_bar{
-    visibility: hidden;
+    display: none;
+  }
+  .menu_bar li{
+    display: none;
   }
   .search_bar{
-    visibility: hidden;
+    display: none;
+  }
+  .search_bar select{
+    display: none;
+  }
+  .search_bar input{
+    display: none;
+  }
+  .search_bar img{
+    display: none;
   }
 
 }
