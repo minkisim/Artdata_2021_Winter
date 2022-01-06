@@ -183,8 +183,8 @@
     .Bid_back_div{
         position: absolute;
         top:80px;
-        left: 0vmin;
-        width:90vmin;
+        left: 0vw;
+        width:90vw;
         height:600px;
         background-color: #F9F9F9;
         border: 3px black solid;
@@ -193,8 +193,8 @@
 .Bid_back_div2{
     position: absolute;
     top:80px;
-    left:0vmin;
-    width:90vmin;
+    left:0vw;
+    width:90vw;
     height:570px;
     background-color: #F9F9F9;
     border: 3px black solid;
@@ -203,13 +203,13 @@
 .Bid_btn{
     position: absolute;
     top:0px;
-    left:80vmin;
-    width: 10vmin;
+    left:80vw;
+    width: 10vw;
     object-fit: cover;
 }
 .Bid_title{
     text-align: left;
-    width: 90vmin;
+    width: 90vw;
     height: 50px;
     background-color: #000000;
 }
@@ -224,16 +224,16 @@
 .Bid_price{
     position: relative;
     top:20px;
-    left:5vmin;
+    left:5vw;
     text-align: left;
-    width:80vmin;
+    width:80vw;
     height:170px;
     border: 2px #a8a8a8 solid; 
 }
 
 .Bid_price_title{
     position: relative;
-    width:75vmin;
+    width:75vw;
     height:30px;
     top:10px;
     left:10px;
@@ -243,7 +243,7 @@
 
 .Bid_price_title2{
     position: relative;
-    width:75vmin;
+    width:75vw;
     height:30px;
     top:10px;
     left:10px;
@@ -255,7 +255,7 @@
     position: relative;
     top:18px;
     left:10px;
-    width:71vmin;
+    width:71vw;
     height:40px;
     text-align: right;
     font-size:18px
@@ -264,7 +264,7 @@
     position: relative;
     top:10px;
     left:10px;
-    width:72vmin;
+    width:72vw;
     height:40px;
     text-align: right;
     padding-right: 50px;
@@ -293,7 +293,7 @@
     position: relative;
     top:25px;
     left:10px;
-    width: 75vmin;
+    width: 75vw;
     height:40px;
     text-align: center;
     background-color: #000000;
@@ -302,7 +302,7 @@
     position: relative;
     top:25px;
     left:10px;
-    width: 75vmin;
+    width: 75vw;
     height:40px;
     text-align: center;
     background-color: #e8e8e8;
@@ -454,7 +454,7 @@
     .Bid_check{
         position: absolute;
         top:350px;
-        left:2vmin;
+        left:2vw;
         text-align: left;
     }
 
@@ -473,7 +473,7 @@
     .Bid_check2{
         position: absolute;
         top:250px;
-        left:2vmin;
+        left:2vw;
         text-align: left;
     }
     .Bid_check2 p{
@@ -490,7 +490,7 @@
         position: relative;
         top:20px;
         left:10px;
-        width:80vmin;
+        width:80vw;
         display: flex;
     }
     .Bid_check_flex p{
@@ -501,7 +501,7 @@
         position: relative;
         top:30px;
         left:20px;
-        width:75vmin;
+        width:75vw;
     }
     .Bid_check_textArea p{
         font-size: 11px;
@@ -522,7 +522,7 @@
         position: relative;
         top:30px;
         left:20px;
-        width:75vmin;
+        width:75vw;
     }
     .Bid_check_textArea2 p{
         font-size: 13px;
@@ -531,8 +531,8 @@
     .Bid_check_btn{
         position: relative;
         top:40px;
-        left:3vmin;
-        width: 80vmin;
+        left:3vw;
+        width: 80vw;
         height:24px;
         border: 2px #a8a8a8 solid;
         text-align: center;
@@ -544,8 +544,8 @@
     .Bid_now{
         position: relative;
         top:30px;
-        left:5vmin;
-        width:80vmin;
+        left:5vw;
+        width:80vw;
         height:100px;
         border: 2px #a8a8a8 solid; 
     }

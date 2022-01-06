@@ -16,7 +16,7 @@ body {
     .myPage_Page {
         position: absolute;
         top: 200px;
-        left: 5vmin;
+        left: 5vw;
     }
 }
 .Transfer_button{
@@ -124,7 +124,7 @@ body {
 @media screen and (max-width:768px) {
     .personal_data_title {
         position: relative;
-        width: 90vmin;
+        width: 90vw;
         text-align: left;
         margin-left: 0px;
         font-size: 24px;
@@ -133,7 +133,7 @@ body {
     }
     
     .personal_data_div {
-        width: 90vmin;
+        width: 90vw;
         height: 100px;
         background: linear-gradient(to top, #F9F9F9 90%, #181818 10%);
         border-radius: 15px;
@@ -227,7 +227,7 @@ body {
     .collection {
         position: relative;
         top:10px;
-        width: 90vmin;
+        width: 90vw;
         height: 300px;
         border-radius: 15px;
         text-align: center;
@@ -235,34 +235,34 @@ body {
         font-size: 14px;
     }
     .collect_num{
-        width:10vmin;
+        width:10vw;
         margin-left: 0px;
         margin-right: 0px;
         font-family: Noto Sans KR;
 
     }
     .collect_art{
-        width:40vmin;
+        width:40vw;
         margin-left: 0px;
         margin-right: 0px;
 
         font-family: Noto Sans KR;
     }
     .collect_artist{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
         font-family: Noto Sans KR;
     }
     .collect_day{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
         font-family: Noto Sans KR;
     }
     .collection_header_flex {
         position: relative;
-        width: 90vmin;
+        width: 90vw;
         top: 0px;
         left: 0px;
         height: 40px;
@@ -280,7 +280,7 @@ body {
     .collection_data_flex {
         position: relative;
         top: 20px;
-        width: 90vmin;
+        width: 90vw;
         left: 0;
         height: 40px;
         display: flex;
@@ -290,13 +290,13 @@ body {
     }
     
     .data_num {
-        width:10vmin;
+        width:10vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     
     .data_picture1{
-        width:40vmin;
+        width:40vw;
         margin-left: 0px;
         margin-right: 0px;
         overflow:hidden;
@@ -304,12 +304,12 @@ body {
         white-space:nowrap;
     }
     .data_artist1{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     .data_Link1{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
@@ -353,7 +353,7 @@ body {
 
 @media only screen and (max-width:768px) {
     .like_art {
-        width: 90vmin;
+        width: 90vw;
         text-align: left;
         position: relative;
         border-radius: 15px;
@@ -364,30 +364,30 @@ body {
         margin-bottom: 300px;
     }
     .like_art_num{
-        width:10vmin;
+        width:10vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     .like_art_art{
-        width:40vmin;
+        width:40vw;
         margin-left: 0px;
         margin-right: 0px;
         font-family: Noto Sans KR;
     }
     .like_art_artist{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     .like_art_Charge2{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     
     
     .data_picture2{
-        width:40vmin;
+        width:40vw;
         margin-left: 0px;
         margin-right: 0px;
         overflow:hidden;
@@ -395,12 +395,12 @@ body {
         white-space:nowrap;
     }
     .data_artist2{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
     .data_Charge2{
-        width:20vmin;
+        width:20vw;
         margin-left: 0px;
         margin-right: 0px;
     }
@@ -466,7 +466,6 @@ body {
 
 .people_table_header{
     display: flex;
-    background-color: #F9F9F9;
 }
 .Owner_Item{
     position: relative;
@@ -513,9 +512,11 @@ body {
     position: relative;
     top:0px;
     display: flex;
+    
 }
 .Owner_table_contents p{
     font-size:14px;
+    text-align: center;
 }
 .Owner_header_num{
     position: relative;
@@ -572,14 +573,30 @@ body {
     .Transfer_Page{
         position: absolute;
         top:200px;
-        left:3vmin;
+        left:3vw;
+    }
+    .people_search_bar{
+        display: flex;
+        position: relative;
+        top:10px;
+        left:20px;
+    }
+    .people_search_bar input{
+       position: relative;
+       top:3px;
+       width:250px;
+       height:20px;
+       margin-right: 10px;  
+    }
+    .people_search_bar img{
+        width:30px;
     }
     .Owner_table{
         background: linear-gradient(to top, #F9F9F9 80%, #181818 20%);
         border-radius: 15px;
         position: relative;
         top:0px;
-        width: 94vmin;
+        width: 94vw;
         height: 200px;
     }
     .Owner_table_header{
@@ -587,7 +604,7 @@ body {
         top:0px;
         display: flex;
         justify-content: center;
-        width:90vmin;
+        width:90vw;
     }
     .Owner_table_header p{
         color:#F9F9F9;
@@ -606,7 +623,7 @@ body {
         top:0px;
         display: flex;
         justify-content: center;
-        width:90vmin;
+        width:90vw;
     }
     .Owner_table_contents p{
         font-size:12px;
@@ -614,34 +631,34 @@ body {
     .Owner_header_num{
         margin-left: 0px;
         margin-right: 0px;
-        left:2px;
-        width:8vmin;
+        left:5px;
+        width:8vw;
     }
     .Owner_header_artwork
     {
         margin-left: 0px;
         margin-right: 0px;
-        width:42vmin;
+        width:42vw;
     }
     .Owner_header_artist
     {
         margin-left: 0px;
         margin-right: 0px;
-        width:20vmin;
+        width:20vw;
     }
     .Owner_header_transfer
     {
         margin-top:10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:20vmin;
+        width:20vw;
     }
     .Owner_content_num
     {   
         margin-top:10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:8vmin;
+        width:8vw;
         left: 0px;
     }
     .Owner_content_artwork
@@ -650,7 +667,7 @@ body {
         margin-left: 0px;
         margin-right: 0px;
         text-align: center;
-        width:42vmin;
+        width:42vw;
     }
     .Owner_content_artist
     {
@@ -658,38 +675,43 @@ body {
         margin-left: 0px;
         margin-right: 0px;
         text-align: center;
-        width:20vmin;
+        width:20vw;
     }
     .Owner_content_btn{
      
         top:10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:20vmin;
+        width:20vw;
     }
 }
+
 .people_header_name{
     position: relative;
     left:30px;
     margin-top: 10px;
     margin-right:140px;
     width:40px;
-    color:#181818;
+    color:#F9F9F9
 }
+
 .people_header_email{
     position: relative;
     margin-top: 10px;
     margin-right:140px;
     width:100px;
-    color:#181818;
+    color:#F9F9F9
 }
+
 .people_header_idCode{
     position: relative;
     margin-top: 10px;
     margin-right:100px;
     width:100px;
-    color:#181818;
+    color:#F9F9F9
 }
+
+
 .people_table_content{
     display: flex;
     width:600px;
@@ -723,27 +745,26 @@ body {
         margin-left: 0px;
         margin-right: 0px;
         left:0px;
-        width:20vmin;
-        color:#181818;
+        width:20vw;
+        color:#F9F9F9
     }
     .people_header_email{
-
         margin-top: 10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:40vmin;
-        color:#181818;
+        width:40vw;
+        color:#F9F9F9
     }
     .people_header_idCode{
         margin-top: 10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:30vmin;
-        color:#181818;
+        width:30vw;
+        color:#F9F9F9
     }
     .people_table_content{
         display: flex;
-        width:90vmin;
+        width:90vw;
         text-align: center;
         justify-content: center;
     }
@@ -751,7 +772,7 @@ body {
         margin-top: 10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:20vmin;
+        width:20vw;
         color:#181818;
     }
     .people_table_email{
@@ -759,31 +780,30 @@ body {
         margin-top: 10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:40vmin;
+        width:40vw;
         color:#181818;
     }
     .people_table_idCode{
         margin-top: 10px;
         margin-left: 0px;
         margin-right: 0px;
-        width:30vmin;
+        width:30vw;
         color:#181818;
     }
 
 .people_table{
     position: relative;
     top:20px;
-    left:2vmin;
-    width:90vmin;
-    height:150px;
+    left:2vw;
+    width:90vw;
+    height:170px;
     background: linear-gradient(to top, #F9F9F9 75%, #181818 25%);
     border-radius: 15px;
 }
 
 .people_table_header{
     display: flex;
-    background-color: #F9F9F9;
-    width: 90vmin;
+    width: 90vw;
     text-align: center;
     justify-content: center;
 }

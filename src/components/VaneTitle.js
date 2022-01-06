@@ -100,7 +100,7 @@ function VaneTitle({isLogin,isAdmin}){
           <img src="/img/search_btn.png" onClick={mainSearch} alt="검색버튼"/>
         </div>
         <div className="user_icon">
-        <Link to="/mypage"><div className="icon_sample"></div></Link>
+        <Link to="/mypage"><img className="icon_sample" src="/icon_people.png"></img></Link>
         </div>
 
       

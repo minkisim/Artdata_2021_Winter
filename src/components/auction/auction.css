@@ -155,11 +155,11 @@
         position:absolute;
         top:200px;
         left:0px;
-        width:100vmin;
+        width:100vw;
     }
     .auction_search_bar{
-        width:90vmin;
-        left:5vmin;
+        width:90vw;
+        left:5vw;
         position: relative;
         display: flex;
         flex-wrap: wrap;
@@ -168,7 +168,7 @@
 
     
 .search_bar_artwork{
-    width:50vmin;
+    width:50vw;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -182,7 +182,7 @@
 
 
 .search_artist{
-    width:50vmin;
+    width:50vw;
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
@@ -195,7 +195,7 @@
 
 }
 .search_input1{
-    width:35vmin;
+    width:35vw;
     height:45px;
     border : 1px solid #B7B7B7;
     border-radius: 10px;
@@ -205,15 +205,15 @@
     top:10px;
     border:none;
     font-size: 14px;
-    left:1vmin;
-    width:30vmin;
+    left:1vw;
+    width:30vw;
 }
 .search_input1 input::placeholder {
     color: #C3C3C3;
 }
 
 .search_input2{
-    width:35vmin;
+    width:35vw;
     height:45px;
     border : 1px solid #B7B7B7;
     border-radius: 10px;
@@ -223,8 +223,8 @@
     top:10px;
     border:none;
     font-size: 14px;
-    left:1vmin;
-    width:30vmin;
+    left:1vw;
+    width:30vw;
 }
 .search_input2 input::placeholder {
     color: #C3C3C3;
@@ -328,7 +328,7 @@
         display: flex;
         position: relative;
         top:300px;
-        left: calc( 50vmin - 155px );
+        left: calc( 50vw - 155px );
         width:310px;
         flex-wrap: wrap;
     }
@@ -501,8 +501,8 @@
     .Auctiondata_Page{
         position: absolute;
         top:200px;
-        left:3vmin;
-        width:94vmin;
+        left:3vw;
+        width:94vw;
         height: 800px;
         background-color: #F9F9F9;
         border-radius: 14px;
@@ -526,15 +526,15 @@
     .Main_Image{
         position: absolute;
         top:10px;
-        left:15vmin;
-        width:60vmin;
+        left:15vw;
+        width:60vw;
         height:300px;
         object-fit: contain;
     }
     .Artwork_Artist{
         position: absolute;
         top:300px;
-        left:10vmin;
+        left:10vw;
     }
 }
 
@@ -656,7 +656,7 @@
      .Auction_Info_artistyear{
         position: absolute;
         top:380px;
-        left:5vmin;
+        left:5vw;
     }
     .Auction_Info_artistyear p{
         font-size:  16px;
@@ -668,14 +668,14 @@
     .Auction_Info_subdata{
         position: absolute;
         top:350px;
-        left:8vmin;
+        left:8vw;
     }
     
     .Auction_Info_hr1{
         position: absolute;
         top:410px;
-        left:5vmin;
-        width:80vmin;
+        left:5vw;
+        width:80vw;
         height:1px;
         background-color: #BEBEBE;
         border:none;
@@ -684,14 +684,14 @@
     .Auction_Info_enddate_flex{
         position: absolute;
         top:425px;
-        left:4vmin;
+        left:4vw;
         display: flex;
-        width:84vmin;
+        width:84vw;
     }
     .Auction_Info_enddate{
-        width:39vmin;
+        width:39vw;
         text-align: left;
-        margin-left: 1vmin;
+        margin-left: 1vw;
     }
     .enddate_title{
         font-size:12px;
@@ -806,8 +806,8 @@
     .Auction_Info_hr2{
         position: absolute;
         top:450px;
-        left:5vmin;
-        width:80vmin;
+        left:5vw;
+        width:80vw;
         height:1px;
         background-color: #BEBEBE;
         border:none
@@ -815,13 +815,13 @@
     .Auction_Info_price{
         position: absolute;
         top:465px;
-        left:6vmin;
+        left:6vw;
         display: flex;
         justify-content: space-between;
-        width:80vmin;
+        width:80vw;
     }
     .Auction_Info_nowprice{
-        width:39vmin;
+        width:39vw;
         text-align: left;
     }
     .nowprice_title{
@@ -845,26 +845,26 @@
         font-family: Noto Sans KR;
     }
     .Auction_Info_pricedata{
-        width:40vmin;
+        width:40vw;
         text-align: left;
     }
     .Auction_Info_btn{
         position: absolute;
         top:500px;
-        left:45vmin;
+        left:45vw;
         display: flex;
-        width:42vmin;
+        width:42vw;
         justify-content: space-between;
     }
     .Auction_Info_btn2{
         position: absolute;
         top:500px;
-        left:70vmin;
+        left:70vw;
         display: flex;
-        width:20vmin;
+        width:20vw;
     }
     .Auction_Info_nowbtn{
-        width: 20vmin;
+        width: 20vw;
         height: 44px;
         background-color: #A3A3A3;
         border-radius: 15px;
@@ -877,7 +877,7 @@
         color:#f4f4f4;
     }
     .Auction_Info_submit{
-        width: 20vmin;
+        width: 20vw;
         height: 44px;
         background-color: #191919;
         border-radius: 15px;
@@ -1082,8 +1082,8 @@
     .Popup_gray_div{
         position:absolute;
         top:152px;
-        left:0vmin;
-        width: 90vmin;
+        left:0vw;
+        width: 90vw;
         height:510px;
         background-color: #2B2B2B;
         border-radius: 35px;
@@ -1093,7 +1093,7 @@
     .Popup_title{
         position: absolute;
         top:162px;
-        left:3vmin;
+        left:3vw;
         font-size: 16px;
         color:  #FFFFFF;
     }
@@ -1101,14 +1101,14 @@
         opacity: 100%;
         position: absolute;
         top:172px;
-        left:76vmin;
-        width: 10vmin;
+        left:76vw;
+        width: 10vw;
     }
     .Popup_black_div{
         position:absolute;
         top:240px;
-        left:3vmin;
-        width: 84vmin;
+        left:3vw;
+        width: 84vw;
         height:345px;
         background-color: #000000;
         border-radius: 35px;
@@ -1118,12 +1118,12 @@
     .popup_box{
         position:absolute;
         top:260px;
-        left:5vmin;
-        width: 80vmin;
+        left:5vw;
+        width: 80vw;
     }
     .Popup_header{
         display:flex;
-        width: 80vmin;
+        width: 80vw;
         justify-content: center;
     }
     .Popup_header p{
@@ -1132,29 +1132,29 @@
         font-family: Noto Sans KR;
     }
     .Popup_header_no{
-        width:8vmin;
+        width:8vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_header_ID{
-        width: 20vmin;
+        width: 20vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_header_price{
-        width: 20vmin;
+        width: 20vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_header_time{
-        width: 30vmin;
+        width: 30vw;
         margin-left:0px;
         margin-right: 0px;
     }
     
     .Popup_content{
         display:flex;
-        width: 80vmin;
+        width: 80vw;
         justify-content: center;
     }
     
@@ -1164,22 +1164,22 @@
         font-family: Noto Sans KR;
     }
     .Popup_content_no{
-        width:8vmin;
+        width:8vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_content_ID{
-        width: 20vmin;
+        width: 20vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_content_price{
-        width: 20vmin;
+        width: 20vw;
         margin-left:0px;
         margin-right: 0px;
     }
     .Popup_content_time{
-        width: 30vmin;
+        width: 30vw;
         margin-left:0px;
         margin-right: 0px;
     }

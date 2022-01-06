@@ -311,6 +311,7 @@ body{
   .new_art img{
     width:287px;
     height:404px;
+    object-fit: contain;
   }
   .new_art p{
     font-size:20px;

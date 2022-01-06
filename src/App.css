@@ -67,13 +67,13 @@ a { text-decoration: none; color: black; }
 .menu_bar{
   position: absolute;
   top:62px;
-  left:214px;
+  left:184px;
   display:flex;
   justify-content: left; 
 }
 
 .menu_bar li{
-  margin-right:100px;
+  margin-right:80px;
   white-space : nowrap;
   list-style:none;
   font-size:20px;
@@ -85,11 +85,9 @@ a { text-decoration: none; color: black; }
 .search_bar{
   position: absolute;
   top:62px;
-  left:1104px;
+  left:1304px;
   display:flex;
   width:370px;
-  margin-left: 200px;
-  margin-right:25px;
 }
 .search_bar select{
   position: relative;
@@ -120,12 +118,11 @@ a { text-decoration: none; color: black; }
 .user_icon .icon_sample{
   position: absolute;
   top:62px;
-  left:1700px;
+  left:1715px;
   width:45px;
   height:45px;
-  border-radius: 70%;
   margin-top:7px;
-  background-color: #888888;
+
 }
 
 .title_login_btn{
@@ -149,18 +146,17 @@ a { text-decoration: none; color: black; }
   .user_icon .icon_sample{
     position: absolute;
     top: 45px;
-    left: 66vmin;
+    left: calc( 95vmin - 130px );
     width: 30px;
     height: 30px;
     border-radius: 70%;
     margin-top:7px;
-    background-color: #888888;
   }
   
   .title_login_btn{
     position: absolute;
     top:50px;
-    left:77vmin;
+    left: calc( 95vmin - 80px );
     width:80px;
     height:35px;
     background-color: #181818;
