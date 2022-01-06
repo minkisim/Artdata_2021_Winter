@@ -368,11 +368,11 @@ export default function Auctiondata({location, match}){
                     <div className="Bid_now">
                         <div className="Bid_now_Unit">
                             <span>응찰단위 : </span>
-                            <span>{auctionUnit && auctionUnit.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} KRW</span>
+                            <span>{auctionUnit && auctionUnit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} KRW</span>
                         </div>
                         <div className="Bid_now_price">
                             <span className="span1">현재가 : </span>
-                            <span className="span2">{currentprice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} KRW</span>
+                            <span className="span2">{currentprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} KRW</span>
                         </div>   
                     </div>
                  
@@ -412,7 +412,7 @@ export default function Auctiondata({location, match}){
                                 <p>{data.username}</p>
                             </div>
                             <div className="Popup_content_price">
-                                <p>{data.userprice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</p>
+                                <p>{data.userprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
                             </div>
                             <div className="Popup_content_time">
                                 <p>{data.updateDate.split('.')[0].replace('T',' ')}</p>
@@ -467,12 +467,12 @@ export default function Auctiondata({location, match}){
                     <div className="Auction_Info_price">
                         <div className="Auction_Info_nowprice">
                             <span className="nowprice_title">현재가 &nbsp;&nbsp;</span>
-                            <span className="nowprice_content">{currentprice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</span>
+                            <span className="nowprice_content">{currentprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
                         </div>
                         <div className="Auction_Info_pricedata">
                             <span className="price_title">추정가 &nbsp; &nbsp;</span>
                            {data != undefined && data.KRW_lower != undefined && data.KRW_upper != undefined &&
-                               <span className="price_content">{data.KRW_lower.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} ~ {data.KRW_upper.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</span>}
+                               <span className="price_content">{data.KRW_lower.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ~ {data.KRW_upper.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>}
                         </div>
                     </div>
                     <div className="Auction_Info_btn">

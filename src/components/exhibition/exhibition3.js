@@ -17,6 +17,7 @@ import {Link} from 'react-router-dom'
 // 사이드바 Artdata>Artwork 뷰 대응 코드(작품 소개 페이지)
 function Exhibition3({match}){
     const [query,setQuery] = useState()
+    const [artId,setArtId] = useState()
 
     useEffect(async()=>{
         var art_id
@@ -40,6 +41,7 @@ function Exhibition3({match}){
          // console.log(res.data)
          setexhibition(res.data)
          art_id = res.data[0].art_id
+         setArtId(res.data[0].art_id)
           })
           .catch(()=>{
           alert('error');
@@ -61,7 +63,17 @@ function Exhibition3({match}){
           alert('error');
           });
 
-
+          axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+            date:'day',
+            art_id:art_id
+        }).
+        then((res)=>{
+       // console.log(res.data)
+       setchart05data(res.data)
+        })
+        .catch(()=>{
+        alert('error');
+        });
     },[match.params.id])
         
 
@@ -98,7 +110,6 @@ function Exhibition3({match}){
 
     useEffect(()=>{
         setQuery(queryString.parse(location.search))
-        console.log(match.params.id)
 
         axios.get(`http://${dev_ver}:4000/api/home3/slider`).
           then((res)=>{
@@ -127,16 +138,7 @@ function Exhibition3({match}){
          }
          */
 
-          axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
-              date:'day'
-          }).
-          then((res)=>{
-         // console.log(res.data)
-         setchart05data(res.data)
-          })
-          .catch(()=>{
-          alert('error');
-          });
+
     },[])
 
 
@@ -144,7 +146,8 @@ function Exhibition3({match}){
     {
         
         axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
-            date:'day'
+            date:'day',
+            art_id : artId
         }).
           then((res)=>{
          // console.log(res.data)
@@ -158,7 +161,8 @@ function Exhibition3({match}){
     {
         
         axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
-            date:'week'
+            date:'week',
+            art_id : artId
         }).
           then((res)=>{
          // console.log(res.data)
@@ -172,7 +176,8 @@ function Exhibition3({match}){
     {
         
         axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
-            date:'month'
+            date:'month',
+            art_id : artId
         }).
           then((res)=>{
          // console.log(res.data)
@@ -186,7 +191,8 @@ function Exhibition3({match}){
     {
         
         axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
-            date:'year'
+            date:'year',
+            art_id : artId
         }).
           then((res)=>{
          // console.log(res.data)

@@ -70,13 +70,13 @@ export default function AuctionShowWindow(props){
                     <div className="auction_ShowWindow_price">
                         <p>추정가</p>
                         <div className="auction_ShowWindow_KRW">
-                            <p>KRW {props.data.KRWpriceStart.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</p>
-                            <p>~ {props.data.KRWpriceEnd.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</p>
+                            <p>KRW {props.data.KRWpriceStart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
+                            <p>~ {props.data.KRWpriceEnd.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
                         </div>
                     </div>
                     <div className="auction_ShowWindow_USD">
-                            <p>USD  {props.data.USDpriceStart.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</p>
-                            <p>~  {props.data.USDpriceEnd.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</p>
+                            <p>USD  {props.data.USDpriceStart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
+                            <p>~  {props.data.USDpriceEnd.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
                     </div>
                     <div><hr className="auction_line1"/></div>
                     <div className="auction_btn_div" >

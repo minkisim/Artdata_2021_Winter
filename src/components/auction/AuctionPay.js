@@ -254,7 +254,7 @@ export default function AuctionPay(){
                             <p className="p1">낙찰 금액</p>
                             <p className="p2">KRW</p>
                         </div>
-                        <div className="Bid_price_block"><p>{current.userprice && current.userprice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원 정</p></div>
+                        <div className="Bid_price_block"><p>{current.userprice && current.userprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} 원 정</p></div>
                         {clickcheck ? <div className="Bid_price_btn_on" onClick={on_submit}><p>결제</p></div>
                         :  <div className="Bid_price_btn_off"><p>결제</p></div> }
                         {clickcheck ? <p className="warning_text2">※ 취소가 불가능 하므로, 가격 확인 후 결제 해주세요.</p>
@@ -313,7 +313,7 @@ export default function AuctionPay(){
                     <div className="Auction_Info_price">
                         <div className="Auction_Info_nowprice">
                             <span className="nowprice_title">낙찰가 &nbsp;&nbsp;</span>
-                            <span className="nowprice_content">{current.userprice ? current.userprice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") : 0}</span>
+                            <span className="nowprice_content">{current.userprice ? current.userprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0}</span>
                         </div>
                         <div className="Auction_Info_pricedata">
                             <span className="price_title">낙찰자 &nbsp; &nbsp;</span>

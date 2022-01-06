@@ -24,7 +24,7 @@ export default function Chart05(props){
             <YAxis type="number" />
             <Tooltip cursor={{fill: 'transparent'}}/>
             
-            <Bar dataKey="Day" stroke="#191F1D" fill="#191F1D" radius={[15, 15, 0, 0]} />
+            <Bar dataKey="Hits" stroke="#191F1D" fill="#191F1D" radius={[15, 15, 0, 0]} />
          
          </BarChart>
          </ResponsiveContainer>

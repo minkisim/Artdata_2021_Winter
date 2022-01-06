@@ -1641,37 +1641,27 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                             {
                                                 var date = moment().format('YYYY-MM-DD')
                                                 var sql = "select sum(hits) hits from user_preference where art_id = ? and access_time = ?"
-                                                var returnvalue = {dailynum : 0, totalnum : 0}
+                                                var returnvalue = {dailynum : Number(0), totalnum : Number(0)}
                                                 try{
                                                     var [result] = await connection.query(sql, [art_id, date])
                                                     if(result!=undefined && result[0]!=undefined)
                                                     {
-                                                        returnvalue.dailynum = result[0].hits
-                                                    }
-                                                    else
-                                                    {
-                                                        returnvalue.dailynum = 0
+                                                        returnvalue.dailynum = Number(result[0].hits)
                                                     }
 
                                                     sql = "select sum(hits) hits from user_preference where art_id = ?"                                                
                                                     var [result2] = await connection.query(sql, [art_id])
                                                     if(result2!=undefined && result2[0]!=undefined)
                                                     {
-                                                        returnvalue.totalnum = result2[0].hits
+                                                        returnvalue.totalnum = Number(result2[0].hits)
                                                     }
-                                                    else
-                                                    {
-                                                        returnvalue.totalnum = 0
-                                                    }
-
                                                 }catch(err)
                                                 {
                                                     //db 에러시
                                                     console.error(err); 
                                                 }
-
-                                                returnvalue.dailynum !== null ? returnvalue.dailynum : 0
-                                                returnvalue.totalnum !== null ? returnvalue.totalnum : 0
+                                                returnvalue.dailynum !== null ? returnvalue.dailynum : Number(0)
+                                                returnvalue.totalnum !== null ? returnvalue.totalnum : Number(0)
                                                 return returnvalue
                                             };
                                             //chart04용 데이터 반환, 나이별 조회 목록
@@ -1827,170 +1817,101 @@ app.get('/api/exhibition1/data', async function (req, res) {
                         await closeConnection(connection)
                     })
 
-                        app.post('/api/exhibition3/chart05', function (req, res) {
-                            console.log(req.body.date)
+                        app.post('/api/exhibition3/chart05', async function (req, res) {
+                            var connection = await openConnection()
+                            var date = moment().format('YYYY-MM-DD')
+                            var query =""
+                            var resvalue = []
+                            //15일 전
+                            //8주 전
+                            //5달 전
+                            //3년 전
+
                             switch(req.body.date)
                             {
                                 case 'day':
-                                    res.json(
-                                        [
-                                            {
-                                                name: '10',
-                                                'Day': 10,
-                                              },
-                                              {
-                                                name: '11',
-                                                'Day': 11,
-                                              },
-                                              {
-                                                name: '12',
-                                                'Day': 15,
-                                              },
-                                              {
-                                                name: '13',
-                                                'Day': 20,
-                                              },
-                                              {
-                                                name: '14',
-                                                'Day': 17,
-                                              },
-                                              {
-                                                name: '15',
-                                                'Day': 9,
-                                              },
-                                              {
-                                                name: '16',
-                                                'Day': 8,
-                                              },
-                                              {
-                                                name: '17',
-                                                'Day': 12,
-                                              },
-                                              {
-                                                name: '18',
-                                                'Day': 19,
-                                              },
-                                              {
-                                                name: '19',
-                                                'Day': 7,
-                                              },
-                                              {
-                                                name: '20',
-                                                'Day': 10,
-                                              },
-                                              {
-                                                name: '21',
-                                                'Day': 11,
-                                              },
-                                              {
-                                                name: '22',
-                                                'Day': 15,
-                                              },
-                                              {
-                                                name: '23',
-                                                'Day': 20,
-                                              },
-                                              {
-                                                name: '24',
-                                                'Day': 17,
-                                              },
-                                              {
-                                                name: '25',
-                                                'Day': 9,
-                                              }
-                                        ])
-                                        break;
+                                    query ="SELECT DATE(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (20) day),'%Y-%m-%d')  group by date order by date"
+                                    try{
+                                        var [result] = await connection.query(query, [req.body.art_id, date])
+                                        var date1 = new Date(date)
+                                        if(result!=undefined && result[0]!=undefined)
+                                        {
+                                            
+                                            result.forEach((item)=>{
+                                               
+                                                var date2 = new Date(item.date)
+                                                resvalue.push({name: Math.floor((date1.getTime() - date2.getTime())/(1000*60*60*24))+"일전" ,'Hits':item.hits})
+                                            })
+                                        }
+                                    }catch(err)
+                                    {
+                                        console.log(err)
+                                    }
+                                   
+                                    res.json(resvalue)
+                                    break;
 
                                 case 'week':
-                                    res.json(
-                                        [
-                                            {
-                                                name: '10',
-                                                'Day': 10,
-                                              },
-                                              {
-                                                name: '11',
-                                                'Day': 11,
-                                              },
-                                              {
-                                                name: '12',
-                                                'Day': 15,
-                                              },
-                                              {
-                                                name: '13',
-                                                'Day': 20,
-                                              },
-                                              {
-                                                name: '14',
-                                                'Day': 17,
-                                              },
-                                              {
-                                                name: '15',
-                                                'Day': 9,
-                                              },
-                                              {
-                                                name: '16',
-                                                'Day': 8,
-                                              },
-                                              {
-                                                name: '17',
-                                                'Day': 12,
-                                              },
-                                              {
-                                                name: '18',
-                                                'Day': 19,
-                                              },
-                                              {
-                                                name: '19',
-                                                'Day': 7,
-                                              }
-                                        ])
-                                        break;
+                                    query ="select DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-1) DAY), '%Y-%m-%d') as start,"
+                                    query+= "DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-7) DAY), '%Y-%m-%d') as end,"
+                                    query+= "DATE_FORMAT(access_time, '%Y-%U') AS date, sum(hits) hits, DATEDIFF(?, access_time) as diff "
+                                    query += "from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (15) week),'%Y-%m-%d') "
+                                    query += "group by date order by date"
+                                    try{
+                                        var [result] = await connection.query(query, [date, req.body.art_id, date])
+                                        if(result!=undefined && result[0]!=undefined)
+                                        {
+                                            result.forEach((item)=>{
+                                                resvalue.push({name: Math.floor(item.diff/7)+"주전",'Hits':item.hits})
+                                            })
+                                        }
+                                    }catch(err)
+                                    {
+                                        console.log(err)
+                                    }
+
+                                    res.json(resvalue)
+                                    break;
 
                                 case 'month':
-                                    res.json(
-                                        [
-                                            {
-                                                name: '7',
-                                                'Day': 30,
-                                              },
-                                              {
-                                                name: '8',
-                                                'Day': 21,
-                                              },
-                                              {
-                                                name: '9',
-                                                'Day': 15,
-                                              },
-                                              {
-                                                name: '10',
-                                                'Day': 20,
-                                              },
-                                              {
-                                                name: '11',
-                                                'Day': 17,
-                                              },
-                                              
-                                        ])
+                                    query ="SELECT MONTH(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (12) month),'%Y-%m-%d')  group by date order by date"
+                                    try{
+                                        var [result] = await connection.query(query, [req.body.art_id, date])
+                                        if(result!=undefined && result[0]!=undefined)
+                                        {
+                                            
+                                            result.forEach((item)=>{
+                                               
+                                                var date2 = moment(item.date,'YYYY-MM-DD')
+                                                resvalue.push({name: Math.floor((date2.diff(date, 'months')))+"월전" ,'Hits':item.hits})
+                                            })
+                                        }
+                                    }catch(err)
+                                    {
+                                        console.log(err)
+                                    }
+                                   
+                                    res.json(resvalue)
                                         break;
 
                                 case 'year':
-                                    res.json(
-                                        [
-                                            {
-                                                name: '2019',
-                                                'Day': 100,
-                                              },
-                                              {
-                                                name: '2020',
-                                                'Day': 121,
-                                              },
-                                              {
-                                                name: '2021',
-                                                'Day': 115,
-                                              }
-                                        ])
+                                    query ="SELECT year(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (10) year),'%Y-%m-%d')  group by date order by date"
+                                    try{
+                                        var [result] = await connection.query(query, [req.body.art_id, date])
+                                        if(result!=undefined && result[0]!=undefined)
+                                        {
+                                            result.forEach((item)=>{
+                                                resvalue.push({name: item.date ,'Hits':item.hits})
+                                            })
+                                        }
+                                    }catch(err)
+                                    {
+                                        console.log(err)
+                                    }
+                                   
+                                    res.json(resvalue)
                             }
+                            await closeConnection(connection)
                         });
 
                         
@@ -2099,6 +2020,10 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                             {
                                                                 var value = chart04_user_preference(result2)
                                                                 
+                                                                value.forEach((it)=>{
+                                                                    people_num+=it
+                                                                })
+
                                                                 jsondata.push(
                                                                     [
                                                                         { name: '10-20대', value: value[0] },
@@ -2147,6 +2072,10 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                                                     if(result2!=undefined && result2[0]!=undefined)
                                                                     {
                                                                         var value = chart04_user_preference(result2)
+                                                                        
+                                                                        value.forEach((it)=>{
+                                                                            people_num+=it
+                                                                        })
                                                                         
                                                                         jsondata.push(
                                                                             [
