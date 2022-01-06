@@ -14,33 +14,17 @@ export default function AuctionShowWindow(props){
             art_id:props.data.id//art_id
         })
         .then((result)=>{
-            console.log(result.data)
-
-            var begindate = result.data.begin_point.split('-')
-            var enddate = result.data.end_point.split('-')
-            var diffDate1 = new Date(begindate[0],begindate[1]-1,begindate[2],0,0,0)
-            var diffDate2 = new Date(enddate[0],enddate[1]-1,enddate[2],0,0,0)
-
-            
-            var currentDate = new Date()
-            //alert(result.data.begin_point)
-            //alert(result.data.end_point)
-            var diff1 =(currentDate.getTime() - diffDate1.getTime() )>=0
-            var diff2 =(diffDate2.getTime() - currentDate.getTime())>=0
-
-           
-
-            if(diff1 && diff2)
+            if(result.data.isStarted && result.data.isNotEnded)
             {
                 
                document.location.href=`/auctiondata?id=${props.data.id}`
             }
-            else if(!diff1)
+            else if(!result.data.isStarted)
             {
                 alert('해당 작품은 아직 경매가 시작되지 않았습니다.')
                 return false
             }
-            else if(!diff2)
+            else if(!result.data.isNotEnded)
             {
                 document.location.href=`/auctionpay?id=${props.data.id}`
             }

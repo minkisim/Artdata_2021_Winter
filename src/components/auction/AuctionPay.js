@@ -122,25 +122,14 @@ export default function AuctionPay(){
                 artname: result2.data.art_id
             })
             .then((result)=>{
-                //console.log("begin_point : "+result.data.begin_point)
-                console.log(result.data.end_point.split('-')[1])
-                var begindate = result.data.begin_point.split('-')
                 var enddate = result.data.end_point.split('-')
-                var diffDate1 = new Date(begindate[0],begindate[1]-1,begindate[2],0,0,0)
-                var diffDate2 = new Date(enddate[0],enddate[1]-1,enddate[2],0,0,0)
-                //console.log("diff : "+diffDate2.getDay())
     
                 var week=['일','월','화','수','목','금','토']
     
                 setEnddate(enddate)
-                setEnddate2(week[diffDate2.getDay()])
-    
-    
-                var currentDate = new Date()
-                var seconds = (diffDate2.getTime() - currentDate.getTime())/1000
-             
-           
-                if(seconds>0)
+                setEnddate2(week[result.data.day])
+  
+                if(result.data.tminus>0)
                 {
                     alert('아직 진행중인 경매입니다.')
                     document.location.replace('/')
@@ -207,6 +196,7 @@ export default function AuctionPay(){
 
     function on_submit()
     {
+        /*
         const curr = new Date();
         const utc =  curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
         const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
@@ -216,13 +206,13 @@ export default function AuctionPay(){
         const monthdate =( kr_curr.getMonth()+1 )
         const month = (monthdate/10 < 1) ? '0'+monthdate : monthdate
         const date = kr_curr.getDate()/10 < 1 ? '0'+kr_curr.getDate() : kr_curr.getDate()
-        
+        */
         //alert(year + "."+month+'.'+date)
         axios.post(`http://${dev_ver}:4000/api/auction_submit`,{
                 id:userdata.id,
                 username:userdata.username,
-                art_id : data.art_id,
-                date: year + "-"+month+'-'+date
+                art_id : data.art_id
+                //date: year + "-"+month+'-'+date
         })
         .then((result)=>{
             if(result.data.success)

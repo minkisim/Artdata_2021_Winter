@@ -117,41 +117,20 @@ export default function Auctiondata({location, match}){
             artname: result2.data.art_id
         })
         .then((result)=>{
-            //console.log("begin_point : "+result.data.begin_point)
-            
-            var begindate = result.data.begin_point.split('-')
             var enddate = result.data.end_point.split('-')
-            var diffDate1 = new Date(begindate[0],begindate[1]-1,begindate[2],0,0,0)
-            var diffDate2 = new Date(enddate[0],enddate[1]-1,enddate[2],0,0,0)
-            //console.log("diff : "+diffDate2.getDay())
-
+            
             var week=['일','월','화','수','목','금','토']
 
             setEnddate(enddate)
-            setEnddate2(week[diffDate2.getDay()])
+            setEnddate2(week[result.data.day])
             setAuctionUnit(result.data.auction_unit)
 
-            var currentDate = new Date()
-            var seconds = (diffDate2.getTime() - currentDate.getTime())/1000
-            /*var diff1 =(currentDate.getTime() - diffDate1.getTime() )>=0
-           
-
-
-           
-
-            var day = parseInt((seconds/3600)/24)
-            var hour = parseInt((seconds/3600)%24);
-            var min = parseInt((seconds%3600)/60);
-            var sec = parseInt(seconds%60);*/
-
-            //console.log(day+" "+hour + " " + min + " " + sec)
-            
-            if(seconds<=0)
+            if(result.data.tminus<=0)
             {
                 alert('이미 완료된 경매입니다.')
                 document.location.replace('/')
             }
-            setTminus(seconds)//(diffDate2.getTime() - currentDate.getTime())/1000)
+            setTminus(result.data.tminus)//(diffDate2.getTime() - currentDate.getTime())/1000)
         })
         .catch((err)=>{
             alert("date Error:\n"+err)
@@ -272,7 +251,7 @@ export default function Auctiondata({location, match}){
             return false
         }
 
-       
+       /*
         const curr = new Date();
         const utc =  curr.getTime() + (curr.getTimezoneOffset() * 60 * 1000);
         const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
@@ -287,13 +266,13 @@ export default function Auctiondata({location, match}){
         const sec = kr_curr.getSeconds()/10 < 1 ? '0'+kr_curr.getSeconds() : kr_curr.getSeconds()
          
         const kr_curr_string = year +"-"+ month + '-' + day// +' '+hour+':'+min+':'+sec
-        
+        */
         axios.post(`http://${dev_ver}:4000/api/auctiondata/submit`,{
             username:userdata.username,
             userid:userdata.id,
             art_id:data.art_id,
-            userprice:price,
-            updateDate: kr_curr_string
+            userprice:price
+            //updateDate: kr_curr_string
         })
         .then((result)=>{
             if(result.data.success)

@@ -2361,6 +2361,7 @@ app.post('/api/Transfer/sendArt', async (req,res) => {
 })
 
 app.post('/api/AuctionMain/isStarted',async (req,res)=>{
+    var date = moment()
     var connection = await openConnection()
         //경매 시작일, 종료일 확인
         var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point from art a, auction u where a.art_id = ? and a.art_id = u.art_id"
@@ -2371,8 +2372,23 @@ app.post('/api/AuctionMain/isStarted',async (req,res)=>{
                 result.forEach((rows)=>{
                     var data= {
                         begin_point : rows.begin_point,
-                        end_point : rows.end_point
+                        end_point : rows.end_point,
+                        isStarted : false,
+                        isNotEnded : false
                     }
+                    var begin = moment(rows.begin_point,'YYYY-MM-DD')
+                    var end = moment(rows.end_point,'YYYY-MM-DD')
+
+                    if(begin.diff(date)<=0)
+                    {
+                        data.isStarted = true
+                    }
+                    
+                    if(end.diff(date)>0)
+                    {
+                        data.isNotEnded = true
+                    }
+
                     res.json(data)
                 })
             }
@@ -2607,6 +2623,7 @@ app.post('/api/auctiondata/search',async (req,res)=>{
 })
 
 app.post('/api/auctiondata/submit',async (req,res)=>{
+    var date = moment().format("YYYY-MM-DD")
     var connection = await openConnection()
         //해당 경매 입찰 시도 시
         //현재 해당 작품에 가장 높은 가격 제시한 사람 확인
@@ -2629,7 +2646,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                     {
                         //해당 입찰 정보의 가격과 입찰 날짜를 업데이트
                         query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"                
-                             var [result2] = await connection.query(query,[req.body.userprice, req.body.updateDate, req.body.username, req.body.art_id])
+                             var [result2] = await connection.query(query,[req.body.userprice, date, req.body.username, req.body.art_id])
                                 if(result2 !=undefined && result2.affectedRows>=1)
                                 {
                                     await connection.commit()
@@ -2645,7 +2662,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                     else{
                        //새로운 입찰 튜플 생성
                         query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
-                        var [result2] = await connection.query(query,[req.body.username, req.body.userprice, req.body.updateDate, req.body.art_id])
+                        var [result2] = await connection.query(query,[req.body.username, req.body.userprice, date, req.body.art_id])
                                 if(result2.affectedRows>=1)
                                 {
                                     await connection.commit()
@@ -2670,19 +2687,30 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
 })
 
 app.post('/api/auctiondata/isStarted',async (req,res)=>{
+    var date = moment()
     var connection = await openConnection()
         //작품id로 특정 경매의 시작일, 종료일, 입찰 단위 검색
         var query = "select DATE_FORMAT(u.begin_point,'%Y-%m-%d') begin_point, DATE_FORMAT(u.end_point,'%Y-%m-%d') end_point, Auction_unit  from auction u where art_id = ?"
         try{
             var [result] = await connection.query(query,[req.body.artname])
+            
+            var data 
             if(result!=undefined && result[0]!=undefined)
                 {
-                    res.json({
+                   data = {
                         begin_point : result[0].begin_point,
                         end_point : result[0].end_point,
-                        auction_unit : result[0].Auction_unit
-                    })
+                        auction_unit : result[0].Auction_unit,
+                        tminus : Number(0),
+                        day : Number(-1)
+                    }
+                    var end = moment(result[0].end_point,'YYYY-MM-DD')
+
+                    data.tminus = moment.duration(end.diff(date)).asSeconds()
+                    data.day = end.day()
+                    
                 }
+                res.json(data)
         }catch(err)
         {
             //db 에러시
@@ -2776,6 +2804,7 @@ app.post('/api/myauction', async (req,res)=>{
 })
 
 app.post('/api/auction_submit', async (req,res)=>{
+    var date = moment().format('YYYY-MM-DD')
     var connection = await openConnection()
             //경매 구매절차
             //사용자가 해당 작품 소유
@@ -2783,7 +2812,7 @@ app.post('/api/auction_submit', async (req,res)=>{
             try{
                 var [result] = await connection.query(query,[
                     req.body.username,
-                    req.body.date,
+                    date,
                     req.body.art_id
                 ])
                     if(result != undefined && result.affectedRows>=1)
