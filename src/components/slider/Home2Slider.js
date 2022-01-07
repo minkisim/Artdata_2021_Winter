@@ -9,17 +9,19 @@ export default class SimpleSlider extends Component {
   render() {
     var settings = {
       dots: true,
-      infinite: false,
+      infinite: true,
       speed: 700,
       slidesToShow: 5,
       slidesToScroll: 5,
       initialSlide: 0,
+      autoplay: true,
+      autoplaySpeed: 3000,
       responsive: [
         {
           breakpoint: 1024,
           settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
+            slidesToShow: 1,
+            slidesToScroll: 1,
             infinite: true,
             dots: true
           }
@@ -27,8 +29,8 @@ export default class SimpleSlider extends Component {
         {
           breakpoint: 600,
           settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
+            slidesToShow: 1,
+            slidesToScroll: 1,
             initialSlide: 0,
             dots: true
           }
@@ -38,7 +40,7 @@ export default class SimpleSlider extends Component {
           settings: {
             slidesToShow: 1,
             slidesToScroll: 1,
-            dots: false
+            dots: true
           }
         }
       ]
@@ -48,7 +50,7 @@ export default class SimpleSlider extends Component {
     return (
       <div>
       
-        <Slider {...settings}>
+        <Slider {...settings} dotsClass="dotsCSS">
           {this.props.dataset && this.props.dataset.map( data => <Link to={`/exhibition3/${data.id}`}><div><ShowWindow4 data={data}></ShowWindow4></div></Link>
           )}
         </Slider>

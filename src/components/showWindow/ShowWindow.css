@@ -262,32 +262,32 @@ body {
 @media screen and (max-width:768px) {
     .show_window4 {
         width: 80vw;
-        height: 155px;
-        margin-bottom: 10px;
+        height: 35vw;
         position: relative;
         background-color: #191919;
         border-radius: 15px;
         margin-left: 0px;
         margin-right: 0px;
+        margin-bottom: 0px;
     }
 
     .show_window4_img {
         position: absolute;
-        top: 15px;
-        left: 5vw;
-        width: 30vw;
-        height: 124px;
+        top: 1vw;
+        left: 2vw;
+        width: 31vw;
+        height: 33vw;
     }
     .show_window4_img img {
         object-fit: contain;
-        width: 30vw;
-        height: 124px;
+        width: 31vw;
+        height: 33vw;
     }
     .show_window4_text {
         position: absolute;
-        top: 60px;
-        left: 40vw;
-        width:45vw;
+        top: 12vw;
+        left: 39vw;
+        width:35vw;
     }
     
 .artist_name4 {
@@ -323,8 +323,8 @@ body {
 }
     .plus_btn4 {
         position: absolute;
-        top: 130px;
-        left: 72vw;
+        top: 28vw;
+        left: 74vw;
         width: 15px;
         height: 15px;
     }

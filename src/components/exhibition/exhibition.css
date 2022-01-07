@@ -911,12 +911,12 @@ body {
         top: 150px;
         left: 10vw;
         width: 80vw;
-        height: 200px;
+        height: 40vw;
     }
    
     .exhibition3_artwork {
         position: absolute;
-        top: 350px;
+        top: calc( 180px + 40vw );
         left: 10vw;
         width: 80vw;
         height: 500px;
@@ -1147,7 +1147,7 @@ body {
     .exhibition3_old {
         position: absolute;
         left: 10vw;
-        top: 940px;
+        top: calc( 760px + 40vw );
         width: 80vw;
         height: 80vw;
     
@@ -1265,7 +1265,7 @@ body {
 @media only screen and (max-width:768px) {
     .art_cumulative_time {
         position: absolute;
-        top: calc( 1000px + 90vw );
+        top: calc( 825px + 128vw );
         left: 0;
         width: 100vw;
         height: 400px;
@@ -1282,7 +1282,7 @@ body {
     
     .cum_time_graph_div {
         position: absolute;
-        top: 8vw;
+        top: 30px;
         left:5vw;
         width: 90vw;
         height: 55vw;
