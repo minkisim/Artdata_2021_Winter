@@ -1850,8 +1850,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     break;
 
                                 case 'week':
-                                    query = "select DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-1) DAY), '%Y-%m-%d') as start, DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-7) DAY), '%Y-%m-%d') as end,"
-                                    query += "DATE_FORMAT(access_time, '%Y-%U') AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (15) week),'%Y-%m-%d')"
+                                    query = "select DATE_FORMAT(access_time, '%Y-%U') AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (15) week),'%Y-%m-%d')"
                                     query += "group by date order by date"
                                     try{
                                         var [result] = await connection.query(query, [req.body.art_id, date])
