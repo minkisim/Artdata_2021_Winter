@@ -3,8 +3,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import './chart.css'
 // 관람객 누적 체류 시간 바 그래프(exhibition3.js 관련)
 export default function Chart05(props){
-      console.log(props.data)
-   
       return (
         
         <div className='Chart05'>
@@ -21,7 +19,7 @@ export default function Chart05(props){
           >
             <CartesianGrid strokeDasharray="5 5" />
             <XAxis dataKey="name" type="category" />
-            <YAxis type="number" dataKey={(v)=>parseInt(v.Hits)} domain={[0, dataMax => (dataMax+10)]} />
+            <YAxis type="number" dataKey={(v)=>parseInt(v.Hits)} domain={[0, dataMax => (Math.floor(dataMax*1.1))]} />
             <Tooltip cursor={{fill: 'transparent'}}/>
             
             <Bar dataKey="Hits" stroke="#191F1D" fill="#191F1D" radius={[15, 15, 0, 0]} />

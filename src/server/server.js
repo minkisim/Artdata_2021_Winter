@@ -1835,20 +1835,17 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     query ="SELECT DATE(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (?) day),'%Y-%m-%d')  group by date order by date"
                                     try{
                                         var [result] = await connection.query(query, [req.body.art_id, date, daynum])
-                                        var date1 = new Date(date)
                                         if(result!=undefined && result[0]!=undefined)
                                         {
                                             result.forEach((item, index)=>{
                                                 var date2 = moment(item.date,'MM-DD')
                                                 resvalue.push({name: date2.format('MM-DD') ,'Hits':item.hits})
                                             })
-                                           
                                         }
                                     }catch(err)
                                     {
                                         console.log(err)
                                     }
-                                   
                                     res.json(resvalue)
                                     break;
 

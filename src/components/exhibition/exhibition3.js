@@ -104,7 +104,6 @@ function Exhibition3({match}){
     )
 
     const [chart05data,setchart05data] = useState(
-        []
     )
 
 
@@ -252,7 +251,7 @@ return(
             </div>
             </div>
             <div className="art_cumulative_time_graph">
-                <Chart05 data={chart05data}/>
+                { chart05data!=undefined && chart05data[0]!=undefined ? <Chart05 data={chart05data}/> : <p>자료가 없습니다.</p>}
             </div>
             </div>
         </div>
