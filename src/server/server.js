@@ -1117,7 +1117,7 @@ app.get('/api/home2', async(req,res) => {
 app.get('/api/home3/slider', async function (req, res) {
     var connection = await openConnection()
     //HOME3 슬라이드에 사용되는 가장 최근에 등록된 작품 15개 보여주기
-        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 15"
+        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 8"
         try{
             var [result] = await connection.query(query)
             var jsondata = []
