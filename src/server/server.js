@@ -1116,7 +1116,7 @@ app.get('/api/home2', async(req,res) => {
 
 app.get('/api/home3/slider', async function (req, res) {
     var connection = await openConnection()
-    //HOME3 슬라이드에 사용되는 가장 최근에 등록된 작품 15개 보여주기
+    //HOME3 슬라이드에 사용되는 가장 최근에 등록된 작품 8개 보여주기
         let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.artist_name, a.art_name, e.exhibition_name, a.Image_url , a.Art_id  from art a, artist r, exhibition e where a.artist_id = r.artist_id and a.exhibition_id = e.exhibition_id  order by a.art_id desc ) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 8"
         try{
             var [result] = await connection.query(query)
@@ -1822,6 +1822,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                             var date = moment().format('YYYY-MM-DD')
                             var query =""
                             var resvalue = []
+                            
                             //15일 전
                             //8주 전
                             //5달 전
@@ -1830,18 +1831,18 @@ app.get('/api/exhibition1/data', async function (req, res) {
                             switch(req.body.date)
                             {
                                 case 'day':
-                                    query ="SELECT DATE(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (20) day),'%Y-%m-%d')  group by date order by date"
+                                    var daynum = 10
+                                    query ="SELECT DATE(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (?) day),'%Y-%m-%d')  group by date order by date"
                                     try{
-                                        var [result] = await connection.query(query, [req.body.art_id, date])
+                                        var [result] = await connection.query(query, [req.body.art_id, date, daynum])
                                         var date1 = new Date(date)
                                         if(result!=undefined && result[0]!=undefined)
                                         {
-                                            
-                                            result.forEach((item)=>{
-                                               
-                                                var date2 = new Date(item.date)
-                                                resvalue.push({name: Math.floor((date1.getTime() - date2.getTime())/(1000*60*60*24))+"일전" ,'Hits':item.hits})
+                                            result.forEach((item, index)=>{
+                                                var date2 = moment(item.date,'MM-DD')
+                                                resvalue.push({name: date2.format('MM-DD') ,'Hits':item.hits})
                                             })
+                                           
                                         }
                                     }catch(err)
                                     {
@@ -1852,45 +1853,41 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                     break;
 
                                 case 'week':
-                                    query ="select DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-1) DAY), '%Y-%m-%d') as start,"
-                                    query+= "DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-7) DAY), '%Y-%m-%d') as end,"
-                                    query+= "DATE_FORMAT(access_time, '%Y-%U') AS date, sum(hits) hits, DATEDIFF(?, access_time) as diff "
-                                    query += "from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (15) week),'%Y-%m-%d') "
+                                    query = "select DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-1) DAY), '%Y-%m-%d') as start, DATE_FORMAT(DATE_SUB(access_time, INTERVAL (DAYOFWEEK(access_time)-7) DAY), '%Y-%m-%d') as end,"
+                                    query += "DATE_FORMAT(access_time, '%Y-%U') AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (15) week),'%Y-%m-%d')"
                                     query += "group by date order by date"
-                                    try{
-                                        var [result] = await connection.query(query, [date, req.body.art_id, date])
-                                        if(result!=undefined && result[0]!=undefined)
-                                        {
-                                            result.forEach((item)=>{
-                                                resvalue.push({name: Math.floor(item.diff/7)+"주전",'Hits':item.hits})
-                                            })
-                                        }
-                                    }catch(err)
-                                    {
-                                        console.log(err)
-                                    }
-
-                                    res.json(resvalue)
-                                    break;
-
-                                case 'month':
-                                    query ="SELECT MONTH(access_time) AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (12) month),'%Y-%m-%d')  group by date order by date"
                                     try{
                                         var [result] = await connection.query(query, [req.body.art_id, date])
                                         if(result!=undefined && result[0]!=undefined)
                                         {
-                                            
+                                            console.log(result)
                                             result.forEach((item)=>{
-                                               
-                                                var date2 = moment(item.date,'YYYY-MM-DD')
-                                                resvalue.push({name: Math.floor((date2.diff(date, 'months')))+"월전" ,'Hits':item.hits})
+                                                resvalue.push({name: item.date,'Hits':item.hits})
                                             })
                                         }
                                     }catch(err)
                                     {
                                         console.log(err)
                                     }
-                                   
+                                    res.json(resvalue)
+                                    break;
+
+                                case 'month':
+                                    var monthnum = 12
+                                    query ="SELECT DATE_FORMAT(access_time, '%Y-%m') AS date, sum(hits) hits from user_preference where art_id = ? and access_time > date_format(DATE_SUB(?, INTERVAL (?) month),'%Y-%m-%d')  group by date order by date"
+                                    try{
+                                        var [result] = await connection.query(query, [req.body.art_id, date, monthnum])
+                                        if(result!=undefined && result[0]!=undefined)
+                                        {
+                                            result.forEach((item, index)=>{
+                                                var date2 = moment(item.date,'YYYY-MM')
+                                                resvalue.push({name: date2.format('YYYY-MM') ,'Hits':item.hits})
+                                            })
+                                        }
+                                    }catch(err)
+                                    {
+                                        console.log(err)
+                                    }
                                     res.json(resvalue)
                                         break;
 
