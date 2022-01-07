@@ -84,6 +84,33 @@
     margin:0px;
     font-family:Noto Sans KR;
 }  
+@media only screen and (max-width:768px) {
+    .graph2 svg{
+        font-size:10px;
+        width:auto;
+        height:auto;
+    }
+    .graph2{
+        font-family: 'Lato', sans-serif;
+        position: absolute;
+        border-radius: 15px 15px 15px 15px;
+        background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
+        top:calc( 35vw + 310px );
+        left:5vw;
+        width:90vw;
+        height:70vw;
+    }
+    .graph_2_title{
+        position: absolute;
+        top: calc( 35vw + 280px );
+        left:7vw;
+        font-size:16px;
+        margin:0px;
+        font-family:Noto Sans KR;
+    }  
+}
+
+
 .graph3{
     font-family: 'Lato', sans-serif;
     position: absolute;

@@ -5,17 +5,18 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, ResponsiveContainer } from 'recharts';
 import { RiStoreLine } from 'react-icons/ri';
 import XDataFormater from './XDataFormater';
+import { useMediaQuery } from 'react-responsive';
 
 // 진행 중인 전시별 관람 정보 코드 (home03.js 관련)
 function Chart02(props){
+    const ismobile =useMediaQuery({ maxWidth: 768 });
     // 진행 중인 전시별 관람 정보 html (home03.js 관련)
     return(
         <div>
             <div className="graph_2_title">진행 중인 전시별 관람 정보</div>
             <div className="graph2">
-        
-                <BarChart width={900}
-                height={550}
+            <ResponsiveContainer width='100%' height={'100%'}>
+                <BarChart 
                 data={props.data}
                 margin={{
                     top: 30,
@@ -23,8 +24,8 @@ function Chart02(props){
                     left: 10,
                     bottom: 30,
                 }}
-                barSize={20}
-                barGap={7}
+                barSize={ismobile ? 15 : 20}
+                barGap={ismobile ? 5 : 7}
                 >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis interval={0} dataKey="name" type="category" tick={<XDataFormater/>}/>
@@ -39,7 +40,7 @@ function Chart02(props){
                 </Bar>
 
                 </BarChart>
-           
+                </ResponsiveContainer>
             </div>
         </div>
     )

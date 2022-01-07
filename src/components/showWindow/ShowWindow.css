@@ -147,20 +147,20 @@ body {
     .show_window2 .show_window2_picture {
         position: absolute;
         top: 15px;
-        left: 30px;
-        width: 125px;
+        left: 5vw;
+        width: 40vw;
         height:160px;
     }
     .show_window2 .show_window2_picture img {
         object-fit: contain;
-        width: 115px;
+        width: 40vw;
         height: 160px;
     }
     .total_name2 {
         position: absolute;
         top: 70px;
-        left: 200px;
-        width:250px;
+        left: 48vw;
+        width:38vw;
         text-align: left;
     }
     .name2 {
@@ -183,7 +183,7 @@ body {
     .plus_btn2{
         position: absolute;
         top: 160px;
-        left: 435px;
+        left: 80vw;
         width: 25px;
         height: 25px;
     }

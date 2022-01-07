@@ -38,6 +38,7 @@
     "react-icons": "^4.2.0",
     "react-medium-image-zoom": "^4.3.4",
     "react-minimal-side-navigation": "^1.9.2",
+    "react-responsive": "^9.0.0-beta.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-slick": "^0.28.1",
