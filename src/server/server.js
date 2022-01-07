@@ -1051,24 +1051,32 @@ app.get('/api/home1/about2', async (req, res) =>
     //HOME1 최근 등록된 작품3개의
     //하단 그래프용 정보 얻어오기
 
-        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select a.art_name, a.Remaintime, a.Audience_number  from  art a order by Remaintime, Audience_number desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
+        let query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select a.art_name, a.Remaintime, a.art_id  from  art a order by a.art_id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 3"
         try{
             let [result] = await connection.query(query)
             var jsondata = []
             //질의 결과가 있을 때
             if(result != undefined && result[0]!=undefined)
             {
-                result.forEach((rows) => {
+               await result.forEach(async (rows, index) => {
+                    var value =  await show_user_preference(connection, rows.art_id)
+                    
                     var data = {
                         name : rows.art_name,
                         '전시 관람 체류 시간' : rows.Remaintime,
-                        '전시 관람객': rows.Audience_number
-                    
+                        '전시 관람객': value.totalnum
                     }
-                    jsondata.push(data)
+                   jsondata.push(data)
+
+                   if(index == 2)
+                   {
+                    res.json(jsondata)
+                   }
                 })
             }
-             res.json(jsondata)
+            else{
+                res.json(null)
+            }
 
         }catch(err)
         {
@@ -1162,7 +1170,7 @@ app.get('/api/home3/graph', async function (req, res) {
                    
                     var data = {name : array.art_name,
                         '전시 관람 체류 시간' : array.Remaintime,
-                        '전시 관람객': value.totalnum !== null ? value.totalnum : 0}
+                        '전시 관람객': value.totalnum !== null ? value.totalnum : Number(0)}
                     jsondata.push(data)
                     if(index==4)
                     {
@@ -1170,7 +1178,9 @@ app.get('/api/home3/graph', async function (req, res) {
                     }
                    
                 })
-                
+            }
+            else{
+                res.json(null)
             }
         }catch(err)
         {
@@ -1856,7 +1866,6 @@ app.get('/api/exhibition1/data', async function (req, res) {
                                         var [result] = await connection.query(query, [req.body.art_id, date])
                                         if(result!=undefined && result[0]!=undefined)
                                         {
-                                            console.log(result)
                                             result.forEach((item)=>{
                                                 resvalue.push({name: item.date,'Hits':item.hits})
                                             })
