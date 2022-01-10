@@ -11,15 +11,15 @@
     text-align:right;
     border-radius: 8px 8px 0px 0px;
     background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
-    top:580px;
-    left:315px;
+    top:480px;
+    left:305px;
     width:800px;
     height:450px;
 }
 .graph_1_title{
     position: absolute;
-    top:534px;
-    left:315px;
+    top:450px;
+    left:305px;
     font-size:18px;
     width:400px;
     text-align: left;
@@ -42,14 +42,14 @@
             text-align:right;
             border-radius: 8px 8px 0px 0px;
             background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
-            top:810px;
+            top:365px;
             left:5vw;
             width:90vw;
             height:61vw;
         }
         .graph_1_title{
             position: absolute;
-            top:780px;
+            top:340px;
             left:3vw;
             font-size:16px;
             width:400px;
