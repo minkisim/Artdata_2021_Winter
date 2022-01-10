@@ -83,9 +83,10 @@ function Home3(){
                 <div className="home_3_Slider">
                     {sliderdata[0] != undefined && <SimpleSlider dataset={sliderdata}></SimpleSlider>}
                 </div>
-        </div>
+            </div>
             <Chart02 data={graph}></Chart02> 
             <DateBox data={date}></DateBox>
+            <div className='home_3_Div'></div>
         </div>
     )
 }

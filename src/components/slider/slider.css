@@ -151,13 +151,13 @@
 @media only screen and (max-width:768px) {
     .slider_component1 {
         width: 90vw;
-        height: 610px;
+        height: 500px;
     }
     
     .component1_artist {
         position: absolute;
-        top: 260px;
-        width: 31vw;
+        top: 200px;
+        width: 34vw;
         text-align: right;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -169,8 +169,8 @@
     
     .component1_type {
         position: absolute;
-        top: 290px;
-        width: 31vw;
+        top: 240px;
+        width: 32vw;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -182,8 +182,8 @@
     
     .component1_size {
         position: absolute;
-        top: 330px;
-        width: 31vw;
+        top: 270px;
+        width: 32vw;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -196,8 +196,8 @@
     
     .component1_musium {
         position: absolute;
-        top: 350px;
-        width: 31vw;
+        top: 290px;
+        width: 32vw;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -211,15 +211,15 @@
     .component1_img {
         position: relative;
         top: 10px;
-        left: 25vw;
+        left: 15vw;
         margin-left: 80px;
-        width: 40vw;
-        height:600px;
+        width: 49vw;
+        height:500px;
 
     }
     .component1_img img{
-        width: 40vw;
-        height:600px;
+        width: 49vw;
+        height:500px;
         object-fit: contain;
     }
     

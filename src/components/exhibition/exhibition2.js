@@ -172,7 +172,8 @@ function Exhibition2({match}){
             <div className="old_graph">
                 <Chart04 data={chart04data}></Chart04>
             </div>
-
+            <div className='exhibition2_mobileDiv'>                        
+            </div>
         </div>
     )
 }

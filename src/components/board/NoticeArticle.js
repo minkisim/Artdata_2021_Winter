@@ -64,6 +64,7 @@ function NoticeArticle({isLogin, isAdmin}){
             <p>게시글 목록</p>
         </div></Link>    
     </div>
+    <div className="NoticeArticle_mobileDiv"></div>
 
     </>  
     )

@@ -31,6 +31,7 @@ function Home2() {
     }, [])
     // Today Artwork html
     return(
+        <>
         <div className="home_2_div">
             <div className="home_2_div_img">{artData != null && <Zoomimage image={artData.imageurl} size='548'></Zoomimage>}</div>
             <div className="home_2_text">
@@ -47,6 +48,9 @@ function Home2() {
                 {artData != null && <Link to={`/exhibition3/${artData.id}`}><p>View more</p></Link>}
             </div>    
         </div>
+        <div className='home_2_Div'>
+        </div>
+        </>
     )
 }
 export default Home2;

@@ -7,7 +7,7 @@ import '../App.css';
 /* vaneTitle and  SideBar Part*/
 import VaneTitle from '../components/VaneTitle';
 import Sidebar from '../components/Sidebar/Sidebar';
-
+import NavBottom from './NavBottom';
 /* Home import Part */
 import Home from '../components/home/Home01';
 import Home2 from '../components/home/Home02';
@@ -60,6 +60,8 @@ import CSEditor from '../components/board/CSEditor';
 import NoticeArticle from '../components/board/NoticeArticle';
 import CSArticle from '../components/board/CSArticle';
 import CSAnswer from '../components/board/CSAnswer';
+
+
 
 import {dev_ver} from './global_const';
 
@@ -178,6 +180,7 @@ function MainPage({isLogin, isAdmin}){
                 { !(isLogin==undefined || isLogin=='' || isLogin.length<1) && <Route component={Error404}></Route>}
             </Switch>            
         </div> 
+        <NavBottom/>
         <Sidebar />
         
         </BrowserRouter>

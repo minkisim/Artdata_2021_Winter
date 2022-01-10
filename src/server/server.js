@@ -3079,6 +3079,7 @@ app.post('/api/board/answer',async (req,res)=>{
     //로그인 확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     {
+        console.log(req.session.user)
         //현재 로그인된 세션의 사용자(req.session.user.username)가
         //답변하는 관리자이므로
         //답변 내용과 함께 업데이트

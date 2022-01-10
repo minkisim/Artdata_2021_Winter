@@ -38,6 +38,7 @@ function Home4( ){
     },[])   
     // New Artwork html
     return(
+        <>
         <div className="new_artwork">
             <p>New artwork</p>
             <div className="new_artwork_box">
@@ -53,6 +54,8 @@ function Home4( ){
             </div>
             
         </div>
+        <div className='home_4_Div'></div>
+        </>
     )
 }
 export default  Home4;

@@ -66,7 +66,7 @@ body{
   @media screen and (max-width:768px){
     .Title_Page_back{
       position: absolute;
-      top:200px;
+      top:100px;
       left:0vmin;
       width:100vmin;
       height: calc( 100vmin / 16 * 9 );
@@ -75,7 +75,7 @@ body{
     
     .Title_Page_div{
       position: absolute;
-      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6);
+      top: calc( 100px + ( 100vmin / 16 ) * 9 / 6);
       left:0vmin;
       width:100vmin;
       height: calc( 100vmin / 16 * 6 );
@@ -85,7 +85,7 @@ body{
     }
     .Title_Page_p1{
       position: absolute;
-      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 10vmin );
+      top: calc( 100px + ( 100vmin / 16 ) * 9 / 6 + 10vmin );
       left:10vmin;
       font-family: Noto sans KR;
       width:80vmin;
@@ -97,7 +97,7 @@ body{
     }
     .Title_Page_p2{
       position: absolute;
-      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 14vmin );
+      top: calc( 100px + ( 100vmin / 16 ) * 9 / 6 + 14vmin );
       left:20vmin;
       font-family: Noto sans KR;
       width:60vmin;
@@ -110,7 +110,7 @@ body{
     }
     .Title_Page_btn{
       position: absolute;
-      top: calc( 200px + ( 100vmin / 16 ) * 9 / 6 + 26vmin );
+      top: calc( 100px + ( 100vmin / 16 ) * 9 / 6 + 26vmin );
       left: max( calc( (100vmin - 22vmin) / 2 ) , calc( (100vmin - 190px) / 2 ) );
       width: min( 22vmin , 190px );
       height: min(7vmin, 70px);
@@ -158,19 +158,22 @@ body{
   position: absolute;
   
 }
+.home_1_Div{
+  display: none;
+}
 
 @media screen and (max-width:768px) {
       
     .Weekly{
       position: absolute;
-      top:180px;
+      top:80px;
       left:7vmin;
       font-size:16px;
       font-weight:bold;
     }
     .home_window_flexbox2{
       position: absolute;
-      top:210px;
+      top:110px;
       left:5vmin;
       width: 90vmin;
       height: 30vmin;
@@ -185,6 +188,13 @@ body{
     .home_artwork_div{
     position: absolute;
 
+    }
+    .home_1_Div{
+      display: block;
+      position: absolute;
+      top: calc( 850px + 61vw );
+      height: 100px;
+      width: 100vw;
     }
 }
 
@@ -250,19 +260,27 @@ body{
     font-size:23px;
     margin-top:26px;
   }
-
+  .home_2_Div{
+    display: none;
+  }
 
 @media only screen and (max-width:768px){
   .home_2_div{
     position:absolute;
-    top:186px;
+    top:86px;
     left:5vw;
     width:90vw;
-    height: calc( 340px + 80vw);
+    height: calc( 280px + 80vw);
     background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
     border-radius: 15px 15px 15px 15px;
   }
-  
+  .home_2_Div{
+    display: block;
+    position: absolute;
+    top: calc( 600px + 80vw);
+    width: 100vw;
+    height: 100px;
+  }
   .home_2_div_img{
     position:absolute;
     top:55px;
@@ -287,17 +305,17 @@ body{
     margin:0px;
   }
   .home_2_text_1{
-    font-size: 36px;
+    font-size: 26px;
   }
   .home_2_text_2{
-    font-size:16px;
+    font-size:14px;
     font-weight:lighter;
   }
   
   .home_2_textArea{
     position:absolute;
     left:5vw;
-    top: calc( 220px + 60vw );
+    top: calc( 180px + 60vw );
     width:80vw;
     height:20vw;
     text-align: left;
@@ -310,7 +328,7 @@ body{
     width:160px;
     height:60px;
     left: calc( 45vw - 80px );
-    top: calc( 240px + 80vw );
+    top: calc( 200px + 80vw );
     background-color: #191919;
     border-radius: 15px;
   }
@@ -335,11 +353,14 @@ body{
     left:30px;
     width: 1344px;
 }
+.home_3_Div{
+  display: none;
+}
 
 @media only screen and (max-width:768px) {
   .home_3_Current{
       position: absolute;
-      top:180px;
+      top:80px;
       left:5vw;
       font-weight: 700;
   }
@@ -348,6 +369,13 @@ body{
       top:60px;
       left:5vw;
       width: 80vw;
+  }
+  .home_3_Div{
+    display: block;
+    position:absolute;
+    top:calc( 105vw + 660px);
+    height: 100px;
+    width: 100vw;
   }
 }
 
@@ -418,14 +446,23 @@ body{
     text-align: center;
     font-weight:normal;
 }
-
+.home_4_Div{
+  display: none;
+}
 @media only screen and (max-width:768px) {
   .new_artwork{
     position: absolute;
     width:90vw;
     height:950px;
-    top:160px;
+    top:60px;
     left:5vw;
+  }
+  .home_4_Div{
+    display: block;
+    position: absolute;
+    top:calc( 30px + 180vw + 450px);
+    height: 100px;
+    width: 100vw;
   }
   .new_artwork p{
     text-align: left;

@@ -150,6 +150,8 @@ function Artist01({match}){
                 </div>
             </div>
         </div>
+        <div className='artist01_mobileDiv'>
+        </div>
     </div>
 
 

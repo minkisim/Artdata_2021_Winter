@@ -148,6 +148,7 @@ function SignupPage({history}){
                     
                     <div className="signup_btn" onClick={joinForm}><p>Sign Up</p></div>
                 </div>
+            <div className='signup_mobileDiv'></div>
             </div>
         )
 }

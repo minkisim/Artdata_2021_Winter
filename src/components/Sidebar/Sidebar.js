@@ -24,9 +24,10 @@ const Nav = styled.div`
 `;
 
 const Nav2 = styled.div`
-  background: #15171c;
-  position: fixed;
-  top:120px;
+  background: #ffffff;
+  position: absolute;
+  top:20px;
+  left: 10px;
   width: 50px;
   height: 50px;
   border-radius: 0px 10px 10px 0px;
@@ -63,8 +64,8 @@ const SidebarNav = styled.nav`
 const SidebarNav2 = styled.nav`
   background: #15171c;
   position : fixed;
-  top:120px;
-  width: 220px;
+  top:30px;
+  width: 50vw;
   border-radius: 0px 30px 0px 0px;
   height: 900px;
   display: flex;

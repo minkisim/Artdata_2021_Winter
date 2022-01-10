@@ -266,7 +266,8 @@ return(
             </div>
         </div>
         </div>
-
+        <div className='exhibition3_moblieDiv'>
+        </div>        
 
 
 

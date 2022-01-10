@@ -42,15 +42,15 @@
             text-align:right;
             border-radius: 8px 8px 0px 0px;
             background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
-            top:930px;
+            top:810px;
             left:5vw;
             width:90vw;
             height:61vw;
         }
         .graph_1_title{
             position: absolute;
-            top:900px;
-            left:7vw;
+            top:780px;
+            left:3vw;
             font-size:16px;
             width:400px;
             text-align: left;
@@ -95,14 +95,14 @@
         position: absolute;
         border-radius: 15px 15px 15px 15px;
         background: linear-gradient(to top,#F9F9F9 98%,#181818 2%);
-        top:calc( 35vw + 310px );
+        top:calc( 35vw + 210px );
         left:5vw;
         width:90vw;
         height:70vw;
     }
     .graph_2_title{
         position: absolute;
-        top: calc( 35vw + 280px );
+        top: calc( 35vw + 180px );
         left:7vw;
         font-size:16px;
         margin:0px;
@@ -120,4 +120,18 @@
 .graph3 svg{
     width:auto;
     height:auto;
+}
+
+@media only screen and (max-width:768px){
+    .graph3{
+        font-family: 'Lato', sans-serif;
+        position: absolute;
+        border-radius: 15px 15px 15px 15px;
+        background: linear-gradient(to top,#F9F9F9 95%,#181818 5%);
+    }
+    .graph3 svg{
+        width:auto;
+        height:auto;
+    }
+    
 }

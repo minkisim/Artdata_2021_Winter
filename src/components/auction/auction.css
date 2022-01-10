@@ -153,7 +153,7 @@
 
     .auction_Main_Page{
         position:absolute;
-        top:200px;
+        top:100px;
         left:0px;
         width:100vw;
     }
@@ -318,19 +318,30 @@
     display: flex;
     position: relative;
     top:0px;
-    left:50px;
+    left:0px;
     width:1450px;
     flex-wrap: wrap;
 }
 
-@media only screen and (max-width:768px) {
+@media only screen and (max-width:619px) {
     .auction_list{
         display: flex;
         position: relative;
-        top:300px;
+        top:250px;
         left: calc( 50vw - 155px );
         width:310px;
         flex-wrap: wrap;
+    }
+}
+@media only screen and (min-width:620px) and (max-width:768px) {
+    .auction_list{
+        display: flex;
+        position: relative;
+        top:200px;
+        left: 5vw;
+        width:90vw;
+        flex-wrap: wrap;
+        justify-content: space-between;
     }
 }
 
@@ -500,7 +511,7 @@
 @media only screen and (max-width:768px) {
     .Auctiondata_Page{
         position: absolute;
-        top:200px;
+        top:100px;
         left:3vw;
         width:94vw;
         height: 800px;
@@ -1081,7 +1092,7 @@
 @media only screen and (max-width:768px) {
     .Popup_gray_div{
         position:absolute;
-        top:152px;
+        top:52px;
         left:0vw;
         width: 90vw;
         height:510px;
@@ -1092,7 +1103,7 @@
     }
     .Popup_title{
         position: absolute;
-        top:162px;
+        top:62px;
         left:3vw;
         font-size: 16px;
         color:  #FFFFFF;
@@ -1100,13 +1111,13 @@
     .Popup_btn{
         opacity: 100%;
         position: absolute;
-        top:172px;
+        top:72px;
         left:76vw;
         width: 10vw;
     }
     .Popup_black_div{
         position:absolute;
-        top:240px;
+        top:140px;
         left:3vw;
         width: 84vw;
         height:345px;
@@ -1117,7 +1128,7 @@
     }
     .popup_box{
         position:absolute;
-        top:260px;
+        top:160px;
         left:5vw;
         width: 80vw;
     }

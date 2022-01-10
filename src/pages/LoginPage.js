@@ -43,6 +43,7 @@ function LoginPage({history,props}){
     }
 // 로그인 페이지 구성용 html
         return(
+            <>
             <div className="login_page_div">
                 <p className="login_Slogan1">IoT기술과 예술이 만나다</p>
                 <p className="login_Slogan2">작품의 가치를 좀 더 선명하게 확인 해 보세요.</p>
@@ -57,6 +58,8 @@ function LoginPage({history,props}){
                     </div>
                 </div>
             </div>
+            <div className='login_mobileDiv'></div>
+            </>
         )
 }
 export default LoginPage;

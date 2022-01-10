@@ -15,7 +15,7 @@ body {
 @media only screen and (max-width:768px) {
     .myPage_Page {
         position: absolute;
-        top: 200px;
+        top: 100px;
         left: 5vw;
     }
 }
@@ -572,7 +572,7 @@ body {
 @media screen  and (max-width:768px){
     .Transfer_Page{
         position: absolute;
-        top:200px;
+        top:100px;
         left:3vw;
     }
     .people_search_bar{

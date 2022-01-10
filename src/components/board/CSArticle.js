@@ -78,7 +78,9 @@ function CSArticle({isLogin, isAdmin}){
             <div className="CSAnswerBtn">
             <p>게시글 답변</p>
         </div></Link>}    
+
     </div>
+    <div className="CSArticle_mobileDiv"></div>
 
     </>  
     )

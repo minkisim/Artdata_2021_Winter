@@ -36,11 +36,13 @@ body {
     margin-right: 37px;
     margin-left: 0px;
 }
-
+.exhibition1_mobileDiv{
+    display: none;
+}
 @media only screen and (max-width:768px) {
     .show_window_flexbox2 {
-        position: absolute;
-        top: 150px;
+        position: relative;
+        top: 100px;
         left: calc( ( 100vw - 420px ) / 2 );
         width: 420px;
         display: flex;
@@ -49,6 +51,13 @@ body {
         flex-wrap: wrap;
         margin-right: 0px;
         margin-left: 0px;
+    }
+    .exhibition1_mobileDiv{
+        display: block;
+        position: relative;
+        width: 100vw;
+        height: 300px;
+    
     }
 
 }
@@ -96,9 +105,9 @@ body {
 @media only screen and (max-width:768px) {
     .exhibition2 {
         position: absolute;
-        top: 180px;
+        top: 100px;
         left: 5vw;
-        height: 820px;
+        height: 800px;
         width: 90vw;
     }
     
@@ -113,7 +122,7 @@ body {
         position: absolute;
         top: 40px;
         width: 90vw;
-        height: 790px;
+        height: 760px;
         background: linear-gradient(to top, #F9F9F9 99%, #181818 1%);
         border-radius: 15px;
     }
@@ -204,7 +213,7 @@ body {
         width: 80vw;
         height: 38px;
         position: absolute;
-        top: 680px;
+        top: 650px;
         left: 5vw;
         background-color: #191919;
         border-radius: 10px;
@@ -236,7 +245,7 @@ body {
         width: 80vw;
         height: 38px;
         position: absolute;
-        top: 720px;
+        top: 690px;
         left: 5vw;
         background-color: #191919;
         border-radius: 10px;
@@ -267,8 +276,8 @@ body {
     
     .data_date {
         position: absolute;
-        top: 755px;
-        left: calc( 88vw - 150px );
+        top: 725px;
+        left: calc( 87vw - 150px );
         width: 150px;
         text-align: right;
     }
@@ -523,7 +532,7 @@ body {
 
     .rank_title {
         position: absolute;
-        top: 1000px;
+        top: 900px;
         left: 8vw;
         font-size: 14px;
         font-family: Noto Sans KR;
@@ -533,17 +542,16 @@ body {
     .rank_table {
         width: 90vw;
         height: 322px;
-        background: linear-gradient(to top, #F9F9F9 86%, #181818 14%);
+        background: linear-gradient(to top, #F9F9F9 88%, #181818 12%);
         border-radius: 15px;
         position: absolute;
-        top: 1040px;
+        top: 940px;
         left: 5vw;
     }
     
     .table_header {
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
         width: 90vw;
     }
     
@@ -552,11 +560,11 @@ body {
     }
     
     .table_rank {
-        margin-top: 15px;
-        margin-bottom: 20px;
+        margin-top: 13px;
+        margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
-        width:50px;
+        width:11vw;
         text-align: center;
     }
     
@@ -567,20 +575,20 @@ body {
     }
     
     .table_art {
-        margin-top: 15px;
-        margin-bottom: 20px;
+        margin-top: 13px;
+        margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
-        width:250px;
+        width:49vw;
         text-align: center;
     }
     
     .table_time {
-        margin-top: 15px;
-        margin-bottom: 20px;
+        margin-top: 13px;
+        margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
-        width:150px;
+        width:30vw;
         text-align: center;
     }
     
@@ -593,7 +601,7 @@ body {
     }
     
     .body_rank {
-        margin-top: 10px;
+        margin-top: 11px;
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -602,7 +610,7 @@ body {
     }
     
     .body_art {
-        margin-top: 10px;
+        margin-top: 11px;
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -617,7 +625,7 @@ body {
     }
     
     .body_time {
-        margin-top: 10px;
+        margin-top: 11px;
         margin-bottom: 5px;
         margin-left: 0px;
         margin-right: 0px;
@@ -674,20 +682,22 @@ body {
     margin-left: 20px;
 
 }
-
+.exhibition2_mobileDiv{
+    display: none;
+}
 @media only screen and (max-width:768px) {
     .customer_graph {
         position: absolute;
-        top: 1440px;
-        left: 10vw;
-        width: 80vw;
+        top: 1302px;
+        left: 5vw;
+        width: 90vw;
         height: 40vw;
     }
     
     .customer_title {
         position: absolute;
-        top: 1400px;
-        left: 10vw;
+        top: 1262px;
+        left: 5vw;
         font-size: 15px;
         font-family: Noto Sans KR;
         font-weight: 700;
@@ -697,9 +707,9 @@ body {
     
     .old_graph {
         position: absolute;
-        top: calc(1500px + 40vw);
-        left: 10vw;
-        width: 80vw;
+        top: calc(1362px + 40vw);
+        left: 5vw;
+        width: 90vw;
         height: 55vw;
         background: linear-gradient(to top, #F9F9F9 98%, #181818 2%);
         border-radius: 15px;
@@ -707,13 +717,19 @@ body {
     
     .old_title {
         position: absolute;
-        top: calc(1460px + 40vw);
+        top: calc(1322px + 40vw);
         left: 5vw;
         font-size: 15px;
         font-family: Noto Sans KR;
         font-weight: 700;
         margin-left: 20px;
-    
+    }
+    .exhibition2_mobileDiv{
+        top: calc( 1362px + 95vw );
+        position: absolute;
+        display: block;
+        height:100px;
+        width: 100vw;
     }
 }
 
@@ -908,17 +924,16 @@ body {
 
     .exhibition3_simpleSlider {
         position: absolute;
-        top: 150px;
+        top: 100px;
         left: 10vw;
-        width: 80vw;
+        width: 80.1vw;
         height: 40vw;
     }
-   
     .exhibition3_artwork {
         position: absolute;
-        top: calc( 180px + 40vw );
-        left: 10vw;
-        width: 80vw;
+        top: calc( 110px + 40vw );
+        left: 5vw;
+        width: 90vw;
         height: 500px;
     }
     
@@ -927,7 +942,7 @@ body {
         width: 200px;
         text-align: left;
         margin-top: 0px;
-        margin-left:20px;
+        margin-left:10px;
         font-size: 18px;
         font-weight: 700;
     }
@@ -935,7 +950,7 @@ body {
     .exhibition3_artwork_box {
         position: absolute;
         top: 30px;
-        width: 80vw;
+        width: 90vw;
         height: 550px;
         background: linear-gradient(to top, #F9F9F9 98%, #181818 2%);
         border-radius: 15px;
@@ -945,11 +960,11 @@ body {
         position: absolute;
         top: 15px;
         left: 5vw;
-        width: 70vw;
+        width: 80vw;
         height: 300px;
     }
     .exhibition3_artwork_box_img img{
-        width: 70vw;
+        width: 80vw;
         height:300px;
         object-fit: contain;
     }
@@ -1015,7 +1030,7 @@ body {
         position: absolute;
         left: 5vw;
         top: 430px;
-        width: 70vw;
+        width: 80vw;
         height: 45px;
         background-color: #191919;
         border-radius: 10px;
@@ -1056,7 +1071,7 @@ body {
         position: absolute;
         left: 5vw;
         top: 480px;
-        width: 70vw;
+        width: 80vw;
         height: 45px;
         background-color: #191919;
         border-radius: 10px;
@@ -1094,7 +1109,7 @@ body {
     
     .exhibition3_time_line {
         position: absolute;
-        left: 40vw;
+        left: 50vw;
         top: 515px;
         width: 35vw;;
         font-family: Note Sans KR;
@@ -1146,11 +1161,10 @@ body {
 
     .exhibition3_old {
         position: absolute;
-        left: 10vw;
-        top: calc( 760px + 40vw );
-        width: 80vw;
-        height: 80vw;
-    
+        left: 5vw;
+        top: calc( 690px + 40vw );
+        width: 90vw;
+        height: 100vw;
     }
     
     .exhibition3_old_div {
@@ -1158,10 +1172,9 @@ body {
         top: 40px;
         width: 90vw;
         height: 90vw;
-        left: -5vw;
+        left: 0vw;
         background: linear-gradient(to top, #F9F9F9 98%, #181818 2%);
         border-radius: 15px;
-    
     }
     
     .exhibition3_old_graph_title {
@@ -1170,7 +1183,7 @@ body {
         font-weight: 700;
         margin-top: 7px;
         margin-bottom: 7px;
-        margin-left: 20px;
+        margin-left: 3vw;
         font-family: Noto Sans KR;
     }
     
@@ -1261,11 +1274,14 @@ body {
     width:100%;
     height:100%
 }
+.exhibition3_moblieDiv{
+    display: none;
+}
 
 @media only screen and (max-width:768px) {
     .art_cumulative_time {
         position: absolute;
-        top: calc( 825px + 128vw );
+        top: calc( 735px + 130vw );
         left: 0;
         width: 100vw;
         height: 400px;
@@ -1340,5 +1356,12 @@ body {
         top: 10vw;
         width: 80vw;
         height: 40vw;
+    }
+    .exhibition3_moblieDiv{
+        display: block;
+        position:absolute;
+        top: calc( 760px + 185vw );
+        height:100px;
+        width:100vw;
     }
 }

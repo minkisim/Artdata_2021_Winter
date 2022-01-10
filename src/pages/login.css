@@ -90,7 +90,7 @@ input:focus {outline:none;}
     
 .login_Slogan1{
     position: absolute;
-    top:189px;
+    top:89px;
     left: calc( 50vmin - 100px );
     width:200px;
     margin:0px;
@@ -101,7 +101,7 @@ input:focus {outline:none;}
 
 .login_Slogan2{
     position: absolute;
-    top:231px;
+    top:131px;
     left:calc( 50vmin - 150px );
     width: 300px;
     margin:0px;
@@ -112,12 +112,19 @@ input:focus {outline:none;}
 
 .login_box{
     position: absolute;
-    top:347px;
+    top:247px;
     left:5vw;
     width:90vw;
     height:453px;
     background-color: #F9F9F9;
     border-radius: 15px;
+}
+.login_mobileDiv{
+    display: block;
+    width: 100vw;
+    height: 100px;
+    top: 710px;
+    position: absolute;
 }
 
 .login_box img{
@@ -249,12 +256,15 @@ input:focus {outline:none;}
     margin-top: 10px;
     font-family: Noto Sans KR;
 }
+.signup_mobileDiv{
+    display: none;
+}
 
 
 @media screen and (max-width:768px) {
     .signup_box img{
         position:absolute;
-        top:47px;
+        top:30px;
         left:calc( 45vmin - 60px );
         width:120px;
         height:106px;
@@ -263,13 +273,21 @@ input:focus {outline:none;}
     }
     .signup_box{
         position: absolute;
-        top:147px;
+        top:100px;
         left: 5vmin;
         width:90vmin;
         height:900px;
         background-color: #F9F9F9;
         border-radius: 15px;
         padding-bottom: 50px;
+        margin-bottom: 100px;
+    }
+    .signup_mobileDiv{
+        display: block;
+        top:1100px;
+        position: absolute;
+        width: 100vw;
+        height: 100px;
     }
     .signup_box input{
         position: relative;

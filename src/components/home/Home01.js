@@ -76,7 +76,7 @@ export default function Home( ){
             </div>   
            
             {graph[0] ? <Chart01 data={graph}/>:null}
-
+            <div className='home_1_Div'></div>
             
         </div>
         
