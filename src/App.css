@@ -297,9 +297,9 @@ a { text-decoration: none; color: black; }
     bottom:0px;
     display: flex;
     background-color: #15171c;
-    width:90vw;
+    width:80vw;
     height:60px;
-    padding: 0vw 5vw;
+    padding: 0vw 10vw;
     justify-content: space-between;
   }
   .icon_block{
