@@ -88,6 +88,85 @@ const promisePool = pool.promise()
 */
 //mysql추가사항 end
 
+//schedule 추가사항
+var asynclock = require('async-lock')
+var lock = new asynclock()
+var key = 'key'
+
+var cron = require('node-cron')
+cron.schedule('*/2 * * * * *', async()=>{
+    //현재 1순위인 경매에서 다른 사용자가 새로 입찰했을 때
+    //입찰한 경매 종료 시
+    
+    
+    var time = moment().format('HH:mm:ss')
+    var date = moment().format('YYYY-MM-DD')
+    //console.log('schduler : '+date)
+
+    lock.acquire("key1", async(done)=>{
+        //console.log("lock entered")
+
+        var connection = await openConnection()
+        var query = "select u.begin_point, u.end_point, u.artist_id, u.art_id, a.art_name from auction u, art a where u.end_point = date_format(?,'%Y-%m-%d') and u.art_id = a.art_id and a.owner_username is null"
+        
+        try{
+            var [result] = await connection.query(query,date)
+            if(result!=undefined && result[0]!=undefined)
+            {
+                
+                result.forEach(async(item)=>{
+                    query = "select * from user_bid where art_id = ? and user_price in (select max(user_price) from user_bid where art_id = ?)"
+                    var [result2] = await connection.query(query, [item.art_id, item.art_id])
+                    
+                    if(result2 != undefined && result2[0]!=undefined)
+                    {
+                        query = "select * from user_inform where username = ? and art_id = ? and auction_type = 0 and inform_time = ?"
+
+                        var [result3] = await connection.query(query,[result2[0].username, item.art_id, date])
+                        if(result3!=undefined && result3[0]!=undefined)
+                        {
+                            //console.log("이미 등록된 알림입니다.")
+                        }
+                        else{
+                            query = "insert into user_inform values(?,?,?,?,?,?, false)"
+                        
+                            try{
+                                await connection.beginTransaction()
+                                var [result4] = await connection.query(query, [result2[0].username, "<p>다음 작품의 경매가 종료되었습니다. "+item.art_name+"\n입찰을 확인해 주세요.</p>",date, 0, item.art_id, 0])
+                                if(result4!=undefined && result4.affectedRows>=1)
+                                {
+                                    console.log("inform success")
+                                }
+                                await connection.commit()
+                            }catch(err)
+                            {
+                                await connection.rollback()
+                                //console.log(err)
+                            }
+                        }
+                        //console.log(result2)
+                    }
+                })
+            }
+        }
+        catch(err)
+        {
+            console.log(err)
+        }
+        //console.log(result)
+        
+        closeConnection(connection)
+        done()
+    },(err,ret)=>{
+        //console.log("lock released")
+    }, {})
+
+
+
+})
+//schedule 추가사항 end
+
+
 
 //const dev_ver = require("../pages/global_const");
 const corsOptions = {
@@ -128,6 +207,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
+const { connectionClass } = require('oracledb');
 //const { truncate } = require('fs/promises');
 //const { off } = require('process');
 //const { elemIndices } = require('prelude-ls');
@@ -2651,11 +2731,24 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                              var [result2] = await connection.query(query,[req.body.userprice, date, req.body.username, req.body.art_id])
                                 if(result2 !=undefined && result2.affectedRows>=1)
                                 {
-                                    await connection.commit()
-                                    res.json({success : true})
+                                    query = "insert into user_inform select u.username, concat('<p>',concat(a.art_name,'작품에 더 높은 입찰가가 제시되었습니다.</p>')) inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                    var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
+
+                                    if(result3!=undefined && result3.affectedRows>=1)
+                                    {
+                                        await connection.commit()
+                                        res.json({success : true})
+                                    }
+                                    else
+                                    {
+                                        await connection.rollback()
+                                        res.json({err : true})
+                                    }
+
+                                    
                                 }
                                 else{
-                                    connection.rollback()
+                                    await connection.rollback()
                                     res.json({err : true})
                                 }
     
@@ -2667,11 +2760,22 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                         var [result2] = await connection.query(query,[req.body.username, req.body.userprice, date, req.body.art_id])
                                 if(result2.affectedRows>=1)
                                 {
-                                    await connection.commit()
-                                    res.json({success : true})
+                                    query = "insert into user_inform select u.username, concat('<p>',concat(a.art_name,'작품에 더 높은 입찰가가 제시되었습니다.</p>')) inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                    var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
+
+                                    if(result3!=undefined && result3.affectedRows>=1)
+                                    {
+                                        await connection.commit()
+                                        res.json({success : true})
+                                    }
+                                    else
+                                    {
+                                        await connection.rollback()
+                                        res.json({err : true})
+                                    }
                                 }
                                 else{
-                                    connection.rollback()
+                                    await connection.rollback()
                                     res.json({err : true})
                                 }
                       }
@@ -3079,7 +3183,6 @@ app.post('/api/board/answer',async (req,res)=>{
     //로그인 확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     {
-        console.log(req.session.user)
         //현재 로그인된 세션의 사용자(req.session.user.username)가
         //답변하는 관리자이므로
         //답변 내용과 함께 업데이트
@@ -3254,6 +3357,13 @@ app.post('/api/notice/upload',async (req,res)=>{
         res.json({login_required:true})
     }
     await closeConnection(connection)
+})
+
+
+//알림
+app.post('api/inform',async (req,res)=>{
+    //현재 1순위인 경매에서 다른 사용자가 새로 입찰했을 때
+    //입찰한 경매 종료 시
 })
 
 
