@@ -140,7 +140,7 @@ create table user_inform (
 	inform_time	time,
 	art_id		int			not null,
 	auction_type	int			not null,
-	comfirm		boolean			default false,
+	confirm		boolean			default false,
 	primary key (username, inform_date, inform_time, art_id, auction_type),
 	foreign key (username) references artuser(username) on delete cascade,
 	foreign key (art_id) references art(art_id) on delete cascade

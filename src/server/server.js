@@ -132,7 +132,7 @@ cron.schedule('*/2 * * * * *', async()=>{
                         
                             try{
                                 await connection.beginTransaction()
-                                var [result4] = await connection.query(query, [result2[0].username, "<p>다음 작품의 경매가 종료되었습니다. "+item.art_name+"\n입찰을 확인해 주세요.</p>",date, 0, item.art_id, 0])
+                                var [result4] = await connection.query(query, [result2[0].username, item.art_name+" 작품이 낙찰되었습니다. 결제를 진행하여 주시길 바랍니다.",date, 0, item.art_id, 0])
                                 if(result4!=undefined && result4.affectedRows>=1)
                                 {
                                     console.log("inform success")
@@ -2731,7 +2731,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                              var [result2] = await connection.query(query,[req.body.userprice, date, req.body.username, req.body.art_id])
                                 if(result2 !=undefined && result2.affectedRows>=1)
                                 {
-                                    query = "insert into user_inform select u.username, concat('<p>',concat(a.art_name,'작품에 더 높은 입찰가가 제시되었습니다.</p>')) inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                    query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
                                     var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
 
                                     if(result3!=undefined && result3.affectedRows>=1)
@@ -2760,7 +2760,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                         var [result2] = await connection.query(query,[req.body.username, req.body.userprice, date, req.body.art_id])
                                 if(result2.affectedRows>=1)
                                 {
-                                    query = "insert into user_inform select u.username, concat('<p>',concat(a.art_name,'작품에 더 높은 입찰가가 제시되었습니다.</p>')) inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                    query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
                                     var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
 
                                     if(result3!=undefined && result3.affectedRows>=1)
@@ -3361,9 +3361,29 @@ app.post('/api/notice/upload',async (req,res)=>{
 
 
 //알림
-app.post('api/inform',async (req,res)=>{
+app.get('/api/inform/myinform',async (req,res)=>{
     //현재 1순위인 경매에서 다른 사용자가 새로 입찰했을 때
     //입찰한 경매 종료 시
+    var connection = await openConnection()
+
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var query = "select * from user_inform where username = ? order by inform_date desc, inform_time desc"
+        try{
+            var [result] = await connection.query(query,[req.session.user.username])
+            res.json(result)
+        }catch(err)
+        {
+            console.log(err)
+            res.json({err:true})
+        }
+    }
+    else
+    {
+        res.json({login_required:true})
+    }
+    
+    await closeConnection(connection)
 })
 
 
