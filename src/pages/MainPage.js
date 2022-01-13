@@ -25,6 +25,7 @@ import Transfer from '../components/myPage/Transfer';
 import AuctionMain from '../components/auction/AuctionMain';
 import Auctiondata from '../components/auction/Auctiondata';
 import AuctionPay from '../components/auction/AuctionPay';
+import MyNotify from '../components/myPage/MyNotify';
 
 /* Admin Part */
 import UploadAuction from './Uploadauction';
@@ -141,7 +142,7 @@ function MainPage({isLogin, isAdmin}){
                 {<Route  path="/signupPage" restricted={true} component={SignupPage} exact></Route>} 
 
                 {<Route path="/notice" component={NoticeBoard} exact></Route>}
-               
+                {<Route path="/notify" component={MyNotify} exact></Route>}
 
                 {<Route path="/customerService" component={CustomerService} exact></Route>}
 

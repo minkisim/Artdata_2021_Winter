@@ -808,3 +808,110 @@ body {
     justify-content: center;
 }
 }
+
+.Notify_Page{
+    position: absolute;
+    top:150px;
+    left:157px;
+    width:300px;
+}
+
+.Notify_Header{
+    position: relative;
+    width: 283px;
+    height: 40px;
+    border: 1px solid #eaeaea;
+    padding-left: 15px;
+    margin: 0px;
+}
+
+.Notify_Title{
+    position: absolute;
+    line-height: 39px;
+    margin: 0px;
+}
+.Notify_Title p{
+    margin: 0px;
+    font-weight: 700;
+    color: #6b6d70;
+}
+.Notify_Header_right{
+    position: absolute;
+    top:4px;
+    right:8px;
+    width: 160px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.Notify_Header_btn{
+    margin:0px;
+    padding:6px 6px;
+    border: 1px solid #eaeaea;
+}
+.Notify_Header_btn p{
+    margin:0px;
+    font-size: 12px;
+}
+.Notify_Body{
+    width: 298px;
+}
+.Notify_Data{
+    padding-left: 15px;
+    width: 283px;
+    height: 51px;
+    border: 1px solid #eaeaea;
+}
+.Notify_Data .data_textarea{
+    position: absolute;
+    width: 240px;
+    height: 18px;
+}
+.Notify_Data .data_textarea p{
+    font-size: 14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    margin: 0px;
+    padding: 5px 0px;
+    text-align: left;
+    
+}
+
+.Notify_Data .data_from {
+    position: relative;
+    width: 240px;
+    top: 23px;
+    height: 18px;
+}
+
+.Notify_Data  .data_from p{
+    font-size: 14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    margin: 0px;
+    padding: 1px 0px;
+    text-align: left;
+}
+
+.Notify_Data .on{
+    color: #444444;
+}
+
+.Notify_Data .off{
+    color: #ADADAD;
+}
+
+.Notify_Data .data_Xbtn{
+    position: relative;
+    left:250px;
+    top:-15px;
+    width:30px;
+    line-height: 30px;
+}
+
+.Notify_Data .data_Xbtn p{
+    margin: 0px;
+}
+

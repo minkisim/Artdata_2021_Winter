@@ -251,7 +251,7 @@ return(
             </div>
             </div>
             <div className="art_cumulative_time_graph">
-                { chart05data!=undefined && chart05data[0]!=undefined ? <Chart05 data={chart05data}/> : <p>자료가 없습니다.</p>}
+                { chart05data!=undefined && chart05data[0]!=undefined ? <Chart05 data={chart05data}/> : <p className='art_cumulative_null'>해당 기간 내용이 없습니다.</p>}
             </div>
             </div>
         </div>

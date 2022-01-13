@@ -1201,7 +1201,12 @@ body {
     width: 800px;
     height: 400px;
 }
-
+.art_cumulative_null{
+    position: relative;
+    top:50px;
+    font-size: 20px;
+    font-weight: 700;
+}
 .art_cumulative_time_title {
     text-align: left;
     font-size: 16px;
