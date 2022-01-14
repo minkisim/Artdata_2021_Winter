@@ -13,8 +13,8 @@ function MyNotify(){
         .then((res)=>{
             if(res.data.login_required)
             {
-                alert('로그인이 필요합니다.')
-                window.location.href = '/loginPage'
+                //alert('로그인이 필요합니다.')
+                //window.location.href = '/loginPage'
             }
             else if(res.data.err)
             {

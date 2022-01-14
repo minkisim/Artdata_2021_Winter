@@ -98,7 +98,7 @@ a { text-decoration: none; color: black; }
 .search_bar{
   position: absolute;
   top:62px;
-  left:1304px;
+  left:1254px;
   display:flex;
   width:370px;
 }
@@ -131,11 +131,18 @@ a { text-decoration: none; color: black; }
 .user_icon .icon_sample{
   position: absolute;
   top:62px;
-  left:1715px;
+  left:1655px;
   width:45px;
   height:45px;
   margin-top:7px;
-
+}
+.message_icon .icon_message{
+  position: absolute;
+  top:52px;
+  left:1715px;
+  width:55px;
+  height:55px;
+  margin-top:7px;
 }
 
 .title_login_btn{

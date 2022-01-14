@@ -1,19 +1,22 @@
 /* eslint-disable */
 import React,{useState} from 'react';
 import Sidebar from './Sidebar/Sidebar';
+import styled from 'styled-components';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import '../App.css';
 import {Link} from 'react-router-dom';
 import { IoMdLogOut } from 'react-icons/io';
-
+import MyNotify from './myPage/MyNotify';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 import {dev_ver} from '../pages/global_const'
 // 타이틀에 상단바 코드
 function VaneTitle({isLogin,isAdmin}){
-    
+    const [message, setMessage] = useState(false);
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
+   function showMessage ()
+   {setMessage(!message)}
     function logOut()
     {
       
@@ -65,6 +68,16 @@ function VaneTitle({isLogin,isAdmin}){
       
     }
 
+    const MessageSide = styled.div`
+    display: ${() => (message ? 'block' : 'none')};
+    position : fixed;
+    top:120px;
+    width: 300px;
+    border-radius: 0px 30px 0px 0px;
+    left: 1590px;
+    z-index: 10;
+  `;
+
     const onKeyPress = (e) => {
       if(e.key == 'Enter'){
         mainSearch()
@@ -100,10 +113,17 @@ function VaneTitle({isLogin,isAdmin}){
           <img src="/img/search_btn.png" onClick={mainSearch} alt="검색버튼"/>
         </div>
         <div className="user_icon">
-        <Link to="/mypage"><img className="icon_sample" src="/icon_people.png"></img></Link>
+            <Link to="/mypage"><img className="icon_sample" src="/icon_people.png"></img></Link>
         </div>
-
-      
+        <div className="message_icon" onClick={showMessage}>
+            <img className="icon_message" src="/message_black.png"></img>
+        </div>
+      <MessageSide>
+        <div className='Notify_window'>
+          <img className='Notify_Xbtn'  src='/img/X_btn.png' onClick={showMessage}></img>
+        </div>
+        <MyNotify/>
+      </MessageSide>
       {isLogin=='true' && <div className="title_login_btn" onClick={logOut}><p>Logout</p> </div>}
       {isLogin=='false' && <div className="title_login_btn"><Link to="/loginPage"><p >Login</p></Link></div> }
       </>
