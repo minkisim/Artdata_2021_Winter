@@ -1,12 +1,13 @@
-drop table user_preference;
-drop table auction cascade;
-drop table user_bid cascade;
-drop table art cascade;
-drop table artist cascade;
-drop table board cascade;
-drop table artuser cascade;
-drop table exhibition cascade;
-drop table notification cascade;
+drop table if exists user_inform;
+drop table if exists user_preference;
+drop table if exists auction cascade;
+drop table if exists user_bid cascade;
+drop table if exists art cascade;
+drop table if exists artist cascade;
+drop table if exists board cascade;
+drop table if exists artuser cascade;
+drop table if exists exhibition cascade;
+drop table if exists notification cascade;
 
 
 create table artuser (

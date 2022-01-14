@@ -394,7 +394,7 @@ export default function Auctiondata({location, match}){
                                 <p>{data.userprice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</p>
                             </div>
                             <div className="Popup_content_time">
-                                <p>{data.updateDate.split('.')[0].replace('T',' ')}</p>
+                                <p>{data.updateDate}</p>
                             </div>
                         </div>
 

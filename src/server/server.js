@@ -101,7 +101,7 @@ cron.schedule('*/2 * * * * *', async()=>{
     
     var time = moment().format('HH:mm:ss')
     var date = moment().format('YYYY-MM-DD')
-    //console.log('schduler : '+date)
+    console.log('schduler : '+date)
 
     lock.acquire("key1", async(done)=>{
         //console.log("lock entered")
@@ -120,7 +120,7 @@ cron.schedule('*/2 * * * * *', async()=>{
                     
                     if(result2 != undefined && result2[0]!=undefined)
                     {
-                        query = "select * from user_inform where username = ? and art_id = ? and auction_type = 0 and inform_time = ?"
+                        query = "select * from user_inform where username = ? and art_id = ? and auction_type = 0 and inform_date = ?"
 
                         var [result3] = await connection.query(query,[result2[0].username, item.art_id, date])
                         if(result3!=undefined && result3[0]!=undefined)
@@ -128,7 +128,7 @@ cron.schedule('*/2 * * * * *', async()=>{
                             //console.log("이미 등록된 알림입니다.")
                         }
                         else{
-                            query = "insert into user_inform values(?,?,?,?,?,?, false)"
+                            query = "insert into user_inform values(?,?,date_format(?,'%Y-%m-%d'),?,?,?, false)"
                         
                             try{
                                 await connection.beginTransaction()
@@ -1027,7 +1027,7 @@ app.post('/api/loginForm', async (req,res)=>
             //결과가 없거나, 결과 튜플의 비밀번호가 사용자가 입력한 비밀번호와 일치하지 않을때, 로그인 실패
             if(result==undefined || result[0] == undefined || result[0].password != req.body.password)
             {
-                console.log("비밀번호 불일치 : "+err);
+                console.log("비밀번호 불일치 : ");
                 res.json({
                     success:false
                 })
@@ -2668,7 +2668,7 @@ app.post('/api/auctiondata',async (req,res)=>{
 app.post('/api/auctiondata/search',async (req,res)=>{
     var connection = await openConnection()
         //선택한 경매에 입찰 시도한 사용자 입찰 가격순으로 최대 5명 뽑기
-        var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.username, u.user_price, u.bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = ? order by u.user_price desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
+        var query = "select * from (select t.*, @rownum := @rownum + 1 rownum  from (select r.username, u.user_price, date_format(u.bid_date,'%Y-%m-%d') bid_date, r.email from artuser r, user_bid u where r.username = u.username and u.art_id = ? order by u.user_price desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 5"
         try{
             var [result] = await connection.query(query,[req.body.id])
             //정상 결과 반환 시
@@ -2734,7 +2734,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                                     query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
                                     var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
 
-                                    if(result3!=undefined && result3.affectedRows>=1)
+                                    if(result3!=undefined )
                                     {
                                         await connection.commit()
                                         res.json({success : true})
@@ -2763,7 +2763,7 @@ app.post('/api/auctiondata/submit',async (req,res)=>{
                                     query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
                                     var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
 
-                                    if(result3!=undefined && result3.affectedRows>=1)
+                                    if(result3!=undefined )
                                     {
                                         await connection.commit()
                                         res.json({success : true})
@@ -3368,9 +3368,10 @@ app.get('/api/inform/myinform',async (req,res)=>{
 
     if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
     {
-        var query = "select * from user_inform where username = ? order by inform_date desc, inform_time desc"
+        var query = "select username, inform_text, date_format(inform_date,'%Y-%m-%d') inform_date, inform_time, art_id, auction_type, confirm from user_inform where username = ? order by inform_date desc, inform_time desc"
         try{
             var [result] = await connection.query(query,[req.session.user.username])
+            console.log(result)
             res.json(result)
         }catch(err)
         {
@@ -3386,7 +3387,43 @@ app.get('/api/inform/myinform',async (req,res)=>{
     await closeConnection(connection)
 })
 
+app.post('/api/inform/delete', async (req, res)=>{
+    var connection = await openConnection()
 
+    console.log(req.body.inform_date.split("T")[0])
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var query = "delete from user_inform where username = ? and inform_date = date_format(?,'%Y-%m-%d') and inform_time = ? and art_id = ? and auction_type = ?"
+
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query,[req.body.username, req.body.inform_date, req.body.inform_time, req.body.art_id, req.body.auction_type]) 
+            console.log(result)
+            if(result!=undefined && result.affectedRows>=1)
+            {
+                await connection.commit()
+                res.json({success:true})
+            }
+            else
+            {
+                await connection.rollback()
+                res.json({err:true})
+            }
+        }catch(err)
+        {
+            await connection.rollback()
+            res.json({err:true})
+            console.log(err)
+        }
+    }
+    else
+    {
+        console.log("로그인 안됨")
+        res.json({login_required:true})
+    }
+    
+    await closeConnection(connection)
+})
 
 app.listen(PORT, () => {
     console.log(`Server run: http://localhost:${PORT}/`)
