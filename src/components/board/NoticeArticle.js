@@ -17,12 +17,27 @@ axios.defaults.withCredentials = true;
 // 공지사항 게시글 보기용 코드
 function NoticeArticle({isLogin, isAdmin}){
     const [results, setResults] = useState()
+    const [adminCheck, setAdminCheck] = useState()
+    const [id, setId] = useState()
     useEffect(()=>{
+
+        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        .then((result)=>{
+            if(result.data.userrole == 'ROLE_ADMIN')
+            {
+                setAdminCheck('ROLE_ADMIN')
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+
         var id
         const query = queryString.parse(location.search)
         if(query != undefined && query.id != undefined)
         {
             id=query.id
+            setId(query.id)
         }       
         else{
             alert("잘못된 접근입니다.")
@@ -45,6 +60,30 @@ function NoticeArticle({isLogin, isAdmin}){
             alert(err)
         })
     },[])
+
+    async function deleteArticle()
+    {
+        var qid
+        const query = queryString.parse(location.search)
+        if(query != undefined && query.id != undefined)
+        {
+            qid=query.id
+            
+        }       
+        await axios.post(`http://${dev_ver}:4000/api/notice/deletearticle`,{id:qid})
+        .then((res)=>{
+            if(res.data.success)
+            {
+                alert('삭제하였습니다.')
+            }
+            else{
+                alert('서버 오류')
+            }
+        })
+        
+       
+    }
+
 // 공지사항 게시글 보기용 html
     return(
     <>  
@@ -60,6 +99,13 @@ function NoticeArticle({isLogin, isAdmin}){
         <div align="left" className="NoticeArticle_body" dangerouslySetInnerHTML={ {__html:results.bodytext} }>
         </div>
          }
+         {adminCheck==='ROLE_ADMIN' &&
+             <Link to="/notice"><div className="NoticeArticleDeleteBtn" onClick={deleteArticle}>
+                 <p>게시글 삭제</p>
+             </div></Link>}
+        {adminCheck==='ROLE_ADMIN' &&<Link to={`/noticeeditor?id=${id}`}><div className="NoticeArticleUpdateBtn">
+            <p>게시글 수정</p>
+        </div></Link>}
         <Link to="/notice"><div className="NoticeArticleBtn">
             <p>게시글 목록</p>
         </div></Link>    

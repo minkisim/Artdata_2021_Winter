@@ -13,24 +13,18 @@ import { useMediaQuery } from 'react-responsive';
 import {dev_ver} from '../pages/global_const'
 // 타이틀에 상단바 코드
 function VaneTitle({isLogin,isAdmin, message, getMessage}){
-    //const [message, setMessage] = useState(false);
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
     const ismobile =useMediaQuery({ maxWidth: 768 });
    function showMessage ()
-   {//setMessage(!message)
+   {
     getMessage()
    }
     function logOut()
     {
-      
-      
       axios.get(`http://${dev_ver}:4000/api/logout`)
       .then(()=>{
       })
-      //var expireDate = new Date();
-      //expireDate.setDate(expireDate.getDate() - 1);
-      //document.cookie = "user= " + "; expires=" + expireDate.toGMTString() + "; path=/";
       window.location.replace("/")
     }
 

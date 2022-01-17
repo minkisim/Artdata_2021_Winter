@@ -3131,6 +3131,36 @@ app.post('/api/board/showarticle',async (req,res)=>{
     await closeConnection(connection)
 })
 
+//게시판 삭제
+app.post('/api/board/deletearticle',async (req,res)=>{
+    var connection = await openConnection()
+    //선택한 게시글의 상세 정보 리턴
+    var query = "delete from board where username = ? and indices = ?"
+    try{
+        await connection.beginTransaction()
+        var [result] = await connection.query(query,[req.body.username, req.body.indices])
+        if(result != undefined && result.affectedRows>=1)
+        {
+            await connection.commit()
+            res.json({success:true})
+        }
+        else
+        {
+            await connection.rollback()
+            res.json({success:false})
+        }
+    }catch(err)
+    {
+        //db 에러시
+        await connection.rollback()
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+    await closeConnection(connection)
+})
+
 //게시판 등록
 app.post('/api/board/upload',async (req,res)=>{
     var connection = await openConnection()
@@ -3322,6 +3352,39 @@ app.post('/api/notice/showarticle',async (req,res)=>{
                })
             }    
         }
+        else
+        {
+            res.json({none:true})
+        }
+    }catch(err)
+    {
+        //db 에러시
+        console.error(err); 
+        res.status(200).json({
+           err:true
+       })
+    }
+
+    await closeConnection(connection)
+})
+
+//공지 삭제
+app.post('/api/notice/deletearticle',async (req,res)=>{
+    var connection = await openConnection()
+    //현재 선택한 공지 상세 정보 리턴
+    var query = "delete from notification where id = ?"
+    try{
+        await connection.beginTransaction()
+        var [result] = await connection.query(query,req.body.id)
+        if(result != undefined && result.affectedRows>=1)
+        {
+            await connection.commit()
+            res.json({success:true})
+        }
+        else{
+            await connection.rollback()
+            res.json({success:false})
+        }
     }catch(err)
     {
         //db 에러시
@@ -3341,7 +3404,35 @@ app.post('/api/notice/upload',async (req,res)=>{
     //사용자 세션 확인
     if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
     {
-        //공지글 중에서 가장 큰 id를 선택하여
+        //공지 수정
+        if(req.body.id!=undefined)
+        {
+            var query = "update notification set title = ?, bodytext = ?, uploaddate = DATE_FORMAT(?,'%Y-%m-%d') where id = ?"
+            try{
+                await connection.beginTransaction()
+
+                var [result] = await connection.query(query,[req.body.title,req.body.bodytext,date,req.body.id])
+                if(result!=undefined && result.affectedRows>=1)
+                {
+                    await connection.commit()
+                    res.json({result:true})
+                }
+                else
+                {
+                    await connection.rollback()
+                    res.json({none:true})
+                }
+            }catch(err)
+            {
+                await connection.rollback()
+                res.json({err:true})
+                console.log(err)
+            }
+        }
+        //새 공지 등록
+        else
+        {
+            //공지글 중에서 가장 큰 id를 선택하여
         //+1한 값을 현재 공지의 id로 설정
         var query = "select tmp2.id from (select t.*, @rownum := @rownum + 1 rownum  from (select id from notification order by id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
         try{
@@ -3369,7 +3460,7 @@ app.post('/api/notice/upload',async (req,res)=>{
                     var [result2] = await connection.query(query,input)
                     if(result2 != undefined && result2.affectedRows >= 1){
                         await connection.commit()
-                        res.json({result:true})
+                        res.json({update:true})
                     }
                     else
                     {
@@ -3390,6 +3481,8 @@ app.post('/api/notice/upload',async (req,res)=>{
             console.error(err); 
             res.json({db_error:true})
         }
+        }
+        
 
     }
     //로그인이 안되어 있을 때

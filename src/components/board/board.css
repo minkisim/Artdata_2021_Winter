@@ -403,6 +403,38 @@
     color:#e0e0e0;
     font-weight: bold;
 }
+
+.NoticeArticleDeleteBtn{
+    position: absolute;
+    top:890px;
+    left:1060px;
+    width:140px;
+    height:45px;
+    border-radius: 15px;
+    background-color: #181818;
+}
+.NoticeArticleDeleteBtn p{
+    margin-top: 13px;
+    color:#e0e0e0;
+    font-weight: bold;
+}
+
+.NoticeArticleUpdateBtn{
+    position: absolute;
+    top:890px;
+    left:1210px;
+    width:140px;
+    height:45px;
+    border-radius: 15px;
+    background-color: #181818;
+}
+.NoticeArticleUpdateBtn p{
+    margin-top: 13px;
+    color:#e0e0e0;
+    font-weight: bold;
+}
+
+
 .NoticeArticle_mobileDiv{
     display: none;
 }
@@ -474,6 +506,14 @@
         color:#e0e0e0;
         font-weight: bold;
         font-size: 12px;
+    }
+
+    .NoticeArticleDeleteBtn{
+        display: none;
+    }
+
+    .NoticeArticleUpdateBtn{
+        display: none;
     }
     
 }

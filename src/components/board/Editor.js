@@ -11,19 +11,42 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
 import { dev_ver } from '../../pages/global_const'
 import axios from "axios";
+import queryString from 'query-string'
 // 공지사항 에디터 코드
 function Editor({isLogin, isAdmin}){
 
     const [title,setTitle] = useState("")
     const [bodytext, setBodytext] = useState("")
 
+    useEffect(()=>{
+        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        .then((result)=>{
+            if(result.data.userrole == 'ROLE_ADMIN')
+            {
+            }
+            else{
+                alert('로그인이 필요합니다.')
+                window.location.href = '/loginPage'
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+    },[])
+
     function upload()
     {
         var jsondata = {
+            id : null,
             title : null,
             bodytext : null
         }
 
+        const query = queryString.parse(location.search)
+        if(query != undefined && query.id != undefined)
+        {
+            jsondata.id=query.id
+        }       
 
         if(title != undefined && title.length>=1)
         {
@@ -61,7 +84,11 @@ function Editor({isLogin, isAdmin}){
                 alert("등록 되었습니다.")
                 window.location.href = '/notice'
             }
-            
+            else if(res.data.update)
+            {
+                alert("수정 되었습니다.")
+                window.location.href = '/notice'
+            }
             
         })
         .catch((err)=>{
