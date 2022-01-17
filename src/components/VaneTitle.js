@@ -9,13 +9,14 @@ import { IoMdLogOut } from 'react-icons/io';
 import MyNotify from './myPage/MyNotify';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+import { useMediaQuery } from 'react-responsive';
 import {dev_ver} from '../pages/global_const'
 // 타이틀에 상단바 코드
 function VaneTitle({isLogin,isAdmin, message, getMessage}){
     //const [message, setMessage] = useState(false);
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
-
+    const ismobile =useMediaQuery({ maxWidth: 768 });
    function showMessage ()
    {//setMessage(!message)
     getMessage()
@@ -80,6 +81,16 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
     z-index: 10;
   `;
 
+  const MessageSide2 = styled.div`
+  display: ${() => ( (message) ? 'block' : 'none')};
+  position : absolute;
+  bottom:80px;
+  width: 300px;
+  border-radius: 0px 30px 0px 0px;
+  left: calc( 95vw - 300px );
+  z-index: 10;
+`;
+
     const onKeyPress = (e) => {
       if(e.key == 'Enter'){
         mainSearch()
@@ -120,7 +131,16 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
         <div className="message_icon" onClick={showMessage}>
             <img className="icon_message" src="/message_black.png"></img>
         </div>
-      <MessageSide>
+      {  ismobile ?<MessageSide2>
+      { isLogin=='true' && 
+      <>
+        <div className='Notify_window'>
+          <img className='Notify_Xbtn'  src='/img/X_btn.png' onClick={showMessage}></img>
+        </div>
+        <MyNotify /> 
+      </>
+      }
+      </MessageSide2>: <MessageSide>
       { isLogin=='true' && 
       <>
         <MyNotify /> 
@@ -130,6 +150,7 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
       </>
       }
       </MessageSide>
+     }
       {isLogin=='true' && <div className="title_login_btn" onClick={logOut}><p>Logout</p> </div>}
       {isLogin=='false' && <div className="title_login_btn"><Link to="/loginPage"><p >Login</p></Link></div> }
       </>

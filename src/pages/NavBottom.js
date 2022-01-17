@@ -19,7 +19,7 @@ function NavBottom({message, getMessage}){
             <p>Home</p>
             </div>
             <div className='icon_block'>
-            <Link to="/MyPage"><img src='/icon_message.png' alt='푸시 알림' onClick={()=>{alert(message);getMessage()}}/></Link> 
+            <img src='/icon_message.png' alt='푸시 알림' onClick={getMessage}/>
             <p>Message</p>
             </div>
        </div>

@@ -162,7 +162,9 @@ a { text-decoration: none; color: black; }
 }
 
 @media only screen and (max-width:768px)  {
-
+  .message_icon{
+    display: none;
+  }
   .user_icon .icon_sample{
     display: none;
     position: absolute;
