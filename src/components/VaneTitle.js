@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import Sidebar from './Sidebar/Sidebar';
 import styled from 'styled-components';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
@@ -15,6 +15,7 @@ function VaneTitle({isLogin,isAdmin}){
     const [message, setMessage] = useState(false);
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
+
    function showMessage ()
    {setMessage(!message)}
     function logOut()
@@ -69,7 +70,7 @@ function VaneTitle({isLogin,isAdmin}){
     }
 
     const MessageSide = styled.div`
-    display: ${() => (message ? 'block' : 'none')};
+    display: ${() => ( (message) ? 'block' : 'none')};
     position : fixed;
     top:120px;
     width: 300px;
@@ -119,10 +120,14 @@ function VaneTitle({isLogin,isAdmin}){
             <img className="icon_message" src="/message_black.png"></img>
         </div>
       <MessageSide>
+      { isLogin=='true' && 
+      <>
+        <MyNotify /> 
         <div className='Notify_window'>
           <img className='Notify_Xbtn'  src='/img/X_btn.png' onClick={showMessage}></img>
         </div>
-        <MyNotify/>
+      </>
+      }
       </MessageSide>
       {isLogin=='true' && <div className="title_login_btn" onClick={logOut}><p>Logout</p> </div>}
       {isLogin=='false' && <div className="title_login_btn"><Link to="/loginPage"><p >Login</p></Link></div> }

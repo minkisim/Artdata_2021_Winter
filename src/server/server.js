@@ -101,7 +101,7 @@ cron.schedule('*/2 * * * * *', async()=>{
     
     var time = moment().format('HH:mm:ss')
     var date = moment().format('YYYY-MM-DD')
-    console.log('schduler : '+date)
+    //console.log('schduler : '+date)
 
     lock.acquire("key1", async(done)=>{
         //console.log("lock entered")
@@ -132,7 +132,7 @@ cron.schedule('*/2 * * * * *', async()=>{
                         
                             try{
                                 await connection.beginTransaction()
-                                var [result4] = await connection.query(query, [result2[0].username, item.art_name+" 작품이 낙찰되었습니다. 결제를 진행하여 주시길 바랍니다.",date, 0, item.art_id, 0])
+                                var [result4] = await connection.query(query, [result2[0].username, item.art_name+" 작품이 낙찰되었습니다.",date, 0, item.art_id, 0])
                                 if(result4!=undefined && result4.affectedRows>=1)
                                 {
                                     console.log("inform success")
@@ -207,7 +207,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var session = require('express-session');
 var bodyParser_post = require('body-parser');       //post 방식 파서
-const { connectionClass } = require('oracledb');
+//const { connectionClass } = require('oracledb');
 //const { truncate } = require('fs/promises');
 //const { off } = require('process');
 //const { elemIndices } = require('prelude-ls');
@@ -2928,6 +2928,10 @@ app.post('/api/auction_submit', async (req,res)=>{
                             success:true
                         })
                     }
+                    else
+                    {
+                        res.json({success:false})
+                    }
             }catch(err)
             {
                 //db 에러시
@@ -3057,6 +3061,10 @@ app.get('/api/board/pagenum',async (req,res)=>{
         {
             res.json({boardnum : result[0].boardnum})
         }
+        else
+        {
+            res.json({none:true})
+        }
     }catch(err)
     {
         //db 에러시
@@ -3079,6 +3087,10 @@ app.post('/api/board/showpage',async (req,res)=>{
        {
            //console.log(result)
            res.json(result)
+       }
+       else
+       {
+           res.json({none:true})
        }
     }catch(err)
     {
@@ -3103,6 +3115,10 @@ app.post('/api/board/showarticle',async (req,res)=>{
         {
             //console.log(result)
             res.json(result[0])
+        }
+        else
+        {
+            res.json({none:true})
         }
     }catch(err)
     {
@@ -3153,6 +3169,10 @@ app.post('/api/board/upload',async (req,res)=>{
                         await connection.commit()
                         res.json({result:true})
                     }
+                    else{
+                        await connection.rollback()
+                        res.json({none:true})
+                    }
                 }catch(err)
                 {
                     //db 에러시
@@ -3195,6 +3215,10 @@ app.post('/api/board/answer',async (req,res)=>{
                     {
                         res.json({result:true})
                     }
+                    else
+                    {
+                        res.json(null)
+                    }
         }catch(err)
         {
             //db 에러시
@@ -3222,6 +3246,9 @@ app.get('/api/notice/pagenum',async (req,res)=>{
         {
             res.json({noticenum : result[0].noticenum})
         }
+        else{
+            res.json({none:true})
+        }
     }catch(err)
     {
         //db 에러시
@@ -3245,6 +3272,10 @@ app.post('/api/notice/showpage',async (req,res)=>{
         {
             //console.log(result)
             res.json(result)
+        }
+        else
+        {
+            res.json({none:true})
         }
     }catch(err)
     {
@@ -3275,6 +3306,11 @@ app.post('/api/notice/showarticle',async (req,res)=>{
                     if(result2!=undefined && result2.affectedRows>=1){
                         await connection.commit()
                         res.json(result[0])
+                    }
+                    else
+                    {
+                        await connection.rollback()
+                        res.json({none:true})
                     }
             }catch(err)
             {
@@ -3335,6 +3371,11 @@ app.post('/api/notice/upload',async (req,res)=>{
                         await connection.commit()
                         res.json({result:true})
                     }
+                    else
+                    {
+                        await connection.rollback()
+                        res.json({none:true})
+                    }
                 }catch(err)
                 {
                     //db 에러시
@@ -3371,7 +3412,6 @@ app.get('/api/inform/myinform',async (req,res)=>{
         var query = "select username, inform_text, date_format(inform_date,'%Y-%m-%d') inform_date, inform_time, art_id, auction_type, confirm from user_inform where username = ? order by inform_date desc, inform_time desc"
         try{
             var [result] = await connection.query(query,[req.session.user.username])
-            console.log(result)
             res.json(result)
         }catch(err)
         {
@@ -3390,7 +3430,6 @@ app.get('/api/inform/myinform',async (req,res)=>{
 app.post('/api/inform/delete', async (req, res)=>{
     var connection = await openConnection()
 
-    console.log(req.body.inform_date.split("T")[0])
     if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
     {
         var query = "delete from user_inform where username = ? and inform_date = date_format(?,'%Y-%m-%d') and inform_time = ? and art_id = ? and auction_type = ?"
@@ -3398,7 +3437,6 @@ app.post('/api/inform/delete', async (req, res)=>{
         try{
             await connection.beginTransaction()
             var [result] = await connection.query(query,[req.body.username, req.body.inform_date, req.body.inform_time, req.body.art_id, req.body.auction_type]) 
-            console.log(result)
             if(result!=undefined && result.affectedRows>=1)
             {
                 await connection.commit()
@@ -3407,7 +3445,7 @@ app.post('/api/inform/delete', async (req, res)=>{
             else
             {
                 await connection.rollback()
-                res.json({err:true})
+                res.json({none:true})
             }
         }catch(err)
         {
@@ -3424,6 +3462,115 @@ app.post('/api/inform/delete', async (req, res)=>{
     
     await closeConnection(connection)
 })
+
+app.get('/api/inform/deleteall', async (req, res)=>{
+    var connection = await openConnection()
+
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var query = "delete from user_inform where username = ?"
+
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query,[req.session.user.username]) 
+            if(result!=undefined && result.affectedRows>=1)
+            {
+                await connection.commit()
+                res.json({success:true})
+            }
+            else
+            {
+                await connection.rollback()
+                res.json({none:true})
+            }
+        }catch(err)
+        {
+            await connection.rollback()
+            res.json({err:true})
+            console.log(err)
+        }
+    }
+    else
+    {
+        console.log("로그인 안됨")
+        res.json({login_required:true})
+    }
+    
+    await closeConnection(connection)
+})
+
+app.get('/api/inform/deleteallconfirmed', async (req, res)=>{
+    var connection = await openConnection()
+
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var query = "delete from user_inform where username = ? and confirm = 1"
+
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query,[req.session.user.username]) 
+            if(result!=undefined && result.affectedRows>=1)
+            {
+                await connection.commit()
+                res.json({success:true})
+            }
+            else
+            {
+                await connection.rollback()
+                res.json({none:true})
+            }
+        }catch(err)
+        {
+            await connection.rollback()
+            res.json({err:true})
+            console.log(err)
+        }
+    }
+    else
+    {
+        console.log("로그인 안됨")
+        res.json({login_required:true})
+    }
+    
+    await closeConnection(connection)
+})
+
+app.post('/api/inform/confirmed', async (req, res)=>{
+    var connection = await openConnection()
+
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var query = "update user_inform set confirm = 1 where username = ? and inform_date = date_format(?,'%Y-%m-%d') and inform_time = ? and art_id = ? and auction_type = ?"
+
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query,[req.body.username, req.body.inform_date, req.body.inform_time, req.body.art_id, req.body.auction_type]) 
+            if(result!=undefined && result.affectedRows>=1)
+            {
+                await connection.commit()
+                res.json({success:true})
+            }
+            else
+            {
+                await connection.rollback()
+                res.json({none:true})
+            }
+        }catch(err)
+        {
+            await connection.rollback()
+            res.json({err:true})
+            console.log(err)
+        }
+    }
+    else
+    {
+        console.log("로그인 안됨")
+        res.json({login_required:true})
+    }
+    
+    await closeConnection(connection)
+})
+
 
 app.listen(PORT, () => {
     console.log(`Server run: http://localhost:${PORT}/`)
