@@ -819,8 +819,8 @@ body {
 }
 .Notify_Page{
     position: relative;
-    width:303px;
-    height: 400px;
+    width:301px;
+    height: 403px;
     overflow-y: scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
@@ -869,7 +869,7 @@ body {
 }
 .Notify_Body{
     width: 298px;
-    height: 350px;
+    max-height: 360px;
     overflow-y: scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
@@ -884,7 +884,6 @@ body {
     border: 1px solid #eaeaea;
 }
 .Notify_Data .data_textarea{
-    position: absolute;
     width: 240px;
     height: 30px;
 }
@@ -898,9 +897,7 @@ body {
 }
 
 .Notify_Data .data_from {
-    position: relative;
     width: 240px;
-    top: 40px;
     height: 18px;
 }
 
@@ -909,8 +906,9 @@ body {
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    margin: 0px;
-    padding: 5px 0px;
+    position: relative;
+    top:0px;
+    padding: 2px 0px;
     text-align: left;
 }
 
@@ -925,7 +923,7 @@ body {
 .Notify_Data .data_Xbtn{
     position: relative;
     left:250px;
-    top:0px;
+    top:-35px;
     width:30px;
     line-height: 30px;
 }
