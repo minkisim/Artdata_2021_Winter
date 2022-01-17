@@ -862,6 +862,14 @@ body {
 }
 .Notify_Body{
     width: 298px;
+    min-height:70px;
+    max-height:350px;
+    overflow-y: scroll;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+}
+.Notify_Body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 .Notify_Data{
     padding-left: 15px;
