@@ -819,8 +819,15 @@ body {
 }
 .Notify_Page{
     position: relative;
-    width:300px;
+    width:303px;
+    height: 400px;
+    overflow-y: scroll;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
     background-color: #F9F9F9;
+}
+.Notify_Page::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
 }
 
 .Notify_Header{
@@ -862,8 +869,7 @@ body {
 }
 .Notify_Body{
     width: 298px;
-    min-height:70px;
-    max-height:350px;
+    height: 350px;
     overflow-y: scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
