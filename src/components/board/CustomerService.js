@@ -91,7 +91,9 @@ function CustomerService({isLogin, isAdmin}){
 
         axios.post(`http://${dev_ver}:4000/api/board/showpage`,{page : page})
         .then((res)=>{
-            if(res.data !=undefined)
+            if(res.data.none)
+            {}
+            else if(res.data !=undefined)
             {
                 setData(res.data)
                 //console.log(res.data)
