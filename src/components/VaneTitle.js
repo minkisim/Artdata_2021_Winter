@@ -11,20 +11,21 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 import {dev_ver} from '../pages/global_const'
 // 타이틀에 상단바 코드
-function VaneTitle({isLogin,isAdmin}){
-    const [message, setMessage] = useState(false);
+function VaneTitle({isLogin,isAdmin, message, getMessage}){
+    //const [message, setMessage] = useState(false);
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
 
    function showMessage ()
-   {setMessage(!message)}
+   {//setMessage(!message)
+    getMessage()
+   }
     function logOut()
     {
       
       
       axios.get(`http://${dev_ver}:4000/api/logout`)
       .then(()=>{
-        alert('로그아웃 하였습니다.')
       })
       //var expireDate = new Date();
       //expireDate.setDate(expireDate.getDate() - 1);

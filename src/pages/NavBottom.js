@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 
 // 모바일 하단 Nav 바 용 코드
-function NavBottom(){
+function NavBottom({message, getMessage}){
     return(
        <>
        <div className='nav_bottom'>
@@ -19,7 +19,7 @@ function NavBottom(){
             <p>Home</p>
             </div>
             <div className='icon_block'>
-            <Link to="/MyPage"><img src='/icon_message.png' alt='푸시 알림'/></Link> 
+            <Link to="/MyPage"><img src='/icon_message.png' alt='푸시 알림' onClick={()=>{alert(message);getMessage()}}/></Link> 
             <p>Message</p>
             </div>
        </div>

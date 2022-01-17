@@ -70,6 +70,11 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 function MainPage({isLogin, isAdmin}){
+    const [message, setMessage] = useState(false);
+    function getMessage()
+    {
+        setMessage(!message)
+    }
 /*
     const [isAdmin, setIsAdmin] = useState('');
     const [isLogin, setIsLogin] = useState('');
@@ -119,7 +124,7 @@ function MainPage({isLogin, isAdmin}){
     return (
         <BrowserRouter> 
         <div>
-            <VaneTitle isLogin={isLogin} isAdmin={isAdmin} />
+            <VaneTitle isLogin={isLogin} isAdmin={isAdmin} message={message} getMessage={getMessage}/>
         </div>
         
         <div>
@@ -181,7 +186,7 @@ function MainPage({isLogin, isAdmin}){
                 { !(isLogin==undefined || isLogin=='' || isLogin.length<1) && <Route component={Error404}></Route>}
             </Switch>            
         </div> 
-        <NavBottom/>
+        <NavBottom message={message} getMessage={getMessage}/>
         <Sidebar />
         
         </BrowserRouter>
