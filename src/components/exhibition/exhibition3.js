@@ -9,7 +9,7 @@ import SimpleSlider from '../slider/Home2Slider';
 import Chart04 from '../chartcomponent/chart04';
 import Chart05 from '../chartcomponent/chart05';
 import Zoomimage from '../showWindow/Zoomimage';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 import queryString from 'query-string'
 import {Link} from 'react-router-dom'
@@ -35,7 +35,7 @@ function Exhibition3({match}){
              jsondata.id=query.id
          }
          */
-        await axios.post(`http://${dev_ver}:4000/api/exhibition3/exhibition`, jsondata
+        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/exhibition`, jsondata
         ).
           then((res)=>{
          // console.log(res.data)
@@ -48,7 +48,7 @@ function Exhibition3({match}){
           });
 
           
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/chart04`,{art_id : art_id}).
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart04`,{art_id : art_id}).
           then((res)=>{
          if(res.data==null)
          {
@@ -63,7 +63,7 @@ function Exhibition3({match}){
           alert('error');
           });
 
-          axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+          axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'day',
             art_id:art_id
         }).
@@ -110,7 +110,7 @@ function Exhibition3({match}){
     useEffect(()=>{
         setQuery(queryString.parse(location.search))
 
-        axios.get(`http://${dev_ver}:4000/api/home3/slider`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`).
           then((res)=>{
          // console.log(res.data)
          setsliderdata(res.data)
@@ -144,7 +144,7 @@ function Exhibition3({match}){
     function chart05day()
     {
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'day',
             art_id : artId
         }).
@@ -159,7 +159,7 @@ function Exhibition3({match}){
     function chart05week()
     {
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'week',
             art_id : artId
         }).
@@ -174,7 +174,7 @@ function Exhibition3({match}){
     function chart05month()
     {
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'month',
             art_id : artId
         }).
@@ -189,7 +189,7 @@ function Exhibition3({match}){
     function chart05year()
     {
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition3/chart05`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'year',
             art_id : artId
         }).

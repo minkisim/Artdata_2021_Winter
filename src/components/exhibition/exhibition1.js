@@ -1,7 +1,7 @@
 import './exhibition.css'
 import react , {useState, useEffect} from 'react';
 import ShowWindow1 from '../showWindow/ShowWindow1';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 //  사이드바 Artdata 버튼 대응 뷰 구성 코드(웹페이지 눌러보면 확인 가능)
 function Exhibition(){
@@ -17,7 +17,7 @@ function Exhibition(){
 
     useEffect(() => {
         
-        axios.get(`http://${dev_ver}:4000/api/exhibition1/data`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/exhibition1/data`).
         then((res)=>{
             
             setdata(res.data);

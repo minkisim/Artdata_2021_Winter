@@ -3,7 +3,7 @@
 import React, { Component, useState, useEffect } from 'react';
 import ShowWindow6 from '../showWindow/ShowWindow6';
 import './Home.css'
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import  axios from 'axios';
 import { Link } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ function Home4( ){
     );
     useEffect(() => {
         
-        axios.get(`http://${dev_ver}:4000/api/home4/data`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/home4/data`).
         then((res)=>{
             console.log('받아온 것');
             console.log(res.data);

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { createRef, useState, useEffect} from 'react'
 import './MyPage.css';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
 // 보유작품 양도 관련 코드
 function Transfer({props, history}){
@@ -46,7 +46,7 @@ function Transfer({props, history}){
 
         function findUserByUsername()
         {
-                axios.post(`http://${dev_ver}:4000/api/myPagefindUser`,{
+                axios.post(`${protocol}://${dev_ver}:4000/api/myPagefindUser`,{
                         username: finduser
                 })
                 .then((result) => {
@@ -68,7 +68,7 @@ function Transfer({props, history}){
 
     const search = ( name ) => { 
         console.log("이름 : "+name);
-        axios.get(`http://${dev_ver}:4000/api/Transfer/people`,{params : {name : {name}}}).then((res) => {
+        axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/people`,{params : {name : {name}}}).then((res) => {
             if(res.data.id != 0){
                
             }
@@ -86,7 +86,7 @@ function Transfer({props, history}){
     useEffect(() => {
        
                         //get으로 바꿈
-                        axios.get(`http://${dev_ver}:4000/api/Transfer/artdata`)      
+                        axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`)      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
@@ -145,7 +145,7 @@ function Transfer({props, history}){
         }
 
         console.log('전송')
-        axios.post(`http://${dev_ver}:4000/api/Transfer/sendArt`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/Transfer/sendArt`,{
             checkBoxValue: checkBoxValue,
             username: people.username
         })

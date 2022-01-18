@@ -6,7 +6,7 @@ import Chart04 from '../chartcomponent/chart04';
 import axios from 'axios';
 import Zoomimage from '../showWindow/Zoomimage';
 import {Link} from 'react-router-dom'
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 // 사이드바 Artdata>Exhibition 버튼 대응 뷰 코드(전시관 소개)
 function Exhibition2({match}){
 
@@ -67,7 +67,7 @@ function Exhibition2({match}){
             
         }
         
-        await axios.post(`http://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
+        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
             console.log(res.data[1])
             if(res.data[0].notuple)
             {
@@ -91,7 +91,7 @@ function Exhibition2({match}){
             exnum = match.params.exhibition
         }
         
-        axios.post(`http://${dev_ver}:4000/api/exhibition2/rank`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/rank`,jsondata).
         then((res)=>{
             
        // console.log(res.data)
@@ -103,7 +103,7 @@ function Exhibition2({match}){
         });
 
 
-        axios.get(`http://${dev_ver}:4000/api/exhibition2/chart03/day`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/exhibition2/chart03/day`).
         then((res)=>{
             
        // console.log(res.data)

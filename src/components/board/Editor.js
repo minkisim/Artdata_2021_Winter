@@ -9,7 +9,7 @@ import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "./board.css";
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import axios from "axios";
 import queryString from 'query-string'
 // 공지사항 에디터 코드
@@ -19,7 +19,7 @@ function Editor({isLogin, isAdmin}){
     const [bodytext, setBodytext] = useState("")
 
     useEffect(()=>{
-        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)
         .then((result)=>{
             if(result.data.userrole == 'ROLE_ADMIN')
             {
@@ -69,7 +69,7 @@ function Editor({isLogin, isAdmin}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/notice/upload`,jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/notice/upload`,jsondata)
         .then((res)=>{
             if(res.data.login_required)
             {

@@ -11,7 +11,7 @@ import "./board.css";
 import { func } from "prop-types";
 
 import queryString from 'query-string'
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import axios from "axios";
 // 고객 센터 답변용 코드
 function CSAnswer({isLogin, isAdmin}){
@@ -55,7 +55,7 @@ function CSAnswer({isLogin, isAdmin}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/board/answer`,jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/board/answer`,jsondata)
         .then((res)=>{
             if(res.data.login_required)
             {

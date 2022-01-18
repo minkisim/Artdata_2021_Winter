@@ -7,7 +7,7 @@ import React, {useState,useEffect} from 'react'
 import axios from 'axios'
 import './upload.css'
 import AdminBar from './AdminBar';
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 import queryString from 'query-string'
 // 작품 정보 업로드용 코드
 export default function UploadArtwork(){
@@ -50,7 +50,7 @@ export default function UploadArtwork(){
 
         if(query.id!=undefined && query.id.length>=1)
         {
-            axios.post(`http://${dev_ver}:4000/api/imgupload/search`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/imgupload/search`,{
                 id:query.id
             })
             .then((result)=>{
@@ -185,7 +185,7 @@ export default function UploadArtwork(){
 
        // console.log(jsondata)
 
-        axios.post(`http://${dev_ver}:4000/api/imgupload`, jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/imgupload`, jsondata)
                 .then((result) => {
                     if(result.data.notexist)
                     {
@@ -204,7 +204,7 @@ export default function UploadArtwork(){
 
         if(file!=null && file.name != undefined)
         {
-            axios.post(`http://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
+            axios.post(`${protocol}://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
             .then((result) => {
                 if(result.data.success)
                 { 

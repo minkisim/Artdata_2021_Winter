@@ -1,7 +1,7 @@
 import react,{useState} from "react";
 import axios from 'axios';
 
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 
 // 작품 이미지 업로드 처리용 코드. 
 function Imageupload()
@@ -22,12 +22,12 @@ function Imageupload()
         console.log(artist);
         console.log(artname);
 
-        axios.post(`http://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
+        axios.post(`${protocol}://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
         .then((result) => {
             if(result.data.success)
             { 
                 alert("파일업로드 성공")
-                axios.post(`http://${dev_ver}:4000/api/imgupload`, {
+                axios.post(`${protocol}://${dev_ver}:4000/api/imgupload`, {
                     artist: artist,
                     artname: artname,
                     arttext: arttext,

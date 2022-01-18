@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 //const db = require('./config/db');
 const cors = require("cors");
+const fs = require('fs');
 
 //mysql추가사항
 var mysql = require('mysql2/promise')
@@ -166,7 +167,18 @@ cron.schedule('*/2 * * * * *', async()=>{
 })
 //schedule 추가사항 end
 
-
+//https 추가사항
+const PORT = process.env.PORT || 4001;
+const HTTPS_PORT = 4000;
+const https = require('https')
+const https_options = {
+    key : fs.readFileSync('./localhost-key.pem'),
+    cert : fs.readFileSync('./localhost.pem')
+}
+https.createServer(https_options, app).listen(HTTPS_PORT,()=>{
+    console.log(`Server run: https://localhost:${HTTPS_PORT}`)
+})
+//https 추가사항 end
 
 //const dev_ver = require("../pages/global_const");
 const corsOptions = {
@@ -174,23 +186,25 @@ const corsOptions = {
     credentials : true,
 }
 
-const fs = require('fs');
+
 
 const cookieParser = require('cookie-parser');
-//비밀번호 암호화에 사용될 모듈
+//비밀번호 암호화 
 /*
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRound = 16;
 const tokenKey = 'veryveryveryImportantToKeepIt';
 */
+//비밀번호 암호화 end
+
 const multer = require('multer');
 
 const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-const PORT = process.env.PORT || 4000;
+
 
 app.use(express.json());
 
@@ -1009,15 +1023,118 @@ app.post('/api/joinForm', async (req,res)=>
         await closeConnection(connection)
 })
 
+
+app.get('/api/getForm', async (req,res)=>{
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var connection = await openConnection()
+        var query = "select name, email, phone, gender, age from artuser where username = ?"
+
+        try{
+            var [result] = await connection.query(query, req.session.user.username)
+            if(result!=undefined && result[0]!=undefined)
+            {
+                res.json({
+                    email:result[0].email,
+                    name:result[0].name,
+                    phone:result[0].phone,
+                    gender:result[0].gender,
+                    age:result[0].age
+                })
+            }
+            else{
+                res.json({none:true})
+            }
+        }catch(err)
+        {
+            res.json({err:true})
+            console.log(err)
+        }
+
+        await closeConnection(connection)
+    }
+    else
+    {
+        res.json({login_required:true})
+    }
+})
+
+app.post('/api/changeForm', async (req,res)=>
+{
+    if(req.session.user!=undefined && req.session.user.username != undefined  && req.session.user.username.length>=1)
+    {
+        var connection = await openConnection()
+        //회원 정보 수정
+        let query = "update artuser set name = ?, email = ?, phone = ?, gender = ?, age = ? where username = ?;"
+        
+        try{
+            await connection.beginTransaction()
+            var [result] = await connection.query(query, [
+                req.body.name,
+                req.body.email,
+                req.body.phone,
+                req.body.gender,
+                req.body.age,
+                req.session.user.username
+            ])
+                //회원 정보 등록
+                if(result != undefined && result.affectedRows>=1)
+                {
+                    query =" update user_preference set gender = ?, age = ? where username = ?;"
+                    var [result2] = await connection.query(query,[
+                        req.body.gender,
+                        req.body.age,
+                        req.session.user.username
+                    ])
+                    if(result2!=undefined && result2.affectedRows>=1)
+                    {
+                        console.log("COMMIT 회원변경 성공")
+                        await connection.commit()
+                        res.status(200).json({
+                            success:true
+                        })
+                    }
+                    //반영이 안된 경우
+                    else{
+                        await connection.rollback()
+                        res.status(200).json({
+                            success:false
+                        })
+                    }
+                }
+                //반영이 안된 경우
+                else{
+                    await connection.rollback()
+                    res.status(200).json({
+                        success:false
+                    })
+                }
+        }catch(err)
+        {
+            //db 에러시
+            console.error(err); 
+            res.status(200).json({
+              success:false
+           })
+        }
+
+        await closeConnection(connection)
+    }
+    //로그인 안되어 있을 경우
+    else{
+        res.json({login_required:true})
+    }
+})
+
 app.post('/api/loginForm', async (req,res)=>
 {
     var connection = await openConnection()
-    console.log('로그인');
+    console.log('로그인')
         var uname = req.body.username
         
         //사용자명으로 비밀번호, 사용자 권한 알아내기
-        let sql = "select username, name, password, email,  role, gender, age from artuser where username = ?";
-        console.log(uname.trim());
+        let sql = "select username, name, password, email,  role, gender, age from artuser where username = ?"
+        console.log(uname.trim())
         //uname.trim()으로 공백 지운
         //사용자의 아이디 입력값으로
         //db에 등록된 사용자 찾기
@@ -1027,7 +1144,7 @@ app.post('/api/loginForm', async (req,res)=>
             //결과가 없거나, 결과 튜플의 비밀번호가 사용자가 입력한 비밀번호와 일치하지 않을때, 로그인 실패
             if(result==undefined || result[0] == undefined || result[0].password != req.body.password)
             {
-                console.log("비밀번호 불일치 : ");
+                console.log("비밀번호 불일치 : ")
                 res.json({
                     success:false
                 })
@@ -1048,15 +1165,15 @@ app.post('/api/loginForm', async (req,res)=>
                     age: result[0].age,
                     success:true,
                     authorized: true
-                };
+                }
 
                 //세션 저장
                 req.session.save((err)=>{console.log(err)})
 
                 console.log("세션 등록성공 : "+req.session)
                 // 세션 ID 확인
-                const sessionID = req.sessionID;
-                console.log('session id :', sessionID);
+                const sessionID = req.sessionID
+                console.log('session id :', sessionID)
                 res.json({
                         success: true,
                         session: req.session
@@ -1068,7 +1185,7 @@ app.post('/api/loginForm', async (req,res)=>
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
@@ -1115,7 +1232,7 @@ app.get('/api/home1/about', async (req, res) =>
         }catch(err)
         {
             //db 에러시
-            console.error(err);
+            console.error(err)
 
                 res.status(200).json({
                     success:false
@@ -1161,7 +1278,7 @@ app.get('/api/home1/about2', async (req, res) =>
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
@@ -1193,7 +1310,7 @@ app.get('/api/home2', async(req,res) => {
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
@@ -1225,13 +1342,13 @@ app.get('/api/home3/slider', async function (req, res) {
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
         }
         await closeConnection(connection)
-});
+})
 
 app.get('/api/home3/graph', async function (req, res) {
     var connection = await openConnection()
@@ -1265,14 +1382,14 @@ app.get('/api/home3/graph', async function (req, res) {
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
         }
     
         await closeConnection(connection)
-});
+})
 
 app.get('/api/home3/date', function (req, res) {
     //HOME3 일정 정보
@@ -1306,8 +1423,8 @@ app.get('/api/home3/date', function (req, res) {
                 data: "g 일정 16~17"
             }
         ]
-    );
-});
+    )
+})
 
 
 app.get('/api/home4/data', async function (req, res) {
@@ -1335,13 +1452,13 @@ app.get('/api/home4/data', async function (req, res) {
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
         }
         await closeConnection(connection)
-});
+})
 
     
 app.get('/api/exhibition1/data', async function (req, res) {
@@ -1374,13 +1491,13 @@ app.get('/api/exhibition1/data', async function (req, res) {
         }catch(err)
         {
             //db 에러시
-            console.error(err); 
+            console.error(err)
             res.status(200).json({
                success:false
            })
         }
         await closeConnection(connection)
-    });
+    })
 
     app.post('/api/exhibition2/exhibition', async function (req, res) {
         var connection = await openConnection()
@@ -1473,7 +1590,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                 }catch(err)
                 {
                     //db 에러시
-                    console.error(err); 
+                    console.error(err)
                     res.status(200).json({
                        success:false
                    })
@@ -1571,14 +1688,14 @@ app.get('/api/exhibition1/data', async function (req, res) {
                 }catch(err)
                 {
                     //db 에러시
-                    console.error(err); 
+                    console.error(err)
                     res.status(200).json({
                        success:false
                    })
                 }
         }
         await closeConnection(connection)
-        });
+        })
 
         app.post('/api/exhibition2/rank', async function (req, res) {
             var connection = await openConnection()
@@ -1608,7 +1725,7 @@ app.get('/api/exhibition1/data', async function (req, res) {
                     }catch(err)
                     {
                         //db 에러시
-                        console.error(err); 
+                        console.error(err)
                         res.status(200).json({
                            success:false
                        })

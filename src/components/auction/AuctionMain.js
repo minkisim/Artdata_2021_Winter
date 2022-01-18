@@ -4,7 +4,7 @@ import './auction.css'
 import SearchSlider from './SearchSlider'
 import AuctionShowWindow from './AuctionShowWindow'
 
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 
 // 경매 메인 페이지용 코드
 export default function AuctionMain(){
@@ -33,7 +33,7 @@ export default function AuctionMain(){
     ) 
 
     
-    useEffect( () => {axios.get(`http://${dev_ver}:4000/api/AuctionMain/picturedata`)
+    useEffect( () => {axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`)
     .then((res) => {
             setpicturedata(res.data);
             //console.log(picturedata)
@@ -71,7 +71,7 @@ export default function AuctionMain(){
 
         console.log("보낼 artist정보 : "+jsondata.artist)
 
-        axios.post(`http://${dev_ver}:4000/api/search_auction`,jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/search_auction`,jsondata)
         .then((result)=>{
             setpicturedata(result.data);
         })
@@ -86,7 +86,7 @@ export default function AuctionMain(){
 
     function reset()
     {
-        axios.get(`http://${dev_ver}:4000/api/AuctionMain/picturedata`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`)
         .then((res) => {
                 setpicturedata(res.data);
                 //console.log(picturedata)

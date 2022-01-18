@@ -2,7 +2,7 @@
 import React, { PureComponent,useState, useEffect,useLayoutEffect }  from "react";
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import  axios from 'axios';
 import MyNotifyData from "./MyNotifyData";
 
@@ -10,7 +10,7 @@ function MyNotify(props){
     
     const [data, setData] = useState()
     useEffect(()=>{
-        axios.get(`http://${dev_ver}:4000/api/inform/myinform`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/inform/myinform`)
         .then((res)=>{
             if(res.data.login_required)
             {
@@ -32,7 +32,7 @@ function MyNotify(props){
 
     async function find_inform()
     {
-        await axios.get(`http://${dev_ver}:4000/api/inform/myinform`)
+        await axios.get(`${protocol}://${dev_ver}:4000/api/inform/myinform`)
         .then((res)=>{
             if(res.data.login_required)
             {
@@ -56,7 +56,7 @@ function MyNotify(props){
     async function delete_inform(index)
     {
         var jsondata = data[index]
-        await axios.post(`http://${dev_ver}:4000/api/inform/delete`,jsondata)
+        await axios.post(`${protocol}://${dev_ver}:4000/api/inform/delete`,jsondata)
         .then((res)=>{
             if(res.data.err)
             {
@@ -73,7 +73,7 @@ function MyNotify(props){
 
     async function delete_all()
     {
-        await axios.get(`http://${dev_ver}:4000/api/inform/deleteall`)
+        await axios.get(`${protocol}://${dev_ver}:4000/api/inform/deleteall`)
         .then((res)=>{
             if(res.data.err)
             {
@@ -92,7 +92,7 @@ function MyNotify(props){
     }
     async function delete_all_confirmed()
     {
-        await axios.get(`http://${dev_ver}:4000/api/inform/deleteallconfirmed`)
+        await axios.get(`${protocol}://${dev_ver}:4000/api/inform/deleteallconfirmed`)
         .then((res)=>{
             if(res.data.err)
             {
@@ -112,7 +112,7 @@ function MyNotify(props){
 
     async function send_to_auction(item)
     {
-        await axios.post(`http://${dev_ver}:4000/api/inform/confirmed`,item)
+        await axios.post(`${protocol}://${dev_ver}:4000/api/inform/confirmed`,item)
         .then((res)=>{
 
         })

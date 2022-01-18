@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import axios from 'axios';
 import './login.css';
 
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 // 로그인 페이지 구성용 코드
 function LoginPage({history,props}){
     const [username, setUsername] = useState('');
@@ -11,7 +11,7 @@ function LoginPage({history,props}){
     
     function loginForm()
     {
-        axios.post(`http://${dev_ver}:4000/api/loginForm`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/loginForm`,{
             username: username,
             password: password,
         }, { withCredentials: true })

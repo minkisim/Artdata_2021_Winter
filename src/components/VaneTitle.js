@@ -10,7 +10,7 @@ import MyNotify from './myPage/MyNotify';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 import { useMediaQuery } from 'react-responsive';
-import {dev_ver} from '../pages/global_const'
+import {protocol, dev_ver} from '../pages/global_const'
 // 타이틀에 상단바 코드
 function VaneTitle({isLogin,isAdmin, message, getMessage}){
     const [search, setSearch] = useState('')
@@ -22,7 +22,7 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
    }
     function logOut()
     {
-      axios.get(`http://${dev_ver}:4000/api/logout`)
+      axios.get(`${protocol}://${dev_ver}:4000/api/logout`)
       .then(()=>{
       })
       window.location.replace("/")
@@ -36,7 +36,7 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
         return false
       }
       
-      axios.post(`http://${dev_ver}:4000/api/mainsearch`,{check:id, name:search})
+      axios.post(`${protocol}://${dev_ver}:4000/api/mainsearch`,{check:id, name:search})
       .then((result)=>{
         console.log(result.data)
         if(result.data.id != undefined)

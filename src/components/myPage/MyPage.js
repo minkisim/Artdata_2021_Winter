@@ -3,7 +3,7 @@ import  './MyPage.css';
 import islogin from '../../pages/doTokenExist';
 import {Link} from 'react-router-dom';
 
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 // 내 정보 관련 코드 (MyPage 버튼 대응)
@@ -31,17 +31,17 @@ function MyPage({history}){
        
 
 
-       useEffect(() => {
+       useEffect(async () => {
         
                         //console.log("로그인 유무 검사")
-                        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)      
+                        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
                                         alert('로그인이 필요합니다')
                                         //console.log(result.data.success)
                                         
-                                        window.location.replace("/loginPage")
+                                        window.location.href = "/loginPage"
                                 }
 
                                 else{
@@ -53,7 +53,7 @@ function MyPage({history}){
                         })
        
                          //get으로 바꿈
-                         axios.get(`http://${dev_ver}:4000/api/Transfer/artdata`)      
+                         await axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`)      
                          .then((result) => {
                                  if(result.data.success==false)
                                  {
@@ -76,7 +76,7 @@ function MyPage({history}){
         if(window.confirm('탈퇴하시겠습니까?'))
         {
                 var jsondata = {username : userdata.username}
-                axios.post(`http://${dev_ver}:4000/api/deleteuser`,jsondata)
+                axios.post(`${protocol}://${dev_ver}:4000/api/deleteuser`,jsondata)
                 .then((result)=>{
                         if(result.data.success)
                         {
@@ -125,58 +125,7 @@ function MyPage({history}){
                                  </div>
 
                         ) }
-
-                        
-                        {/* 데이터 반복 끝. */}     
                 </div>
-
-                {/*
-                <p className="name">관심 작품</p>
-                <div className="like_art">
-                <div className="collection_header_flex">
-                                <div><p className="like_art_num">번호</p></div>
-                                <div><p className="like_art_art">작품명</p></div>
-                                <div><p className="like_art_artist">작가명</p></div>
-                                
-                        </div>
-
-
-                        
-                        {
-                                
-                        }
-
-                        <div className="collection_data_flex">
-                                <div><p className="data_num">1</p></div>
-                                <div><p className="data_picture2">picutre</p></div>
-                                <div><p className="data_artist2">artist</p></div>
-             
-                        </div>
-                        <div className="collection_data_flex">
-                                <div><p  className="data_num">2</p></div>
-                                <div><p className="data_picture2">picutre</p></div>
-                                <div><p className="data_artist2">artist</p></div>
-                      
-                        </div>      
-                        <div className="collection_data_flex">
-                                <div><p  className="data_num">3</p></div>
-                                <div><p className="data_picture2">picutre</p></div>
-                                <div><p className="data_artist2">artist</p></div>
-                                
-                        </div>         
-                        <div className="collection_data_flex">
-                                <div><p className="data_num">4</p></div>
-                                <div><p className="data_picture2">picutre</p></div>
-                                <div><p className="data_artist2">artist</p></div>
-                        </div>    
-                        <div className="collection_data_flex">
-                                <div><p className="data_num">5</p></div>
-                                <div><p className="data_picture2">picutre</p></div>
-                                <div><p className="data_artist2">artist</p></div>
-                        </div>    
-                          
-                </div>
-                */}
 
             </div>
 

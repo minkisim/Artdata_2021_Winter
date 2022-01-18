@@ -6,7 +6,7 @@ import Chart01 from '../chartcomponent/chart01';
 import  './Home.css';
 import { Link } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import  axios from 'axios';
 import Home1Slider from './Home1Silder';
 // MainPage 코드
@@ -33,13 +33,13 @@ export default function Home( ){
     //[]는 empty dependency
     useEffect(()=>{
       
-        axios.get(`http://${dev_ver}:4000/api/home1/about`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/home1/about`).
         then((res)=>{
        // console.log(res.data)
          setInputData(res.data)
 
          
-            axios.get(`http://${dev_ver}:4000/api/home1/about2`).
+            axios.get(`${protocol}://${dev_ver}:4000/api/home1/about2`).
             then((result)=>{
              //console.log(result.data)
              setgraph(result.data)

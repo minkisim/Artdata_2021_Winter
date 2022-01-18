@@ -1,9 +1,10 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 import './login.css';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 // 회원가입용 페이지 구성 코드
 function UpdateUserPage({history}){
     const genderselection = ["선택 없음", "남성", "여성"]
@@ -12,30 +13,44 @@ function UpdateUserPage({history}){
     const ageval = [10,20,30,40,50,60,70,80,90]
     const { handleSubmit, register, watch, errors } = useForm();
 
-    const [username, setUsername] = useState('');
     const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordcheck, setPasswordcheck] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [gender, setGender] = useState(0)
     const [age, setAge] = useState(10)
 
-    const [isIdChecked, setIsIdChecked] = useState('no');
+    useEffect(()=>{
+        axios.get(`${protocol}://${dev_ver}:4000/api/getForm`)
+        .then((res)=>{
+            if(res.data.login_required)
+            {
+                alert('로그인이 필요합니다.')
+                window.location.href = '/loginPage'
+            }
+            else if(res.data.err)
+            {
+                alert('서버 오류')
+            }
+            else if(res.data.none)
+            {
+                alert('등록되지 않은 사용자입니다.')
+                window.location.href = '/'
+            }
+            else
+            {
+                setEmail(res.data.email)
+                setName(res.data.name)
+                setPhone(res.data.phone)
+            }
+        })
+        .catch((err)=>{
+            alert(err)
+        })
+    },[])
 
-    function joinForm()
+
+    function changeForm()
     {
-        if(username == '')
-        {
-            alert('아이디를 입력하십시오')
-            return false
-        }
-
-        if(isIdChecked != 'yes')
-        {
-            alert('아이디 중복체크를 확인해 주십시오')
-            return false
-        }
 
         if(name == '')
         {
@@ -43,21 +58,15 @@ function UpdateUserPage({history}){
             return false
         }
 
-        if(password == '')
-        {
-            alert('비밀번호를 입력하십시오')
-            return false
-        }
-
-        if(password != passwordcheck)
-        {
-            alert('비밀번호가 일치하지 않습니다')
-            return false
-        }
-
         if(email == '')
         {
             alert('이메일을 입력하십시오')
+            return false
+        }
+        
+        if(gender === 0)
+        {
+            alert('성별을 선택해 주십시오')
             return false
         }
 
@@ -67,10 +76,8 @@ function UpdateUserPage({history}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/joinForm`,{
-            username: username,
+        axios.post(`${protocol}://${dev_ver}:4000/api/changeForm`,{
             name:name,
-            password: password,
             email: email,
             phone:phone,
             gender:gender,
@@ -78,62 +85,35 @@ function UpdateUserPage({history}){
         })
         .then((result) =>
         {
-            if(result.data.success==false)
+            if(result.data.login_required)
             {
-                alert("회원가입 실패")
+                alert('로그인이 필요합니다.')
+                window.location.href = '/loginPage'
+            }
+            else if(result.data.success==false)
+            {
+                alert("회원정보 수정 실패")
                 return false;
             }
-
-            alert("회원가입 성공")
-            history.push("/");
+            else{
+                alert("회원정보 수정 성공")
+                history.push("/myPage");
+            }
+            
         })
         .catch(() => {
             alert('error')
         })
     }
 
-    function checkId()
-    {
-        axios.post(`http://${dev_ver}:4000/api/checkId`,
-        {
-            username: username
-        })
-        .then((result) => {
-            
-            if(result.data.success == true)
-            {
-                setIsIdChecked('yes');
-                alert('사용가능한 아이디입니다');
-            }
-
-            else if(result.data.success=='null')
-            {
-                setIsIdChecked('no');
-                alert('아이디를 입력해 주십시오')
-            }
-            else
-            {
-                setIsIdChecked('no');
-                alert('해당아이디는 사용 불가능합니다')
-            }
-        })
-        .catch(() => {
-            alert('Error')
-        })
-    }
-
-// 회원가입 용 페이지 구성 html
+//회원 정보 수정용 페이지 구성 html
         return(
             <div>
                 <div className="signup_box">
                     <img src="/img/logo.png" alt="로고 이미지" />
-                    <input maxLength="20" type="text" placeholder="ID" onChange={(e) => {setUsername(e.target.value); setIsIdChecked('no')}} />
-                    <div className="signup_check_id" onClick={checkId}><p>중복확인</p></div>
 
-                    <input maxLength="20" type="text" placeholder="name" onChange={(e) => setName(e.target.value)}/>
-                    <input maxLength="20" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
-                    <input maxLength="20" type="password" placeholder="Password check" onChange={(e) => setPasswordcheck(e.target.value)}/>
-                    <input type="text" placeholder="E-Mail" maxLength="30" onChange={(e) => setEmail(e.target.value)}/>
+                    <input maxLength="20" type="text" placeholder="name" value={name} onChange={(e) => setName(e.target.value)}/>
+                    <input type="text" placeholder="E-Mail" maxLength="30" value={email} onChange={(e) => setEmail(e.target.value)}/>
                     <select onChange={e=>{setGender(e.target.value)}}>
                         {genderselection.map((item, i)=>(
                             <option value={genderval[i]}>{item}</option>
@@ -144,10 +124,10 @@ function UpdateUserPage({history}){
                             <option value={ageval[i]}>{item}</option>
                         ))}
                     </select>
-                    <input maxLength="15" type="text" placeholder="Phone" onChange={(e) => setPhone(e.target.value)}/>
+                    <input maxLength="15" type="text" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}/>
                     <div className='update_flex'>
-                        <div className="update_btn"><p>수정</p></div>
-                        <div className="update_btn"><p>취소</p></div>
+                        <div className="update_btn" onClick={changeForm}><p>수정</p></div>
+                        <div className="update_btn"><Link to="/myPage"><p>취소</p></Link></div>
                     </div>
                 </div>
             <div className='signup_mobileDiv'></div>

@@ -7,7 +7,7 @@ import React, {useState,useEffect} from 'react'
 import axios from 'axios'
 import './upload.css'
 import AdminBar from './AdminBar';
-import { dev_ver } from './global_const';
+import {protocol,  dev_ver } from './global_const';
 import queryString from 'query-string'
 // 작가 정보 업로드용 코드
 export default function UploadArtist(){
@@ -34,7 +34,7 @@ export default function UploadArtist(){
 
         if(query.id!=undefined && query.id.length>=1)
         {
-            axios.post(`http://${dev_ver}:4000/api/artist_upload/search`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/artist_upload/search`,{
                 id: query.id
             })
             .then((result)=>{
@@ -89,7 +89,7 @@ export default function UploadArtist(){
         }
   
 
-        axios.post(`http://${dev_ver}:4000/api/artist_upload`, jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/artist_upload`, jsondata)
                 .then((result) => {
                     if(result.data.success)
                         alert("DB업로드 성공")
@@ -103,7 +103,7 @@ export default function UploadArtist(){
 
         if(file!=null && file.name != undefined)
         {
-            axios.post(`http://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
+            axios.post(`${protocol}://${dev_ver}:4000/api/fileupload`, formData,{headers:{"Content-Type":"multipart/form-data"}})
             .then((result) => {
                 if(result.data.success)
                 { 

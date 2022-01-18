@@ -2,7 +2,7 @@ import axios from 'axios';
 import react from 'react';
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom'
 import './auction.css';
-import { dev_ver } from '../../pages/global_const';
+import {protocol,  dev_ver } from '../../pages/global_const';
 // 경매  리스트 각 컴포넌트 코드
 export default function AuctionShowWindow(props){
     //console.log(props.data.KRWpriceEnd.toLocaleString(undefined, {maximumFractionDigits:2}));
@@ -10,7 +10,7 @@ export default function AuctionShowWindow(props){
     function isStarted()
     {
         
-        axios.post(`http://${dev_ver}:4000/api/AuctionMain/isStarted`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/AuctionMain/isStarted`,{
             art_id:props.data.id//art_id
         })
         .then((result)=>{

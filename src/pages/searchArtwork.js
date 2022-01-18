@@ -2,7 +2,7 @@ import React, {useState,useEffect} from 'react'
 import axios from 'axios'
 import './search.css'
 import AdminBar from './AdminBar'
-import { dev_ver } from './global_const'
+import {protocol,  dev_ver } from './global_const'
 
 
 
@@ -27,7 +27,7 @@ export default function SearchArtwork(){
     {
         setCheckList([])
         setCheckList2([])
-        axios.post(`http://${dev_ver}:4000/api/searchArtwork/search`,{input:input})
+        axios.post(`${protocol}://${dev_ver}:4000/api/searchArtwork/search`,{input:input})
         .then((result) => {
 
             setInputlength(result.data.length)
@@ -87,7 +87,7 @@ export default function SearchArtwork(){
         return false
     }
 
-    axios.post(`http://${dev_ver}:4000/api/searchArtwork/delete`,{
+    axios.post(`${protocol}://${dev_ver}:4000/api/searchArtwork/delete`,{
         checkBoxId: CheckList2,
 
     })

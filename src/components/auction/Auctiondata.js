@@ -2,7 +2,7 @@ import React, {useState,useLayoutEffect,useRef} from 'react'
 import axios from 'axios'
 import './auction.css'
 import './Auctioncheck.css'
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import queryString from 'query-string'
 import Auctiontimer from './Auctiontimer'
 
@@ -51,15 +51,13 @@ export default function Auctiondata({location, match}){
     const [auctionUnit,setAuctionUnit] = useState('1')
 
 
-    useLayoutEffect(()=> {
-        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)      
+    useLayoutEffect(async ()=> {
+        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
                                         alert('로그인이 필요합니다')
-
-                                        
-                                        window.location.replace("/")
+                                        window.location.replace("/loginPage")
                                 }
 
                                 else{
@@ -75,7 +73,7 @@ export default function Auctiondata({location, match}){
 
         console.log(query.id)
 
-        axios.post(`http://${dev_ver}:4000/api/auctiondata`,{
+        await axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata`,{
             id:query.id
         })
         .then((result2)=>{
@@ -90,7 +88,7 @@ export default function Auctiondata({location, match}){
 
 
 
-            axios.post(`http://${dev_ver}:4000/api/auctiondata/search`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/search`,{
                 id:query.id,
                 artname:result2.data.artname
             })
@@ -113,7 +111,7 @@ export default function Auctiondata({location, match}){
         //console.log("artname : "+result2.data.artname)
 
 
-        axios.post(`http://${dev_ver}:4000/api/auctiondata/isStarted`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/isStarted`,{
             artname: result2.data.art_id
         })
         .then((result)=>{
@@ -138,7 +136,7 @@ export default function Auctiondata({location, match}){
 
 
         /*
-        axios.post(`http://${dev_ver}:4000/api/auctiondata/artist`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/artist`,{
             artist : result2.data.artist_id,
             artname: result2.data.artname
         })
@@ -168,7 +166,7 @@ export default function Auctiondata({location, match}){
         console.log(clickbtn1);
         if(clickbtn1 == false){
 
-            axios.post(`http://${dev_ver}:4000/api/auctiondata/search`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/search`,{
                 id:query.id,
                 artname:data.artname
             })
@@ -267,7 +265,7 @@ export default function Auctiondata({location, match}){
          
         const kr_curr_string = year +"-"+ month + '-' + day// +' '+hour+':'+min+':'+sec
         */
-        axios.post(`http://${dev_ver}:4000/api/auctiondata/submit`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/submit`,{
             username:userdata.username,
             userid:userdata.id,
             art_id:data.art_id,

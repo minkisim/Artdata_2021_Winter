@@ -14,7 +14,7 @@ import CommonTableColumn from "./commontable/CommonTableCloumn";
 
 
 import axios from "axios";
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
 // 공지사항 리스트 코드
 function NoticeBoard({isLogin, isAdmin}){
@@ -28,7 +28,7 @@ function NoticeBoard({isLogin, isAdmin}){
     const [lastnum, setLastnum] = useState()
 
     useEffect(()=>{
-        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)
         .then((result)=>{
             if(result.data.userrole == 'ROLE_ADMIN')
             {
@@ -57,7 +57,7 @@ function NoticeBoard({isLogin, isAdmin}){
         }
 
 
-        axios.get(`http://${dev_ver}:4000/api/notice/pagenum`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/notice/pagenum`)
         .then((res)=>{
             if(res.data.err)
             {
@@ -100,7 +100,7 @@ function NoticeBoard({isLogin, isAdmin}){
         })
 
 
-        axios.post(`http://${dev_ver}:4000/api/notice/showpage`,{page : page})
+        axios.post(`${protocol}://${dev_ver}:4000/api/notice/showpage`,{page : page})
         .then((res)=>{
             if(res.data.none)
             {

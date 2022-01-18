@@ -12,7 +12,7 @@ import CommonTableColumn from "./commontable/CommonTableCloumn";
 
 import queryString from 'query-string'
 import axios from "axios";
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
 // 공지사항 게시글 보기용 코드
 function NoticeArticle({isLogin, isAdmin}){
@@ -21,7 +21,7 @@ function NoticeArticle({isLogin, isAdmin}){
     const [id, setId] = useState()
     useEffect(()=>{
 
-        axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)
         .then((result)=>{
             if(result.data.userrole == 'ROLE_ADMIN')
             {
@@ -45,7 +45,7 @@ function NoticeArticle({isLogin, isAdmin}){
         } 
 
 
-        axios.post(`http://${dev_ver}:4000/api/notice/showarticle`,{id:id})
+        axios.post(`${protocol}://${dev_ver}:4000/api/notice/showarticle`,{id:id})
         .then((res)=>{
             if(res.data.err)
             {
@@ -70,7 +70,7 @@ function NoticeArticle({isLogin, isAdmin}){
             qid=query.id
             
         }       
-        await axios.post(`http://${dev_ver}:4000/api/notice/deletearticle`,{id:qid})
+        await axios.post(`${protocol}://${dev_ver}:4000/api/notice/deletearticle`,{id:qid})
         .then((res)=>{
             if(res.data.success)
             {

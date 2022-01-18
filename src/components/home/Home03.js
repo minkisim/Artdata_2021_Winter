@@ -8,7 +8,7 @@ import './Home.css'
 
 import  axios from 'axios';
 
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 // Weekly Exhibition 코드
 function Home3(){
     const [sliderdata, setsliderdata] = useState(
@@ -40,7 +40,7 @@ function Home3(){
     );
 
     useEffect(()=>{
-        axios.get(`http://${dev_ver}:4000/api/home3/slider`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`).
           then((res)=>{
             console.log("graph data")
             console.log(res.data)
@@ -52,7 +52,7 @@ function Home3(){
           });
 
 
-          axios.get(`http://${dev_ver}:4000/api/home3/graph`).
+          axios.get(`${protocol}://${dev_ver}:4000/api/home3/graph`).
           then((res)=>{
               console.log("graph data")
           console.log(res.data)
@@ -63,7 +63,7 @@ function Home3(){
           });
 
 
-          axios.get(`http://${dev_ver}:4000/api/home3/date`).
+          axios.get(`${protocol}://${dev_ver}:4000/api/home3/date`).
           then((res)=>{
          // console.log(res.data)
          setdate(res.data)

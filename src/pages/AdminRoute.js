@@ -4,7 +4,7 @@ import React,{useLayoutEffect,useState} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import doTokenExist from './doTokenExist';
 import axios from 'axios';
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 function AdminRoute({component : Component ,isLogin,isAdmin, ...rest})
 {
   

@@ -8,7 +8,7 @@ import Chart04 from '../chartcomponent/chart04';
 import SimpleSlider2 from '../../pages/Slider';
 import styled from 'styled-components';
 import axios from 'axios';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 // 작가 소개 페이지 코드
 function Artist01({match}){
     
@@ -56,7 +56,7 @@ function Artist01({match}){
              jsondata.id=match.params.artist
          }
 
-        axios.post(`http://${dev_ver}:4000/api/artist01/artist`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/artist`,jsondata).
         then((res)=>{
             console.log(res.data)
        
@@ -68,7 +68,7 @@ function Artist01({match}){
         alert('error');
         });
 
-        axios.post(`http://${dev_ver}:4000/api/artist01/slider`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/slider`,jsondata).
         then((res)=>{
        // console.log(res.data)
             setsliderdata(res.data);   

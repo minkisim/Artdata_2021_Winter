@@ -5,7 +5,7 @@
 import React,{useState,useLayoutEffect} from 'react';
 import './App.css';
 import MainPage from './pages/MainPage';
-import {dev_ver} from './pages/global_const'
+import {protocol, dev_ver} from './pages/global_const'
 import axios from 'axios'
 axios.defaults.withCredentials = true;
 
@@ -14,11 +14,11 @@ function App() {
   const [isAdmin, setIsAdmin] = useState('');
   const [isLogin, setIsLogin] = useState('');
 
-    useLayoutEffect(() => {
+    useLayoutEffect(async () => {
         
                           
-      axios.get(`http://${dev_ver}:4000/api/checkAdmin`)
-      /*fetch(`http://${dev_ver}:4000/api/checkAdmin`,{
+      await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)
+      /*fetch(`${protocol}://${dev_ver}:4000/api/checkAdmin`,{
           method:'get',
           credentials: 'include'
       })

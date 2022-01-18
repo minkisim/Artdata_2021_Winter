@@ -3,7 +3,7 @@ import React, { Component ,useEffect, useState} from 'react';
 import './Home.css'
 import Zoomimage from '../showWindow/Zoomimage';
 import { Link } from 'react-router-dom';
-import {dev_ver} from '../../pages/global_const';
+import {protocol, dev_ver} from '../../pages/global_const';
 import axios from 'axios';
 // Today Artwork 코드
 function Home2() {
@@ -19,7 +19,7 @@ function Home2() {
     ]);
 
     useEffect(() => {
-        axios.get(`http://${dev_ver}:4000/api/home2`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/home2`)
         .then((res) => {
           
             setArtData(res.data)

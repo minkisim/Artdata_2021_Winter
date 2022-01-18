@@ -127,7 +127,7 @@ create table user_preference (
 	art_id		int			not null,
 	access_time	date			not null,
 	hits		int			not null default 0,
-	gender		varchar(1)	check(gender = 'm' or gender = 'f'),
+	gender		varchar(1)	check(gender = 'm' or gender = 'f' or gender = '0'),
 	age		int			not null,
 	primary key (username, art_id, access_time),
 	foreign key (username) references artuser(username) on delete cascade,

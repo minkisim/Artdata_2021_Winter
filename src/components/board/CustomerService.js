@@ -11,7 +11,7 @@ import CommonTable from "./commontable/CommonTable";
 import CommonTableRow from "./commontable/CommonTableRow";
 import CommonTableColumn from "./commontable/CommonTableCloumn";
 
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import axios from "axios";
 import { result } from "lodash";
 import { max } from "moment";
@@ -46,7 +46,7 @@ function CustomerService({isLogin, isAdmin}){
         }
 
 
-        axios.get(`http://${dev_ver}:4000/api/board/pagenum`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/board/pagenum`)
         .then((res)=>{
             if(res.data.err)
             {
@@ -89,7 +89,7 @@ function CustomerService({isLogin, isAdmin}){
         })
 
 
-        axios.post(`http://${dev_ver}:4000/api/board/showpage`,{page : page})
+        axios.post(`${protocol}://${dev_ver}:4000/api/board/showpage`,{page : page})
         .then((res)=>{
             if(res.data.none)
             {}

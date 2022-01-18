@@ -6,7 +6,7 @@
 import React, { Component, useState, useEffect } from 'react';
 import  './MyPage.css';
 import {Link} from 'react-router-dom';
-import {dev_ver} from '../../pages/global_const'
+import {protocol, dev_ver} from '../../pages/global_const'
 import axios from 'axios'
 import { useAsync } from 'react-async';
 // 내 경매 관련 코드 (MyAuction 버튼 대응)
@@ -24,7 +24,7 @@ function MyAuction(){
         const [isLoading, setLoading] = useState(true);
 
         async function onload() {
-                const result2 = await axios.get(`http://${dev_ver}:4000/api/checkAdmin`)      
+                const result2 = await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
                 
                         if(result2.data.success==false)
                         {
@@ -36,7 +36,7 @@ function MyAuction(){
                                 setUserdata(result2.data)
 
                                 
-                                const result = await axios.post(`http://${dev_ver}:4000/api/myauction`,{
+                                const result = await axios.post(`${protocol}://${dev_ver}:4000/api/myauction`,{
                                         username: result2.data.username,
                                         id : result2.data.id
                                 })
@@ -118,7 +118,7 @@ function MyAuction(){
 
                  //get으로 바꿈
                  /*
-                 axios.get(`http://${dev_ver}:4000/api/myauction`)      
+                 axios.get(`${protocol}://${dev_ver}:4000/api/myauction`)      
                  .then((result) => {
                          if(result.data.success==false)
                          {

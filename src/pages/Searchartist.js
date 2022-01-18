@@ -2,7 +2,7 @@ import React, {useState,useEffect} from 'react'
 import axios from 'axios'
 import './search.css'
 import AdminBar from './AdminBar'
-import { dev_ver } from './global_const'
+import {protocol,  dev_ver } from './global_const'
 // 작가 검색 및 수정, 삭제용 코드
 export default function SearchArtist(){
     
@@ -19,7 +19,7 @@ export default function SearchArtist(){
     {
         setCheckList([])
         setCheckList2([])
-        axios.post(`http://${dev_ver}:4000/api/searchArtist/search`,{input:input})
+        axios.post(`${protocol}://${dev_ver}:4000/api/searchArtist/search`,{input:input})
         .then((result) => {
 
             console.log(result.data)
@@ -91,7 +91,7 @@ export default function SearchArtist(){
             return false
         }
     
-        axios.post(`http://${dev_ver}:4000/api/searchArtist/delete`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/searchArtist/delete`,{
             checkBoxId: CheckList2,
     
         })

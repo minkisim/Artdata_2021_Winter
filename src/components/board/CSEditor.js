@@ -11,7 +11,7 @@ import "./board.css";
 import { func } from "prop-types";
 
 
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import axios from "axios";
 // 고객 센터 문의글용 코드
 function CSEditor({isLogin, isAdmin}){
@@ -56,7 +56,7 @@ function CSEditor({isLogin, isAdmin}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/board/upload`,jsondata)
+        axios.post(`${protocol}://${dev_ver}:4000/api/board/upload`,jsondata)
         .then((res)=>{
             if(res.data.login_required)
             {

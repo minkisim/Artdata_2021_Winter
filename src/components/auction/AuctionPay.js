@@ -8,7 +8,7 @@ import axios from 'axios'
 import './auction.css'
 import './Auctioncheck.css'
 
-import { dev_ver } from '../../pages/global_const'
+import {protocol,  dev_ver } from '../../pages/global_const'
 import queryString from 'query-string'
 // 경매 결제 페이지용 코드
 export default function AuctionPay(){
@@ -51,7 +51,7 @@ export default function AuctionPay(){
 
         //console.log(query.id)
 
-        axios.post(`http://${dev_ver}:4000/api/auctiondata`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata`,{
             id:query.id
         })
         .then((result2)=>{
@@ -66,7 +66,7 @@ export default function AuctionPay(){
             console.log(result2.data)
 
 
-                     axios.get(`http://${dev_ver}:4000/api/checkAdmin`)      
+                     axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
@@ -96,7 +96,7 @@ export default function AuctionPay(){
                         
 
 
-            axios.post(`http://${dev_ver}:4000/api/auctiondata/search`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/search`,{
                 id:query.id,
                 artname:result2.data.artname
             })
@@ -118,7 +118,7 @@ export default function AuctionPay(){
                 alert("search error:\n"+err)
             })
 
-            axios.post(`http://${dev_ver}:4000/api/auctiondata/isStarted`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/isStarted`,{
                 artname: result2.data.art_id
             })
             .then((result)=>{
@@ -140,7 +140,7 @@ export default function AuctionPay(){
             })
 
             /*
-            axios.post(`http://${dev_ver}:4000/api/auctiondata/artist`,{
+            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/artist`,{
             artist : result2.data.artist,
             artname: result2.data.artname
             })
@@ -208,7 +208,7 @@ export default function AuctionPay(){
         const date = kr_curr.getDate()/10 < 1 ? '0'+kr_curr.getDate() : kr_curr.getDate()
         */
         //alert(year + "."+month+'.'+date)
-        axios.post(`http://${dev_ver}:4000/api/auction_submit`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auction_submit`,{
                 id:userdata.id,
                 username:userdata.username,
                 art_id : data.art_id

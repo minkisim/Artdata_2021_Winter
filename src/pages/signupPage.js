@@ -3,7 +3,7 @@ import axios from 'axios';
 import './login.css';
 import { useForm } from 'react-hook-form';
 
-import {dev_ver} from './global_const';
+import {protocol, dev_ver} from './global_const';
 // 회원가입용 페이지 구성 코드
 function SignupPage({history}){
     const genderselection = ["선택 없음", "남성", "여성"]
@@ -60,6 +60,11 @@ function SignupPage({history}){
             alert('이메일을 입력하십시오')
             return false
         }
+        if(gender === 0)
+        {
+            alert('성별을 선택해 주십시오')
+            return false
+        }
 
         if(phone == '')
         {
@@ -67,7 +72,7 @@ function SignupPage({history}){
             return false
         }
 
-        axios.post(`http://${dev_ver}:4000/api/joinForm`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/joinForm`,{
             username: username,
             name:name,
             password: password,
@@ -94,7 +99,7 @@ function SignupPage({history}){
 
     function checkId()
     {
-        axios.post(`http://${dev_ver}:4000/api/checkId`,
+        axios.post(`${protocol}://${dev_ver}:4000/api/checkId`,
         {
             username: username
         })

@@ -2,7 +2,7 @@ import React, {useState,useEffect} from 'react'
 import axios from 'axios'
 import './upload.css'
 import AdminBar from './AdminBar';
-import {dev_ver} from '../pages/global_const';
+import {protocol, dev_ver} from '../pages/global_const';
 // 경매 정보 업로드용 코드
 export default function UploadAuction(){
 
@@ -53,7 +53,7 @@ export default function UploadAuction(){
         }
 
 
-        axios.post(`http://${dev_ver}:4000/api/auction_upload`,{
+        axios.post(`${protocol}://${dev_ver}:4000/api/auction_upload`,{
             art_id:artname,
             artistyear:artistyear,        
             begintime:begintime,
