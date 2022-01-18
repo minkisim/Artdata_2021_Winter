@@ -31,7 +31,7 @@ body {
 .MyAuction_button{
     position: absolute;
     top: 18px;
-    left:120px;
+    left:110px;
     width:90px;
     height:45px;
     background-color: #B27354;
@@ -43,11 +43,25 @@ body {
     margin-top:10px;
     font-family: Noto Sans KR;
 }
-
+.MyUpdate_button{
+    position: absolute;
+    top: 18px;
+    left:210px;
+    width:100px;
+    height:45px;
+    background-color: #B27354;
+    border-radius: 15px;
+}
+.MyUpdate_button p{
+    color:#F9F9F9;
+    font-size: 16px;
+    margin-top:10px;
+    font-family: Noto Sans KR;
+}
 .MyQuit_button{
     position: absolute;
     top: 18px;
-    left:220px;
+    left:320px;
     width:100px;
     height:45px;
     background-color: #B27354;
@@ -105,7 +119,7 @@ body {
 }
 
 .personal_data_div {
-    width: 400px;
+    width: 450px;
     height: 100px;
     background: linear-gradient(to top, #F9F9F9 90%, #181818 10%);
     border-radius: 15px;
@@ -122,12 +136,21 @@ body {
     margin-top: 5px;
 }
 @media screen and (max-width:768px) {
+    .Transfer_button{
+        position: absolute;
+        top: 180px;
+        left:120px;
+        width:140px;
+        height:45px;
+        background-color: #B27354;
+        border-radius: 15px;
+    }
     .personal_data_title {
         position: relative;
         width: 90vw;
         text-align: left;
         margin-left: 0px;
-        font-size: 24px;
+        font-size: 18px;
         margin-bottom: 10px;
         font-family: Noto Sans KR;
     }
@@ -149,6 +172,51 @@ body {
         font-family: Noto Sans KR;
         margin-bottom: 10px;
         margin-top: 5px;
+    }
+    .MyAuction_button{
+        position: absolute;
+        top: 15px;
+        left:60px;
+        width:70px;
+        height:35px;
+        background-color: #B27354;
+        border-radius: 15px;
+    }
+    .MyAuction_button p{
+        color:#F9F9F9;
+        font-size: 14px;
+        margin-top:7px;
+        font-family: Noto Sans KR;
+    }
+    .MyUpdate_button{
+        position: absolute;
+        top:15px;
+        left:135px;
+        width:70px;
+        height:35px;
+        background-color: #B27354;
+        border-radius: 15px;
+    }
+    .MyUpdate_button p{
+        color:#F9F9F9;
+        font-size: 14px;
+        margin-top:7px;
+        font-family: Noto Sans KR;
+    }
+    .MyQuit_button{
+        position: absolute;
+        top:15px;
+        left:210px;
+        width:70px;
+        height:35px;
+        background-color: #B27354;
+        border-radius: 15px;
+    }
+    .MyQuit_button p{
+        color:#F9F9F9;
+        font-size: 16px;
+        margin-top:7px;
+        font-family: Noto Sans KR;
     }
 }
 

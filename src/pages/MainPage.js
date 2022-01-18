@@ -17,6 +17,7 @@ import Home4 from '../components/home/Home04';
 /* LoginPage Part */
 import LoginPage from './LoginPage';
 import SignupPage from './signupPage';
+import UpdateUserPage from './updateUserPage';
 
 /* Auction Part */
 import MyPage from '../components/myPage/MyPage';
@@ -145,7 +146,7 @@ function MainPage({isLogin, isAdmin}){
     
                 {<Route  path="/loginPage" restricted={true} component={LoginPage} exact></Route>  }
                 {<Route  path="/signupPage" restricted={true} component={SignupPage} exact></Route>} 
-
+                {<Route path="/updatePage" component={UpdateUserPage} exact></Route>}
                 {<Route path="/notice" component={NoticeBoard} exact></Route>}
                 {<Route path="/notify" component={MyNotify} exact></Route>}
 
