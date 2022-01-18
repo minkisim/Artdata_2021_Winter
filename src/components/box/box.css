@@ -507,7 +507,7 @@ body{
 .artist01_Artist_Fav_title{
   position: absolute;
   top:700px;
-  left:7vw;
+  left:2vw;
   font-family: Noto Sans KR;
   font-size:16px;
   font-weight: 600;
@@ -516,9 +516,9 @@ body{
 .artist01_Artist_Fav_Art_div{
   position: absolute;
   top:730px;
-  left:5vw;
+  left:0vw;
   height:579px;
-  width: 90vw;
+  width: 100vw;
   border-radius: 15px;
   background: linear-gradient(to top,#F9F9F9 99%,#181818 1%);
 }
