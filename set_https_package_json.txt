@@ -1,0 +1,1 @@
+"start:cilent": "HTTPS=true SSL_CRT_FILE=/etc/letsencrypt/live/artdata.kr/cert.pem SSL_KEY_FILE=/etc/letsencrypt/live/artdata.kr/privkey.pem react-scripts start",

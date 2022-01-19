@@ -172,8 +172,13 @@ const PORT = process.env.PORT || 4001;
 const HTTPS_PORT = 4000;
 const https = require('https')
 const https_options = {
-    key : fs.readFileSync('./localhost-key.pem'),
+    key : fs.readFileSync('./localhost-key.pem'),//프로젝트 폴더가 기준, https 로컬 테스트용
     cert : fs.readFileSync('./localhost.pem')
+    /*
+    key : fs.readFileSync('/etc/letsencrypt/live/artdata.kr/privkey.pem'),//https 실 서버용
+    cert : fs.readFileSync('/etc/letsencrypt/live/artdata.kr/cert.pem'),
+    ca : fs.readFileSync('/etc/letsencrypt/live/artdata.kr/chain.pem')
+    */
 }
 https.createServer(https_options, app).listen(HTTPS_PORT,()=>{
     console.log(`Server run: https://localhost:${HTTPS_PORT}`)
@@ -189,13 +194,20 @@ const corsOptions = {
 
 
 const cookieParser = require('cookie-parser');
+
 //비밀번호 암호화 
 /*
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const saltRound = 16;
-const tokenKey = 'veryveryveryImportantToKeepIt';
+const tokenKey = 'veryveryveryImportantToKeepIt'
 */
+const crypto = require('crypto')
+const util = require('util')
+
+const randomBytesPromise = util.promisify(crypto.randomBytes)
+const pbkdf2Promise = util.promisify(crypto.pbkdf2)
+
 //비밀번호 암호화 end
 
 const multer = require('multer');
@@ -858,11 +870,18 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
 //선택한 작품 삭제하기
         var query = "delete from art where art_id = ?;"
         var check = true
+        var filename = []
         try{
             await connection.beginTransaction()
             //checkBoxId는 삭제하려는 작품의 id들의 배열
             for(let i=0; i< req.body.checkBoxId.length; i++)
-            {
+            {   
+                var [result_filename] = await connection.query("select image_url from art where art_id = ?",req.body.checkBoxId[i])
+                if(result_filename!=undefined && result_filename[0]!=undefined)
+                {
+                    filename.push(result_filename[0].image_url)
+                }
+
                 var [result] = await connection.query(query,req.body.checkBoxId[i])
                 if(result!=undefined && result.affectedRows>=1)
                 {
@@ -874,7 +893,6 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
            if(check)
            {
             await connection.commit()
-            console.log(result)
             res.json({
                 success:true
             })
@@ -895,6 +913,22 @@ app.post('/api/searchArtwork/delete',async (req,res) => {
            })
         }    
         await closeConnection(connection)
+
+        try{
+            filename.map(async (item)=>{
+                fs.unlink("./public/img/"+item, (err)=>{
+                    if(err){
+                        console.log(err)
+                    }
+                    else{
+                        console.log("./public/img/"+item+"  삭제")
+                    }
+                })
+            })
+        }catch(err)
+        {
+            console.log(err)
+        }
 })
 
 app.post('/api/searchArtist/search', async (req,res) => {
@@ -981,19 +1015,27 @@ app.post('/api/searchArtist/delete',async (req,res) => {
 
 app.post('/api/joinForm', async (req,res)=>
 {
+    //salt 생성 및 비밀번호 암호화
+    const buf = await randomBytesPromise(64)
+    var salt = buf.toString("base64")
+    var key = await pbkdf2Promise(req.body.password, salt, 113276,64,"sha512")
+    var hased_passwd = key.toString("base64")
+
+    //var encrypt_passwd = crypto.createHash("sha512").update(req.body.password).digest('base64')
     var connection = await openConnection()
         //회원 정보 등록
-        let query = "insert into artuser values (?, ?, ?, ?, ?, ?, ?, ?)"
+        let query = "insert into artuser values (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         try{
             var [result] = await connection.query(query, [
                 req.body.username,
                 req.body.name,
-                req.body.password,
+                hased_passwd,
                 req.body.email,
                 req.body.phone,
                 "ROLE_USER",
-                req.body.gender !== 0 ? req.body.gender : null,
-                req.body.age
+                req.body.gender,
+                req.body.age,
+                salt
             ])
                 //회원 정보 등록
                 if(result != undefined && result.affectedRows>=1)
@@ -1133,16 +1175,24 @@ app.post('/api/loginForm', async (req,res)=>
         var uname = req.body.username
         
         //사용자명으로 비밀번호, 사용자 권한 알아내기
-        let sql = "select username, name, password, email,  role, gender, age from artuser where username = ?"
+        let sql = "select username, name, password, email,  role, gender, age, salt from artuser where username = ?"
         console.log(uname.trim())
         //uname.trim()으로 공백 지운
         //사용자의 아이디 입력값으로
         //db에 등록된 사용자 찾기
         try{
             var [result] = await connection.query(sql, [uname.trim()])
+            var hased_passwd 
+            if(result!=undefined && result[0] != undefined )
+            {
+                var key = await pbkdf2Promise(req.body.password, result[0].salt, 113276,64,"sha512")
+                hased_passwd = key.toString("base64")
+            }
+            
+
 
             //결과가 없거나, 결과 튜플의 비밀번호가 사용자가 입력한 비밀번호와 일치하지 않을때, 로그인 실패
-            if(result==undefined || result[0] == undefined || result[0].password != req.body.password)
+            if(result==undefined || result[0] == undefined || result[0].password != hased_passwd)
             {
                 console.log("비밀번호 불일치 : ")
                 res.json({

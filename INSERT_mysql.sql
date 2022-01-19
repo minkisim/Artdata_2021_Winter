@@ -5897,8 +5897,10 @@ insert into user_preference values('100vbcz5qu', 82, date_format('2015-07-15','%
 insert into user_preference values('100vbcz5qu', 158, date_format('2018-11-25','%Y-%m-%d'), 1, 'm', 80);
 
 
-insert into artuser values('admin', '±èÃ¶¼ö', '1234', 'admin@daum.net', '010-9580-2332', 'role_admin', 'm', 20);
-insert into artuser values('test', 'È«±æµ¿', '1234', 'test@daum.net', '010-9580-2332', 'role_user', 'm', 40 );
+alter table artuser add column salt varchar(100);
+
+insert into artuser values('admin', '±èÃ¶¼ö', 'WB2AwhDBTNh08UIiMW66IsN1vd+fIrpoT33CRkOAQzeBr4DreeLAAOcBtZdUv/OqygwoSH2Yk0ot1oBMu/GfSA==', 'admin@daum.net', '010-9580-2332', 'role_admin', 'm', 20,'CISqD0tuB0llqxaWD8T4v6MlCoILcWwnUUJlWzdS1xQ8DTloHnaIZi5tjzwJYCxiKRUetEiuUQ1gUZGxCz14MA==');
+insert into artuser values('test', 'È«±æµ¿', '9NLWg6qW0SPreEV23A18rYF/MrdXDo10ILflBL31hVi2njLZCVIbB4S9lz6h3ZdyAL0MevR1zF6W3brEpQ5gpg==', 'test@daum.net', '010-9580-2332', 'role_user', 'm', 40,'qNGfzt/iNObGCdoccEdx4Iw3EEeJ/el3PV2Xk2TDBp/mL9q6YgpzYAKK1tgqntGMeWJMpJaZQFEzJKrLVHut6A==');
 insert into user_bid values('test', 10000,  date_format('2019-10-09','%y-%m-%d'), 284);
 
 

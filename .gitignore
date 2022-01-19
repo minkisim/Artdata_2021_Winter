@@ -1,3 +1,5 @@
 node_modules/
 src/pages/global_const.js
 public/img/
+localhost.pem
+localhost-key.pem

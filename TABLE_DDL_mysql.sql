@@ -13,7 +13,7 @@ drop table if exists notification cascade;
 create table artuser (
 	username	varchar(30)	not null,
 	name		varchar(30)	not null,
-	password		varchar(30)	not null,
+	password		varchar(100)	not null,
 	email		varchar(30)	not null,
 	phone		varchar(30),
 	role		varchar(10)	not null check(role = 'role_admin' or role = 'role_user'),
@@ -22,8 +22,6 @@ create table artuser (
 	primary key (username)
 	
 );
-
-
 
 create table exhibition (
 	exhibition_id	int		not null,
