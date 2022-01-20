@@ -5,7 +5,7 @@ import SearchSlider from './SearchSlider'
 import AuctionShowWindow from './AuctionShowWindow'
 
 import {protocol, dev_ver} from '../../pages/global_const';
-
+import ClipLoader from "react-spinners/ClipLoader"
 // 경매 메인 페이지용 코드
 export default function AuctionMain(){
 
@@ -13,6 +13,7 @@ export default function AuctionMain(){
     const [artist,setArtist] = useState('')
     const [value,setValue] = useState([0,100000])
     const [num,setNum] = useState('')
+    const [isLoading, setIsloading] = useState(false)
 
     const [picturedata, setpicturedata] = useState(
         [
@@ -33,7 +34,9 @@ export default function AuctionMain(){
     ) 
 
     
-    useEffect( () => {axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`)
+    useEffect( async() => {
+    setIsloading(true)
+    await axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`)
     .then((res) => {
             setpicturedata(res.data);
             //console.log(picturedata)
@@ -41,6 +44,8 @@ export default function AuctionMain(){
     .catch( (err)=>{
         alert(err);
         });
+    setIsloading(false)
+
     },[]);
 
 
@@ -96,6 +101,9 @@ export default function AuctionMain(){
             });
     }
 // 경매 메인 페이지용 html
+if(isLoading)
+    return (<div class="show_cliploader"><ClipLoader /></div>)
+else
     return(
         <div className="auction_Main_Page">
             <div className="auction_search_bar">

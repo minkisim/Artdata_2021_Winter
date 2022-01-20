@@ -2581,7 +2581,7 @@ app.post('/api/Transfer/sendEmail', async (req,res) => {
   var mail_option = {
       to:'droneprobe@naver.com',
       subject:'artdata_test_mail',
-      text:'testing email service'
+      html:'<div>artdata test</div>'
   }
   await transporter.sendMail(mail_option, async(err,info)=>{
       if(err)

@@ -24,7 +24,7 @@ function AdminRoute({component : Component ,isLogin,isAdmin, ...rest})
     return (
         
         <Route {...rest} render={props =>
-          isLogin && (isAdmin == 'ROLE_ADMIN') ? (
+          isLogin && (isAdmin === 'ROLE_ADMIN') ? (
               <Component {...props} />
             ) : (
               <Redirect to="/loginPage"/>

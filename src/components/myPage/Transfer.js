@@ -4,17 +4,10 @@ import React, { createRef, useState, useEffect} from 'react'
 import './MyPage.css';
 import {protocol, dev_ver} from '../../pages/global_const';
 axios.defaults.withCredentials = true;
+import ClipLoader from "react-spinners/ClipLoader"
 // 보유작품 양도 관련 코드
 function Transfer({props, history}){
-    let inputRef;
-
-    const [userdata, setUserdata] = useState({
-        username:'',
-        name:'',
-        email:''
-    })
-   
-
+    const [isLoading, setIsloadng]= useState(false)
 
      const [myPicture,setmyPicture] = useState(
         [
@@ -93,7 +86,7 @@ function Transfer({props, history}){
                                 {
                                         alert('로그인이 필요합니다')
                                        
-                                        window.location.replace("/")
+                                        window.location.replace("/loginPage")
                                 }
 
                                 else{
@@ -129,9 +122,9 @@ function Transfer({props, history}){
             history.push('/loginPage')}
     }
 
-    function sendArt()
+    async function sendArt()
     {
-        
+       
         if(checkBoxValue == undefined || checkBoxValue.length<1)
         {
             alert('하나 이상의 작품을 선택해 주십시오')
@@ -144,9 +137,10 @@ function Transfer({props, history}){
             alert('보낼 사람을 지정해 주십시오')
             return false
         }
+        
 
-        console.log('전송')
-        axios.post(`${protocol}://${dev_ver}:4000/api/Transfer/sendArt`,{
+        setIsloadng(true)
+        await axios.post(`${protocol}://${dev_ver}:4000/api/Transfer/sendEmail`,{
             checkBoxValue: checkBoxValue,
             username: people.username
         })
@@ -155,7 +149,7 @@ function Transfer({props, history}){
             if(result.data.success)
             {
                 alert('성공적으로 전송하였습니다.')
-                history.push('/mypage')
+               
             }
             else{
                 alert('전송에 실패하였습니다.')
@@ -167,9 +161,13 @@ function Transfer({props, history}){
         .catch((err)=>{
             alert(err)
         })
+        window.location.href = '/mypage'
     }
   
 // 보유작품 양도 관련 html    
+if(isLoading)
+    return (<div class="show_cliploader"><ClipLoader /></div>)
+else
     return(
         <div className="Transfer_Page">
             <p className="Transfer_Page_Title">작품 소유권 양도</p>
@@ -216,7 +214,7 @@ function Transfer({props, history}){
                 </div>    
             </div>
             <div className="phone">
-                <a onClick={sendArt}><div><p>휴대폰 인증</p></div></a>
+                <a disabled="" onClick={(e)=>{e.preventDefault();e.currentTarget.disabled = true;sendArt()}}><div><p>휴대폰 인증</p></div></a>
             </div>
 
 

@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React,{useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import axios from 'axios';
 import './login.css';
 
@@ -9,7 +9,7 @@ import {protocol, dev_ver} from './global_const';
 function LoginPage({history,props}){
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    
+    const location = useLocation()
     function loginForm()
     {
         axios.post(`${protocol}://${dev_ver}:4000/api/loginForm`,{
@@ -22,9 +22,13 @@ function LoginPage({history,props}){
             //
             if(res.data.success==true)
             {
-                //alert('로그인 성공');
-                //console.log(props.togoURL)
-                document.location.href='/'
+                if(!location.state?.from)
+                {
+                    window.location.href = '/'
+                }
+                else{
+                    window.location.href = location.state.from
+                }
             }
 
             //

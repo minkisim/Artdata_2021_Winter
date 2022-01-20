@@ -362,3 +362,11 @@ a { text-decoration: none; color: black; }
     transform: translateX(-315px);
   }
 }
+
+/*clipload*/
+.show_cliploader {
+  position: absolute;
+  top: 50vh;
+  left: calc( 50vw - 150px );
+  width: 300px;
+}
