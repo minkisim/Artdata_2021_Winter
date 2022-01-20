@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import './exhibition.css'
 import react , {useState, useEffect} from 'react';
 import ShowWindow1 from '../showWindow/ShowWindow1';

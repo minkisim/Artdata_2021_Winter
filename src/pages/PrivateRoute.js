@@ -1,5 +1,5 @@
 
-
+/*eslint-disable*/
 import React,{useLayoutEffect} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import doTokenExist from './doTokenExist';

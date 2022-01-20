@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useLayoutEffect } from "react";
 // 타이머용 코드
 const Auctiontimer = (props) => {

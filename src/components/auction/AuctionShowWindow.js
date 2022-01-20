@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import axios from 'axios';
 import react from 'react';
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom'

@@ -1,4 +1,5 @@
 
+/*eslint-disable*/
 /* global history */
 /* global location */
 /* global window */

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState } from 'react';
 import './box.css'
 // home03 전시일정 관련 코드

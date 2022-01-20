@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { PureComponent,useState, useEffect,useLayoutEffect }  from "react";
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 

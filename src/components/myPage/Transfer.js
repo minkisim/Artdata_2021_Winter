@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import axios from 'axios'
 import React, { createRef, useState, useEffect} from 'react'
 import './MyPage.css';

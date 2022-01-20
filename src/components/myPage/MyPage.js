@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { Component, useEffect, useState } from 'react';
 import  './MyPage.css';
 import islogin from '../../pages/doTokenExist';

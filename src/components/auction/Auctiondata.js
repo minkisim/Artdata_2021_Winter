@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, {useState,useLayoutEffect,useRef} from 'react'
 import axios from 'axios'
 import './auction.css'

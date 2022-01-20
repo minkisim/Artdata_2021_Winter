@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import react from 'react';
 import './ShowWindow.css';
 import Zoomimage from './Zoomimage';
