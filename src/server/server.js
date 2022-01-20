@@ -210,6 +210,20 @@ const pbkdf2Promise = util.promisify(crypto.pbkdf2)
 
 //비밀번호 암호화 end
 
+//이메일 전송
+const nodemailer = require('nodemailer')
+var transporter = nodemailer.createTransport({
+    service:'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure:true,
+    auth:{
+        user:'vanenoreply@gmail.com',
+        pass:'lsybsrjyaosfiroq'
+    }
+})
+//이메일 전송 end
+
 const multer = require('multer');
 
 const moment = require('moment');
@@ -2562,6 +2576,27 @@ app.get('/api/Transfer/artdata', async (req,res) => {
         await closeConnection(connection)
 })
 
+app.post('/api/Transfer/sendEmail', async (req,res) => {
+  //이메일 인증
+  var mail_option = {
+      to:'droneprobe@naver.com',
+      subject:'artdata_test_mail',
+      text:'testing email service'
+  }
+  await transporter.sendMail(mail_option, async(err,info)=>{
+      if(err)
+      {
+          console.log(err)
+          res.json({err:true})
+      }
+      else
+      {
+          console.log(info)
+          res.json({success:true})
+      }
+  })
+})
+
 app.post('/api/Transfer/sendArt', async (req,res) => {
     var connection = await openConnection()
     //소유한 작품 타인에게 양도
@@ -3582,7 +3617,7 @@ app.post('/api/notice/upload',async (req,res)=>{
                 if(result!=undefined && result.affectedRows>=1)
                 {
                     await connection.commit()
-                    res.json({result:true})
+                    res.json({updatet:true})
                 }
                 else
                 {
@@ -3627,7 +3662,7 @@ app.post('/api/notice/upload',async (req,res)=>{
                     var [result2] = await connection.query(query,input)
                     if(result2 != undefined && result2.affectedRows >= 1){
                         await connection.commit()
-                        res.json({update:true})
+                        res.json({result:true})
                     }
                     else
                     {
