@@ -10,7 +10,9 @@ function MyNotify(props){
     
     const [data, setData] = useState()
     useEffect(()=>{
-        axios.get(`${protocol}://${dev_ver}:4000/api/inform/myinform`)
+        let unmounted = false
+        let source = axios.CancelToken.source()
+        axios.get(`${protocol}://${dev_ver}:4000/api/inform/myinform`,{cancelToken:source.token})
         .then((res)=>{
             if(res.data.login_required)
             {
@@ -22,12 +24,18 @@ function MyNotify(props){
                 alert('서버 오류')
             }
             else{
+                if(!unmounted)
                 setData(res.data)
             }
         })
         .catch((err)=>{
-
+            alert(err)
         })
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 
     async function find_inform()

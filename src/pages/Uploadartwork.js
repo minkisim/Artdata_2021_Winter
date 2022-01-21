@@ -47,27 +47,32 @@ export default function UploadArtwork(){
     const [file, setFile] =useState();
 
     useEffect(()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         const query = queryString.parse(location.search)
 
         if(query.id!=undefined && query.id.length>=1)
         {
             axios.post(`${protocol}://${dev_ver}:4000/api/imgupload/search`,{
                 id:query.id
-            })
+            },{cancelToken:source.token})
             .then((result)=>{
                 if(result.data!=undefined)
                 {
-                    setArtist(result.data.artist)
-                    setArtname(result.data.artname)
-                    setExhibition(result.data.exhibition)
-                    setArtrelease_date(result.data.artrelease_date)
-                    setImagesize(result.data.imagesize)
-                    setImagetype(result.data.imagetype)
-                    setKRW_lower(result.data.KRW_lower)
-                    setKRW_upper(result.data.KRW_upper)
-                    setUSD_lower(result.data.USD_lower)
-                    setUSD_upper(result.data.USD_upper)
-                    setArttext(result.data.arttext)
+                    if(!unmounted){
+                        setArtist(result.data.artist)
+                        setArtname(result.data.artname)
+                        setExhibition(result.data.exhibition)
+                        setArtrelease_date(result.data.artrelease_date)
+                        setImagesize(result.data.imagesize)
+                        setImagetype(result.data.imagetype)
+                        setKRW_lower(result.data.KRW_lower)
+                        setKRW_upper(result.data.KRW_upper)
+                        setUSD_lower(result.data.USD_lower)
+                        setUSD_upper(result.data.USD_upper)
+                        setArttext(result.data.arttext)
+                    }
                 }
             })
             .catch((err)=>{
@@ -76,7 +81,10 @@ export default function UploadArtwork(){
 
         }
 
-
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 
     function upload()

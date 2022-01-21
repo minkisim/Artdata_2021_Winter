@@ -11,10 +11,6 @@ import doTokenExist from './doTokenExist';
 
 function PrivateRoute({component : Component,isLogin,path,search, ...rest})
 {
- 
-  useLayoutEffect(()=>{
-    console.log(search)
-  },[])
 
   if(search===undefined)
   {

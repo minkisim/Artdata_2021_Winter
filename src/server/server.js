@@ -2587,7 +2587,7 @@ app.post('/api/Transfer/sendEmail', async (req,res) => {
       subject:'artdata_test_mail',
       html:artnameval+"<div>위 작품을 "+req.body.username+"님에게 보내시겠습니까?</div>"
   }
-  await transporter.sendMail(mail_option, async(err,info)=>{
+ transporter.sendMail(mail_option, async(err,info)=>{
       if(err)
       {
           console.log(err)

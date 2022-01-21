@@ -1,3 +1,5 @@
+
+/*eslint-disable*/
 import React,{useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
@@ -20,7 +22,10 @@ function UpdateUserPage({history}){
     const [age, setAge] = useState(10)
 
     useEffect(()=>{
-        axios.get(`${protocol}://${dev_ver}:4000/api/getForm`)
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+        axios.get(`${protocol}://${dev_ver}:4000/api/getForm`,{cancelToken:source.token})
         .then((res)=>{
             if(res.data.login_required)
             {
@@ -36,7 +41,7 @@ function UpdateUserPage({history}){
                 alert('등록되지 않은 사용자입니다.')
                 window.location.href = '/'
             }
-            else
+            else if(!unmounted)
             {
                 setEmail(res.data.email)
                 setName(res.data.name)
@@ -46,6 +51,11 @@ function UpdateUserPage({history}){
         .catch((err)=>{
             alert(err)
         })
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 
 

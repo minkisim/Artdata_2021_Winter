@@ -60,6 +60,9 @@ function Exhibition2({match}){
     )
 
     useEffect(async () => {
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         let jsondata = {}
         var exnum
         if(match.params.exhibition != null && match.params.exhibition != undefined && match.params.exhibition.length>=1)
@@ -68,7 +71,7 @@ function Exhibition2({match}){
             
         }
         
-        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata).then((res)=>{
+        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/exhibition`,jsondata,{cancelToken:source.token}).then((res)=>{
             console.log(res.data[1])
             if(res.data[0].notuple)
             {
@@ -78,13 +81,16 @@ function Exhibition2({match}){
             else
                {
                 exnum = res.data[0].exhibition_id
-                setexhibition(res.data);
-                setchart04data(res.data[1]);
+                if(!unmounted)
+                {
+                    setexhibition(res.data);
+                    setchart04data(res.data[1]);
+                }
                } 
             
         })
-        .catch(()=>{
-        alert('error');
+        .catch((err)=>{
+        alert(err);
         });
 
         if(exnum == undefined)
@@ -92,28 +98,34 @@ function Exhibition2({match}){
             exnum = match.params.exhibition
         }
         
-        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/rank`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition2/rank`,jsondata,{cancelToken:source.token}).
         then((res)=>{
             
-       // console.log(res.data)
+            if(!unmounted)
             setrankdata(res.data);
            
         })
-        .catch(()=>{
-        alert('error');
+        .catch((err)=>{
+        alert(err);
         });
 
 
-        axios.get(`${protocol}://${dev_ver}:4000/api/exhibition2/chart03/day`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/exhibition2/chart03/day`,{cancelToken:source.token}).
         then((res)=>{
             
-       // console.log(res.data)
+            if(!unmounted)
             setchart03data(res.data);
            
         })
-        .catch(()=>{
-        alert('error');
+        .catch((err)=>{
+        alert(err);
         })
+
+        return function () {
+            unmounted=true
+            source.cancel('Cancelling in cleanup')
+        }
+
     },[match.params.exhibition])   
     // 사이드바 Artdata>Exhibition 버튼 대응 뷰 html(전시관 소개)
     return(

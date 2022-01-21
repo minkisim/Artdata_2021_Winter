@@ -31,22 +31,33 @@ export default function UploadArtist(){
     );
 
     useEffect(()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         const query = queryString.parse(location.search)
 
         if(query.id!=undefined && query.id.length>=1)
         {
             axios.post(`${protocol}://${dev_ver}:4000/api/artist_upload/search`,{
                 id: query.id
-            })
+            },{cancelToken:source.token})
             .then((result)=>{
-                setArtist(result.data.artist)
-                setLife_term(result.data.life_term)
-                setArtistInfo(result.data.artist_info)
-                setArtistyearInfo(result.data.artistyearInfo)
+                if(!unmounted){
+                    setArtist(result.data.artist)
+                    setLife_term(result.data.life_term)
+                    setArtistInfo(result.data.artist_info)
+                    setArtistyearInfo(result.data.artistyearInfo)
+                }
+                
             })
             .catch((err)=>{
                 alert(err)
             })
+        }
+
+        return function () {
+            unmounted=true
+            source.cancel()
         }
     },[])
 

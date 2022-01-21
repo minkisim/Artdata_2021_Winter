@@ -50,36 +50,41 @@ function Artist01({match}){
     )
 
     useEffect(() => {
-        console.log(match.params.artist)
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         let jsondata = {}
         if(match.params.artist!=null && match.params.artist != undefined && match.params.artist.length>=1)
          {
              jsondata.id=match.params.artist
          }
 
-        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/artist`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/artist`,jsondata,{cancelToken:source.token}).
         then((res)=>{
-            console.log(res.data)
-       
+            if(!unmounted)
             setartistdata(res.data);
+
             if(res.data[1]!=null)
-            setchart04data(res.data[1])
+             if(!unmounted)
+                 setchart04data(res.data[1])
         })
         .catch(()=>{
         alert('error');
         });
 
-        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/slider`,jsondata).
+        axios.post(`${protocol}://${dev_ver}:4000/api/artist01/slider`,jsondata,{cancelToken:source.token}).
         then((res)=>{
-       // console.log(res.data)
+            if(!unmounted)
             setsliderdata(res.data);   
-            
         })
         .catch(()=>{
         alert('error');
         });
 
-
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[match.params.id])   
 
     const Black_div = styled.div`

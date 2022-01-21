@@ -21,6 +21,9 @@ function Exhibition3({match}){
     const [artId,setArtId] = useState()
 
     useEffect(async()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         var art_id
         let jsondata = {}
          
@@ -36,26 +39,29 @@ function Exhibition3({match}){
              jsondata.id=query.id
          }
          */
-        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/exhibition`, jsondata
-        ).
+        await axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/exhibition`, jsondata,{cancelToken:source.token}).
           then((res)=>{
-         // console.log(res.data)
-         setexhibition(res.data)
-         art_id = res.data[0].art_id
-         setArtId(res.data[0].art_id)
+            if(!unmounted)
+                 setexhibition(res.data)
+            art_id = res.data[0].art_id
+
+            if(!unmounted)
+                 setArtId(res.data[0].art_id)
           })
           .catch(()=>{
           alert('error');
           });
 
           
-        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart04`,{art_id : art_id}).
+        axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart04`,{art_id : art_id},{cancelToken:source.token}).
           then((res)=>{
          if(res.data==null)
          {
+            if(!unmounted)
             setchart04data([{name: '10-20대', value: 0}])
          }
          else{
+            if(!unmounted)
             setchart04data(res.data)
          }
         
@@ -67,14 +73,19 @@ function Exhibition3({match}){
           axios.post(`${protocol}://${dev_ver}:4000/api/exhibition3/chart05`,{
             date:'day',
             art_id:art_id
-        }).
+        },{cancelToken:source.token}).
         then((res)=>{
-       // console.log(res.data)
-       setchart05data(res.data)
+            if(!unmounted)
+            setchart05data(res.data)
         })
         .catch(()=>{
         alert('error');
         });
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[match.params.id])
         
 
@@ -109,11 +120,16 @@ function Exhibition3({match}){
 
 
     useEffect(()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+
+        if(!unmounted)
         setQuery(queryString.parse(location.search))
 
-        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`).
+        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`,{cancelToken:source.token}).
           then((res)=>{
-         // console.log(res.data)
+        if(!unmounted)
          setsliderdata(res.data)
 
           })
@@ -129,16 +145,11 @@ function Exhibition3({match}){
          {
              jsondata.id=match.params.id
          }
-          /*
-         let jsondata = {}
-         
-         if(query!=null && query.id != undefined && query.id.length>=1)
-         {
-             jsondata.id=query.id
-         }
-         */
 
-
+         return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 
 

@@ -21,20 +21,22 @@ function Home4( ){
         ] 
     );
     useEffect(() => {
-        
-        axios.get(`${protocol}://${dev_ver}:4000/api/home4/data`).
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+        axios.get(`${protocol}://${dev_ver}:4000/api/home4/data`,{cancelToken:source.token}).
         then((res)=>{
-            console.log('받아온 것');
-            console.log(res.data);
-       // console.log(res.data)
+            if(!unmounted)
             setdata(res.data);
-            console.log('data');
-            console.log(data);
         })
         .catch(()=>{
         alert('error');
         });
 
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])   
     // New Artwork html
     return(

@@ -18,20 +18,27 @@ function Exhibition(){
     )
     const [isLoading, setIsloading] = useState(false)
     useEffect(async () => {
-
+        let unmounted = false
+        let source = axios.CancelToken.source()
+        if(!unmounted)
         setIsloading(true)
 
         await axios.get(`${protocol}://${dev_ver}:4000/api/exhibition1/data`).
         then((res)=>{
-            
+            if(!unmounted)
             setdata(res.data);
             //console.log(res.data)
         })
         .catch(()=>{
         alert('error');
         });
-
+        if(!unmounted)
         setIsloading(false)
+
+        return function () {
+            unmounted=true
+            source.cancel('Cancelling in cleanup')
+        }
     },[])   
 
 

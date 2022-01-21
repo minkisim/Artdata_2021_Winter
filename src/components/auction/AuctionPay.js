@@ -48,13 +48,14 @@ export default function AuctionPay(){
     const [artistdata,setArtistdata] = useState()
 
     useEffect(()=>{
-        const query = queryString.parse(location.search)
+        let unmounted = false
+        let source = axios.CancelToken.source()
 
-        //console.log(query.id)
+        const query = queryString.parse(location.search)
 
         axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata`,{
             id:query.id
-        })
+        },{cancelToken:source.token})
         .then((result2)=>{
             
             if(result2.data==null)
@@ -63,31 +64,19 @@ export default function AuctionPay(){
                 document.location.replace('/')
             }
 
+            if(!unmounted)
             setdata(result2.data)
-            console.log(result2.data)
 
-
-                     axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
+                     axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`,{cancelToken:source.token})      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
                                         alert('로그인이 필요합니다')
-
-                                        
-                                        window.location.replace("/loginPage")
+                                        window.location.replace(window.location.pathname+window.location.search)
                                 }
 
                                 else{
-                                    /*
-                                    if(result.data.owner === result.data.username)
-                                        {
-                                            console.log("일치")
-                                            setIsowner(true)
-                                        }
-                                        else
-                                            console.log("불일치")
-                                        */
-
+                                    if(!unmounted)
                                         setUserdata(result.data)
                                 }
                         })
@@ -100,18 +89,20 @@ export default function AuctionPay(){
             axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/search`,{
                 id:query.id,
                 artname:result2.data.artname
-            })
+            },{cancelToken:source.token})
             .then((result)=>{
                 
                 if(result.data.success)
                 {
-                    //console.log(result.data.result[0])
+                    if(!unmounted)
                     setBidsearch(result.data.result)
                     if(result.data.result[0] != undefined)// && result.data.result[0].userprice != undefined && result.data.result[0].userprice.length>=1)
                     {
-                        //console.log(result.data.email)
-                        setCurrent(result.data.result[0])
-                        setEmail(result.data.email)
+                        if(!unmounted)
+                        {
+                            setCurrent(result.data.result[0])
+                            setEmail(result.data.email)
+                        }
                     }
                 }
             })
@@ -121,15 +112,18 @@ export default function AuctionPay(){
 
             axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/isStarted`,{
                 artname: result2.data.art_id
-            })
+            },{cancelToken:source.token})
             .then((result)=>{
                 var enddate = result.data.end_point.split('-')
     
                 var week=['일','월','화','수','목','금','토']
-    
-                setEnddate(enddate)
-                setEnddate2(week[result.data.day])
-  
+                
+                if(!unmounted)
+                {
+                    setEnddate(enddate)
+                    setEnddate2(week[result.data.day])
+                }
+
                 if(result.data.tminus>0)
                 {
                     alert('아직 진행중인 경매입니다.')
@@ -140,37 +134,20 @@ export default function AuctionPay(){
                 alert("date Error:\n"+err)
             })
 
-            /*
-            axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/artist`,{
-            artist : result2.data.artist,
-            artname: result2.data.artname
-            })
-            .then((result)=>{
-                setArtistdata(result.data)
             })
             .catch((err)=>{
                 alert(err)
             })
-            */
 
-
-            })
-            .catch((err)=>{
-                alert(err)
-            })
-    
-
-
-      
-       
         .catch((err)=>{
             alert(err)
         })
 
-       
-        
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
 
-        
     },[])
 
     function click_auction_btn2(){

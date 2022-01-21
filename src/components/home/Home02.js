@@ -19,15 +19,23 @@ function Home2() {
     ]);
 
     useEffect(() => {
-        axios.get(`${protocol}://${dev_ver}:4000/api/home2`)
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+        axios.get(`${protocol}://${dev_ver}:4000/api/home2`,{cancelToken:source.token})
         .then((res) => {
-          
+            if(!unmounted)
             setArtData(res.data)
-            console.log(res.data)
         })
-        .catch(()=>{
-            console.log('error')
+        .catch((err)=>{
+            console.log(err)
         })
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
+
     }, [])
     // Today Artwork html
     return(

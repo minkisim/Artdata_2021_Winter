@@ -10,7 +10,7 @@ export default function AuctionShowWindow(props){
 
     function isStarted()
     {
-        
+         
         axios.post(`${protocol}://${dev_ver}:4000/api/AuctionMain/isStarted`,{
             art_id:props.data.id//art_id
         })

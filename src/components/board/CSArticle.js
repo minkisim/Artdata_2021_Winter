@@ -20,6 +20,9 @@ function CSArticle({isLogin, isAdmin}){
     const [results, setResults] = useState()
     const [role, setRole] = useState()
     useEffect(()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         var username
         var indices 
         const query = queryString.parse(location.search)
@@ -32,23 +35,28 @@ function CSArticle({isLogin, isAdmin}){
             alert("잘못된 접근입니다.")
             window.location.href = "/customerService"
         }
-        axios.post(`${protocol}://${dev_ver}:4000/api/board/showarticle`,{username : username, indices : indices})
+        axios.post(`${protocol}://${dev_ver}:4000/api/board/showarticle`,{username : username, indices : indices},{cancelToken:source.token})
         .then((res)=>{
+            if(!unmounted)
             setResults(res.data)
-            console.log(res.data)
         })
         .catch((err)=>{
             alert(err)
         })
 
-        axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`,{cancelToken:source.token})
         .then((res)=>{
+            if(!unmounted)
             setRole(res.data.userrole)
-            console.log(res.data)
         })
         .catch((err)=>{
             alert(err)
         })
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 // 고객 센터 게시물 보기용 html
     return(

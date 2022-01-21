@@ -28,20 +28,23 @@ export default function Home( ){
             '전시 관람객': 0
         }
     ]);
-   
-
+    
     //[]는 empty dependency
     useEffect(()=>{
-      
-        axios.get(`${protocol}://${dev_ver}:4000/api/home1/about`).
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+        axios.get(`${protocol}://${dev_ver}:4000/api/home1/about`,{cancelToken:source.token}).
         then((res)=>{
        // console.log(res.data)
+       if(!unmounted)
          setInputData(res.data)
 
          
-            axios.get(`${protocol}://${dev_ver}:4000/api/home1/about2`).
+            axios.get(`${protocol}://${dev_ver}:4000/api/home1/about2`,{cancelToken:source.token}).
             then((result)=>{
              //console.log(result.data)
+             if(!unmounted)
              setgraph(result.data)
             })
             .catch(()=>{
@@ -54,9 +57,10 @@ export default function Home( ){
         alert('error');
         });
 
-
-
-        
+        return function () {
+            unmounted=true
+            source.cancel('Cancelling in cleanup')
+        }
 
         
     },[])

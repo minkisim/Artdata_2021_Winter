@@ -75,9 +75,11 @@ function Transfer({props, history}){
 
 //로그인 검사
     useEffect(() => {
-       
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
                         //get으로 바꿈
-                        axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`)      
+                        axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`,{cancelToken:source.token})      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
@@ -88,11 +90,16 @@ function Transfer({props, history}){
 
                                 else{
                                     //데이터 받아오기
+                                    if(!unmounted)
                                        setmyPicture(result.data)
                                 }
                         })
                         .catch()
      
+                        return function () {
+                            unmounted=true
+                            source.cancel()
+                        }
        }, [])
 
     const setCheckBoxArr = (e,art_id,art_name) =>

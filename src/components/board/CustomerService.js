@@ -28,6 +28,10 @@ function CustomerService({isLogin, isAdmin}){
         const [lastnum, setLastnum] = useState()
         
     useEffect(()=>{
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+
         var page = 1
         var start = 1
         var last = 1
@@ -36,8 +40,12 @@ function CustomerService({isLogin, isAdmin}){
         {
             console.log("page : " + query.page)
             page = query.page
-            setCurrPage(page)
-            setStartnum( (Math.floor((page-1)/5))*5+1)
+
+            if(!unmounted)
+            {
+                setCurrPage(page)
+                setStartnum( (Math.floor((page-1)/5))*5+1)
+            }
             start = (Math.floor((page-1)/5))*5+1
         }
         else
@@ -47,7 +55,7 @@ function CustomerService({isLogin, isAdmin}){
         }
 
 
-        axios.get(`${protocol}://${dev_ver}:4000/api/board/pagenum`)
+        axios.get(`${protocol}://${dev_ver}:4000/api/board/pagenum`,{cancelToken:source.token})
         .then((res)=>{
             if(res.data.err)
             {
@@ -61,16 +69,22 @@ function CustomerService({isLogin, isAdmin}){
                     alert("잘못된 접근입니다.")
                     window.location.href='/customerService'
                 }
+
+                if(!unmounted)
                 setMaxPage(Math.ceil(res.data.boardnum/5.0))
 
                 if(Math.ceil(res.data.boardnum/5.0) >= (Math.floor((page-1)/5))*5+1+4)
                 {
                     last = (Math.floor((page-1)/5))*5+1+4
+
+                    if(!unmounted)
                     setLastnum((Math.floor((page-1)/5))*5+1+4)
                 }
                 else
                 {
                     last = Math.ceil(res.data.boardnum/5.0)
+
+                    if(!unmounted)
                     setLastnum(Math.ceil(res.data.boardnum/5.0))
                 }
 
@@ -81,7 +95,7 @@ function CustomerService({isLogin, isAdmin}){
                     arr.push(i)
                 }
 
-                //console.log(arr)
+                if(!unmounted)
                 setPagenum(arr)
             }
         })
@@ -90,20 +104,26 @@ function CustomerService({isLogin, isAdmin}){
         })
 
 
-        axios.post(`${protocol}://${dev_ver}:4000/api/board/showpage`,{page : page})
+        axios.post(`${protocol}://${dev_ver}:4000/api/board/showpage`,{page : page},{cancelToken:source.token})
         .then((res)=>{
             if(res.data.none)
             {}
             else if(res.data !=undefined)
             {
+                if(!unmounted)
                 setData(res.data)
-                //console.log(res.data)
             }
         })
         .catch((err)=>{
              alert(err)
             
         })
+
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
 
     const priorpage = () =>{

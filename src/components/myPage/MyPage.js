@@ -33,9 +33,10 @@ function MyPage({history}){
 
 
        useEffect(async () => {
-        
+        let unmounted = false
+        let source = axios.CancelToken.source()
                         //console.log("로그인 유무 검사")
-                        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
+                        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`,{cancelToken:source.token})      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
@@ -46,6 +47,7 @@ function MyPage({history}){
                                 }
 
                                 else{
+                                        if(!unmounted)
                                         setUserdata(result.data)
                                 }
                         })
@@ -54,7 +56,7 @@ function MyPage({history}){
                         })
        
                          //get으로 바꿈
-                         await axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`)      
+                         await axios.get(`${protocol}://${dev_ver}:4000/api/Transfer/artdata`,{cancelToken:source.token})      
                          .then((result) => {
                                  if(result.data.success==false)
                                  {
@@ -65,11 +67,16 @@ function MyPage({history}){
  
                                  else{
                                      //데이터 받아오기
+                                     if(!unmounted)
                                         setmyPicture(result.data)
-                                        console.log(result.data)
                                  }
                          })
                          .catch()
+
+                         return function () {
+                                unmounted=true
+                                source.cancel()
+                            }
        }, [])
         
        function quit()

@@ -36,17 +36,28 @@ export default function AuctionMain(){
 
     
     useEffect( async() => {
-    setIsloading(true)
-    await axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`)
-    .then((res) => {
-            setpicturedata(res.data);
-            //console.log(picturedata)
-        })
-    .catch( (err)=>{
-        alert(err);
-        });
-    setIsloading(false)
+        let unmounted = false
+        let source = axios.CancelToken.source()
+        
+        if(!unmounted)
+        setIsloading(true)
+        await axios.get(`${protocol}://${dev_ver}:4000/api/AuctionMain/picturedata`,{cancelToken:source.token})
+        .then((res) => {
+            if(!unmounted)
+                setpicturedata(res.data);
+            })
+        .catch( (err)=>{
+            alert(err);
+            });
 
+        if(!unmounted)
+        setIsloading(false)
+
+
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[]);
 
 

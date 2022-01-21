@@ -40,42 +40,45 @@ function Home3(){
     );
 
     useEffect(()=>{
-        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`).
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
+        axios.get(`${protocol}://${dev_ver}:4000/api/home3/slider`,{cancelToken:source.token}).
           then((res)=>{
-            console.log("graph data")
-            console.log(res.data)
-         setsliderdata(res.data)
+            if(!unmounted)
+             setsliderdata(res.data)
 
           })
-          .catch(()=>{
-          alert('error');
+          .catch((err)=>{
+          alert(err);
           });
 
 
-          axios.get(`${protocol}://${dev_ver}:4000/api/home3/graph`).
+          axios.get(`${protocol}://${dev_ver}:4000/api/home3/graph`,{cancelToken:source.token}).
           then((res)=>{
-              console.log("graph data")
-          console.log(res.data)
-         setgraph(res.data)
+            if(!unmounted)
+             setgraph(res.data)
           })
-          .catch(()=>{
-          alert('error');
+          .catch((err)=>{
+          alert(err);
           });
 
 
-          axios.get(`${protocol}://${dev_ver}:4000/api/home3/date`).
+          axios.get(`${protocol}://${dev_ver}:4000/api/home3/date`,{cancelToken:source.token}).
           then((res)=>{
-         // console.log(res.data)
-         setdate(res.data)
+            if(!unmounted)
+             setdate(res.data)
           })
-          .catch(()=>{
-          alert('error');
+          .catch((err)=>{
+          alert(err);
           });
 
+          return function () {
+            unmounted=true
+            source.cancel()
+        }
       },[])
-      //console.log('data');
-     // console.log(sliderdata);
-     // Weekly Exhibition html
+      
     return(
         <div>
             <div className="home_3_Current">

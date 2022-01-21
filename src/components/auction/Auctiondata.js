@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, {useState,useLayoutEffect,useRef} from 'react'
+import React, {useState,useEffect,useRef} from 'react'
 import axios from 'axios'
 import './auction.css'
 import './Auctioncheck.css'
@@ -52,10 +52,13 @@ export default function Auctiondata({location, match}){
     const [auctionUnit,setAuctionUnit] = useState('1')
 
 
-    useLayoutEffect(async ()=> {
+    useEffect(async ()=> {
+        let unmounted = false
+        let source = axios.CancelToken.source()
+
         const query = queryString.parse(location.search)
 
-        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
+        await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`,{cancelToken:source.token})      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
@@ -64,6 +67,7 @@ export default function Auctiondata({location, match}){
                                 }
 
                                 else{
+                                    if(!unmounted)
                                         setUserdata(result.data)
                                 }
                         })
@@ -73,7 +77,7 @@ export default function Auctiondata({location, match}){
 
         await axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata`,{
             id:query.id
-        })
+        },{cancelToken:source.token})
         .then((result2)=>{
             if(result2.data==null)
             {
@@ -81,23 +85,22 @@ export default function Auctiondata({location, match}){
                 document.location.replace('/')
             }
 
+            if(!unmounted)
             setdata(result2.data)
-            //console.log("결과 : "+result2.data.artname)
-
-
 
             axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/search`,{
                 id:query.id,
                 artname:result2.data.artname
-            })
+            },{cancelToken:source.token})
             .then((result)=>{
                 //console.log(result.data)
                 if(result.data.success)
                 {
-                    
+                    if(!unmounted)
                     setBidsearch(result.data.result)
                     if(result.data.result[0] != undefined )//&& result.data.result[0].userprice != undefined && result.data.result[0].userprice.length>=1)
                     {
+                        if(!unmounted)
                         setCurrentprice(result.data.result[0].userprice)
                     }
                 }
@@ -106,26 +109,27 @@ export default function Auctiondata({location, match}){
                 alert("search error:\n"+err)
             })
 
-        //console.log("artname : "+result2.data.artname)
-
-
         axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/isStarted`,{
             artname: result2.data.art_id
-        })
+        },{cancelToken:source.token})
         .then((result)=>{
             var enddate = result.data.end_point.split('-')
             
             var week=['일','월','화','수','목','금','토']
 
-            setEnddate(enddate)
-            setEnddate2(week[result.data.day])
-            setAuctionUnit(result.data.auction_unit)
+            if(!unmounted){
+                setEnddate(enddate)
+                setEnddate2(week[result.data.day])
+                setAuctionUnit(result.data.auction_unit)
+            }
 
             if(result.data.tminus<=0)
             {
                 alert('이미 완료된 경매입니다.')
                 document.location.replace('/auctionpay'+window.location.search)
             }
+
+            if(!unmounted)
             setTminus(result.data.tminus)//(diffDate2.getTime() - currentDate.getTime())/1000)
         })
         .catch((err)=>{
@@ -133,26 +137,15 @@ export default function Auctiondata({location, match}){
         })
 
 
-        /*
-        axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/artist`,{
-            artist : result2.data.artist_id,
-            artname: result2.data.artname
-        })
-        .then((result)=>{
-            setArtistdata(result.data)
-        })
-        .catch((err)=>{
-            alert(err)
-        })
-        */
-
         })
         .catch((err)=>{
             alert(err)
         })
 
-       
-
+        return function () {
+            unmounted=true
+            source.cancel()
+        }
     },[])
     
 
