@@ -76,6 +76,7 @@ function MainPage({isLogin, isAdmin}){
     {
         setMessage(!message)
     }
+
 /*
     const [isAdmin, setIsAdmin] = useState('');
     const [isLogin, setIsLogin] = useState('');
@@ -146,7 +147,7 @@ function MainPage({isLogin, isAdmin}){
     
                 {<Route  path="/loginPage" restricted={true} component={LoginPage} exact></Route>  }
                 {<Route  path="/signupPage" restricted={true} component={SignupPage} exact></Route>} 
-                {<Route path="/updatePage" component={UpdateUserPage} exact></Route>}
+                
                 {<Route path="/notice" component={NoticeBoard} exact></Route>}
                 {<Route path="/notify" component={MyNotify} exact></Route>}
 
@@ -160,16 +161,16 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
                 { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }  
-                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    }  
-                
+                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    }
+                { isLogin=='true' && <PrivateRoute isLogin={isLogin} path="/updatePage" component={UpdateUserPage} exact></PrivateRoute>} 
 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/myauction" component={MyAuction} exact></PrivateRoute>      }   
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" search={window.location.search} component={Auctiondata} exact></PrivateRoute>  } 
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" search={window.location.search} component={AuctionPay} exact></PrivateRoute>    }
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    } 
-
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/updatePage" component={UpdateUserPage} exact></PrivateRoute>} 
 
                 {<Route  path="/auctionmain"  component={AuctionMain} exact></Route> }   
                 {console.log("isLogin : "+isLogin)}         

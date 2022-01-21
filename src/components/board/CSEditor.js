@@ -62,7 +62,7 @@ function CSEditor({isLogin, isAdmin}){
             if(res.data.login_required)
             {
                 alert("로그인이 필요합니다.")
-                window.location.href = '/loginPage'
+                window.location.href = '/cseditor'
             }
             else if(res.data.db_error){
                 alert("등록에 실패하였습니다.")

@@ -53,12 +53,14 @@ export default function Auctiondata({location, match}){
 
 
     useLayoutEffect(async ()=> {
+        const query = queryString.parse(location.search)
+
         await axios.get(`${protocol}://${dev_ver}:4000/api/checkAdmin`)      
                         .then((result) => {
                                 if(result.data.success==false)
                                 {
-                                        alert('로그인이 필요합니다')
-                                        window.location.replace("/loginPage")
+                                        alert('로그인이 필요합니다') 
+                                        window.location.replace(window.location.pathname+window.location.search)
                                 }
 
                                 else{
@@ -68,11 +70,6 @@ export default function Auctiondata({location, match}){
                         .catch((err)=>{
                                 alert(err)
                         })
-
-
-        const query = queryString.parse(location.search)
-
-        console.log(query.id)
 
         await axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata`,{
             id:query.id
@@ -127,7 +124,7 @@ export default function Auctiondata({location, match}){
             if(result.data.tminus<=0)
             {
                 alert('이미 완료된 경매입니다.')
-                document.location.replace('/')
+                document.location.replace('/auctionpay'+window.location.search)
             }
             setTminus(result.data.tminus)//(diffDate2.getTime() - currentDate.getTime())/1000)
         })

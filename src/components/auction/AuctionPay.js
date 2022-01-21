@@ -133,7 +133,7 @@ export default function AuctionPay(){
                 if(result.data.tminus>0)
                 {
                     alert('아직 진행중인 경매입니다.')
-                    document.location.replace('/')
+                    document.location.replace('/auctiondata'+window.location.search)
                 }
             })
             .catch((err)=>{

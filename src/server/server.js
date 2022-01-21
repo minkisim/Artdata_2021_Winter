@@ -2578,10 +2578,14 @@ app.get('/api/Transfer/artdata', async (req,res) => {
 
 app.post('/api/Transfer/sendEmail', async (req,res) => {
   //이메일 인증
+
+  var artnameval = ""
+
+  req.body.artnameval.map((item)=>{artnameval += '<div>'+item+'</div>'})
   var mail_option = {
       to:'droneprobe@naver.com',
       subject:'artdata_test_mail',
-      html:'<div>artdata test</div>'
+      html:artnameval+"<div>위 작품을 "+req.body.username+"님에게 보내시겠습니까?</div>"
   }
   await transporter.sendMail(mail_option, async(err,info)=>{
       if(err)

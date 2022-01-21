@@ -32,11 +32,8 @@ function Transfer({props, history}){
     )
 
     const [finduser, setFinduser] = useState('');
-
-
-
     const [checkBoxValue, setCheckBoxValue] = useState([]);
-
+    const [artnameval, setArtnameval] = useState([])
 
         function findUserByUsername()
         {
@@ -86,7 +83,7 @@ function Transfer({props, history}){
                                 {
                                         alert('로그인이 필요합니다')
                                        
-                                        window.location.replace("/loginPage")
+                                        window.location.replace("/transfer")
                                 }
 
                                 else{
@@ -98,20 +95,19 @@ function Transfer({props, history}){
      
        }, [])
 
-    const setCheckBoxArr = (e,index) =>
+    const setCheckBoxArr = (e,art_id,art_name) =>
     {
         
         if(e.currentTarget.checked)
         {
-            setCheckBoxValue([...checkBoxValue,index])
+            setCheckBoxValue([...checkBoxValue,art_id])
+            setArtnameval([...artnameval,art_name])
         }
 
         else{
-            setCheckBoxValue(checkBoxValue.filter((el) => el !== index))
+            setCheckBoxValue(checkBoxValue.filter((el) => el !== art_id))
+            setArtnameval(artnameval.filter((el)=> el !== art_name))
         }
-
-        console.log(checkBoxValue)
-        
     }
     
     function logout(){
@@ -142,7 +138,8 @@ function Transfer({props, history}){
         setIsloadng(true)
         await axios.post(`${protocol}://${dev_ver}:4000/api/Transfer/sendEmail`,{
             checkBoxValue: checkBoxValue,
-            username: people.username
+            username: people.username,
+            artnameval : artnameval
         })
         .then((result) => {
             
@@ -186,7 +183,7 @@ else
                         <div><p className="Owner_content_num">{index+1}</p></div>
                         <div><p className="Owner_content_artwork">{data.artname}</p></div>
                         <div><p className="Owner_content_artist">{data.artist}</p></div>
-                        <div className="Owner_content_btn"><input className={`input_${index}`} type="checkbox" name={`picture${index}`} value={`${index}`} onChange={(e) => {setCheckBoxArr(e,data.id)}}/>
+                        <div className="Owner_content_btn"><input className={`input_${index}`} type="checkbox" name={`picture${index}`} value={`${index}`} onChange={(e) => {setCheckBoxArr(e,data.id, data.artname)}}/>
                         </div>
                      
                     </div>)} 

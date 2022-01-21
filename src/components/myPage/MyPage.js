@@ -42,7 +42,7 @@ function MyPage({history}){
                                         alert('로그인이 필요합니다')
                                         //console.log(result.data.success)
                                         
-                                        window.location.href = "/loginPage"
+                                        window.location.href = "/myPage"
                                 }
 
                                 else{
@@ -60,7 +60,7 @@ function MyPage({history}){
                                  {
                                          alert('로그인이 필요합니다')
                                         
-                                         window.location.replace("/")
+                                         window.location.replace("/myPage")
                                  }
  
                                  else{
@@ -102,7 +102,7 @@ function MyPage({history}){
                         <p>이메일 : {userdata ? userdata.email : null}</p>
                 </div>
                 <Link to="/Myauction"><div className="MyAuction_button"><p>내 경매</p></div></Link>
-                <Link to={`/transfer?mine=${userdata.username}`}><div className="Transfer_button"><p>보유 작품 양도</p></div> </Link>
+                <Link to={`/transfer`}><div className="Transfer_button"><p>보유 작품 양도</p></div> </Link>
                 
                 {/*보유 중인  작품 목록*/}
                 <p className="name">보유 작품</p>
