@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import React, {useState,useEffect,useRef} from 'react'
+import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import './auction.css'
 import './Auctioncheck.css'
@@ -50,7 +51,7 @@ export default function Auctiondata({location, match}){
 
     const [artistdata,setArtistdata] = useState()
     const [auctionUnit,setAuctionUnit] = useState('1')
-
+    const history = useHistory()
 
     useEffect(async ()=> {
         let unmounted = false
@@ -63,7 +64,8 @@ export default function Auctiondata({location, match}){
                                 if(result.data.success==false)
                                 {
                                         alert('로그인이 필요합니다') 
-                                        window.location.replace(window.location.pathname+window.location.search)
+                                        //window.location.replace(window.location.pathname+window.location.search)
+                                        document.location.replace('/auctiondata?id='+query.id)
                                 }
 
                                 else{
@@ -82,7 +84,7 @@ export default function Auctiondata({location, match}){
             if(result2.data==null)
             {
                 alert('접근할 수 없는 작품입니다.')
-                document.location.replace('/')
+                document.location.replace('/auctionmain')
             }
 
             if(!unmounted)
@@ -125,8 +127,7 @@ export default function Auctiondata({location, match}){
 
             if(result.data.tminus<=0)
             {
-                alert('이미 완료된 경매입니다.')
-                document.location.replace('/auctionpay'+window.location.search)
+                history.replace('/auctionpay?id='+query.id)
             }
 
             if(!unmounted)
@@ -217,8 +218,8 @@ export default function Auctiondata({location, match}){
 
     function auct_sub()
     {
+        const query = queryString.parse(location.search)
         let price = currentbid.current.value
-        console.log(price)
 
         if(price==undefined || price.length<1 || price=='0')
         {
@@ -257,25 +258,35 @@ export default function Auctiondata({location, match}){
         const kr_curr_string = year +"-"+ month + '-' + day// +' '+hour+':'+min+':'+sec
         */
         axios.post(`${protocol}://${dev_ver}:4000/api/auctiondata/submit`,{
-            username:userdata.username,
-            userid:userdata.id,
             art_id:data.art_id,
             userprice:price
             //updateDate: kr_curr_string
         })
         .then((result)=>{
-            if(result.data.success)
+            if(result.data.login_required)
+            {
+                alert('로그인이 필요합니다.')
+                document.location.replace('/auctiondata?id='+query.id)
+            }
+            else if(result.data.success)
             {
                 alert('입찰 완료. 입찰 작품을 확인해주세요.');
-                window.location.replace("/Myauction");
+                history.replace("/Myauction");
+            }
+            else if(result.data.denied)
+            {
+                alert('현재 다른 사람이 더 높은 가격을 제시하였습니다.')
+                history.replace({pathname : '/auctiondata', search : '?id='+query.id})
             }
             else if(result.data.err)
             {
-                alert('현재 다른 사람이 더 높은 가격을 제시하였습니다.')
-                
+                alert('서버 오류')
+                history.replace({pathname : '/auctiondata', search : '?id='+query.id})
             }
+
             else{
-                alert('이전 제시한 가격보다 낮은 가격을 제시할 수 없습니다.')
+                alert('서버 응답 없음')
+                history.replace({pathname : '/auctiondata', search : '?id='+query.id})
             }
             
         })

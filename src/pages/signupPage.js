@@ -88,9 +88,11 @@ function SignupPage({history}){
                 alert("회원가입 실패")
                 return false;
             }
-
-            alert("회원가입 성공")
-            history.push("/");
+            else
+            {
+                alert("회원가입 성공")
+                window.location.replace("/loginPage");
+            }
         })
         .catch(() => {
             alert('error')

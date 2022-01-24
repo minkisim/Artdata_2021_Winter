@@ -1,17 +1,15 @@
 /*eslint-disable*/
-/* global history */
-/* global location */
-/* global window */
 
 /* eslint no-restricted-globals: ["off"] */
 import React, { Component, useState, useEffect } from 'react';
 import  './MyPage.css';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {protocol, dev_ver} from '../../pages/global_const'
 import axios from 'axios'
 import { useAsync } from 'react-async';
 // 내 경매 관련 코드 (MyAuction 버튼 대응)
 function MyAuction(){
+        const history = useHistory()
         const [userdata, setUserdata] = useState({
                 username:'',
                 name:'',
@@ -30,7 +28,7 @@ function MyAuction(){
                         if(result2.data.success==false)
                         {
                                 alert('로그인이 필요합니다')
-                                window.location.replace("/myauction")
+                                document.location.replace("/myauction")
                         }
 
                         else{
@@ -49,7 +47,6 @@ function MyAuction(){
                                         */
                                         let temp1 = []
                                         let temp2 = []
-                                        console.log(result.data.dib)
                                        
 
                                         if(result.data.dib != undefined)
@@ -175,8 +172,6 @@ function MyAuction(){
                 {/*보유 중인  작품 목록*/}
                 <p className="name">입찰 중</p>
 
-                <div onClick={clickbutton} className="reload_button"><p>경매확인</p></div>
-
                 <div className="collection">
                         <div className="collection_header_flex">
                                 <div><p className="collect_num">번호</p></div>
@@ -192,7 +187,8 @@ function MyAuction(){
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture1">{data.artname}</p></div>
                                         <div><p className="data_artist1">{data.artist}</p></div>
-                                        <div><a href={`/auctiondata?id=${data.artwork_id}`}><p className="data_Link1">LINK</p></a></div>
+                                        <div onClick={()=>{ document.location.href = `/auctiondata?id=${data.artwork_id}` }}>
+                                                <p className="data_Link1">LINK</p></div>
                                  </div>)}
                          )}
                          
@@ -216,7 +212,8 @@ function MyAuction(){
                                         <div><p className="data_num">{index+1}</p></div>
                                         <div><p className="data_picture2">{data.artname}</p></div>
                                         <div><p className="data_artist2">{data.artist}</p></div>
-                                        <div><a href={`/auctionpay?id=${data.artwork_id}`}><p className='data_Charge2'>결제</p></a></div>
+                                        <div onClick={()=>{ document.location.href = `/auctionpay?id=${data.artwork_id}` }}>
+                                                <p className='data_Charge2'>결제</p></div>
                                 </div>
                         
                         )}

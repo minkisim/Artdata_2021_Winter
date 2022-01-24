@@ -5,14 +5,17 @@
 /* global window */
 
 /* eslint no-restricted-globals: ["off"] */
-import React,{useLayoutEffect} from 'react';
-import {Redirect, Route} from 'react-router-dom';
+import React,{useEffect} from 'react';
+import {Redirect, Route, useLocation} from 'react-router-dom';
 import doTokenExist from './doTokenExist';
 
-function PrivateRoute({component : Component,isLogin,path,search, ...rest})
+function PrivateRoute({component : Component,isLogin,path, ...rest})
 {
+  const location = useLocation()
+  useEffect(()=>{
+  },[])
 
-  if(search===undefined)
+  if(location.search===undefined)
   {
     return (
       <Route {...rest} render={props => (isLogin=='true') ? 
@@ -24,7 +27,7 @@ function PrivateRoute({component : Component,isLogin,path,search, ...rest})
    {
     return (
       <Route {...rest} render={props => (isLogin=='true') ? 
-      (<Component {...props}  /> ): (<Redirect to={{pathname:"/loginPage", state:{from:path+search}}}/>)}/>
+      (<Component {...props}  /> ): (<Redirect to={{pathname:"/loginPage", state:{from:path+location.search}}}/>)}/>
 
      );
    }

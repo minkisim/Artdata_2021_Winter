@@ -24,10 +24,12 @@ function LoginPage({history,props}){
             {
                 if(!location.state?.from)
                 {
-                    window.location.href = '/'
+                    document.location.replace('/')
+                    //history.push('/')
                 }
                 else{
-                    window.location.href = location.state.from
+                    document.location.replace(location.state.from)
+                    //history.push(location.state.from)
                 }
             }
 

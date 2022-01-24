@@ -43,7 +43,7 @@ function MyPage({history}){
                                         alert('로그인이 필요합니다')
                                         //console.log(result.data.success)
                                         
-                                        window.location.href = "/myPage"
+                                        document.location.replace("/myPage")
                                 }
 
                                 else{
@@ -62,7 +62,7 @@ function MyPage({history}){
                                  {
                                          alert('로그인이 필요합니다')
                                         
-                                         window.location.replace("/myPage")
+                                         document.location.replace("/myPage")
                                  }
  
                                  else{
@@ -89,7 +89,7 @@ function MyPage({history}){
                         if(result.data.success)
                         {
                                 alert('탈퇴하였습니다.')
-                                window.location.replace("/")
+                                document.location.replace("/")
                         }
                 })
                 .catch()

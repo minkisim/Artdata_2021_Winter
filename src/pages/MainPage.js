@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, { PureComponent,useState, useEffect,useLayoutEffect } from 'react';
+import React, { PureComponent,useState, useEffect, useistory } from 'react';
 import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom';
 import '../App.css';
 
@@ -167,8 +167,8 @@ function MainPage({isLogin, isAdmin}){
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/mypage" component={MyPage} exact></PrivateRoute>            } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/myauction" component={MyAuction} exact></PrivateRoute>      }   
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/Transfer" component={Transfer} exact></PrivateRoute>        }  
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" search={window.location.search} component={Auctiondata} exact></PrivateRoute>  } 
-                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" search={window.location.search} component={AuctionPay} exact></PrivateRoute>    }
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctiondata" component={Auctiondata} exact></PrivateRoute>  } 
+                { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/auctionpay" component={AuctionPay} exact></PrivateRoute>    }
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/cseditor" component={CSEditor} exact></PrivateRoute>    } 
                 { isLogin=='false' && <PrivateRoute isLogin={isLogin} path="/updatePage" component={UpdateUserPage} exact></PrivateRoute>} 
 

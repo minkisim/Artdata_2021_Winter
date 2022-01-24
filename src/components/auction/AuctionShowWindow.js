@@ -1,13 +1,13 @@
 /*eslint-disable*/
 import axios from 'axios';
 import react from 'react';
-import {BrowserRouter, Router, Switch, Route, Link} from 'react-router-dom'
+import {BrowserRouter, Router, Switch, Route, Link,useHistory} from 'react-router-dom'
 import './auction.css';
 import {protocol,  dev_ver } from '../../pages/global_const';
 // 경매  리스트 각 컴포넌트 코드
 export default function AuctionShowWindow(props){
     //console.log(props.data.KRWpriceEnd.toLocaleString(undefined, {maximumFractionDigits:2}));
-
+    const history = useHistory()
     function isStarted()
     {
          
@@ -17,8 +17,8 @@ export default function AuctionShowWindow(props){
         .then((result)=>{
             if(result.data.isStarted && result.data.isNotEnded)
             {
-                
-               document.location.href=`/auctiondata?id=${props.data.id}`
+                document.location.href = `/auctiondata?id=${props.data.id}`
+               // history.push({pathname : '/auctiondata', search : '?id='+props.data.id})
             }
             else if(!result.data.isStarted)
             {
@@ -27,7 +27,8 @@ export default function AuctionShowWindow(props){
             }
             else if(!result.data.isNotEnded)
             {
-                document.location.href=`/auctionpay?id=${props.data.id}`
+                document.location.href = `/auctionpay?id=${props.data.id}`
+                //history.push({pathname : '/auctionpay', search : '?id='+props.data.id})
             }
             
           

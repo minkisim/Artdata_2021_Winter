@@ -85,7 +85,7 @@ function Transfer({props, history}){
                                 {
                                         alert('로그인이 필요합니다')
                                        
-                                        window.location.replace("/transfer")
+                                        history.replace("/transfer")
                                 }
 
                                 else{
@@ -165,7 +165,7 @@ function Transfer({props, history}){
         .catch((err)=>{
             alert(err)
         })
-        window.location.href = '/mypage'
+        history.replace('/mypage')
     }
   
 // 보유작품 양도 관련 html    

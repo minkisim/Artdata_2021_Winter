@@ -98,7 +98,7 @@ function UpdateUserPage({history}){
             if(result.data.login_required)
             {
                 alert('로그인이 필요합니다.')
-                window.location.href = '/loginPage'
+                history.push("/updatePage")
             }
             else if(result.data.success==false)
             {

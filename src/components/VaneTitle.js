@@ -2,7 +2,7 @@
 import React,{useState, useEffect} from 'react';
 import Sidebar from './Sidebar/Sidebar';
 import styled from 'styled-components';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {useHistory,BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import '../App.css';
 import {Link} from 'react-router-dom';
 import { IoMdLogOut } from 'react-icons/io';
@@ -16,6 +16,7 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
     const [search, setSearch] = useState('')
     const [id, setId] = useState(1)
     const ismobile =useMediaQuery({ maxWidth: 768 });
+    const history = useHistory()
    function showMessage ()
    {
     getMessage()
@@ -25,7 +26,7 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
       axios.get(`${protocol}://${dev_ver}:4000/api/logout`)
       .then(()=>{
       })
-      window.location.replace("/")
+      document.location.replace("/")
     }
 
     function mainSearch()
@@ -38,21 +39,20 @@ function VaneTitle({isLogin,isAdmin, message, getMessage}){
       
       axios.post(`${protocol}://${dev_ver}:4000/api/mainsearch`,{check:id, name:search})
       .then((result)=>{
-        console.log(result.data)
         if(result.data.id != undefined)
         {
           
           
           if(id==1)
-              window.location.replace(`/exhibition3/${result.data.id}`)
+           history.push(`/exhibition3/${result.data.id}`)
             
 
           else if(id == 2)
-              window.location.replace(`/artist01/${result.data.id}`)
+           history.push(`/artist01/${result.data.id}`)
 
 
           else if(id==3)
-             window.location.replace(`/exhibition2/${result.data.id}`)
+           history.push(`/exhibition2/${result.data.id}`)
         }
         else if(result.data.err)
         {

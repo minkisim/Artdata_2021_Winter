@@ -1,10 +1,8 @@
 /*eslint-disable*/
-/* global history */
-/* global location */
-/* global window */
 
 /* eslint no-restricted-globals: ["off"] */
 import React, {useState,useEffect} from 'react'
+import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import './auction.css'
 import './Auctioncheck.css'
@@ -47,6 +45,8 @@ export default function AuctionPay(){
     const [enddate2, setEnddate2] = useState()
     const [artistdata,setArtistdata] = useState()
 
+    const history = useHistory()
+
     useEffect(()=>{
         let unmounted = false
         let source = axios.CancelToken.source()
@@ -61,7 +61,7 @@ export default function AuctionPay(){
             if(result2.data==null)
             {
                 alert('접근할 수 없는 작품입니다.')
-                document.location.replace('/')
+                document.location.replace('/auctionmain')
             }
 
             if(!unmounted)
@@ -72,7 +72,7 @@ export default function AuctionPay(){
                                 if(result.data.success==false)
                                 {
                                         alert('로그인이 필요합니다')
-                                        window.location.replace(window.location.pathname+window.location.search)
+                                        document.location.replace('/auctiondata?id='+query.id)
                                 }
 
                                 else{
@@ -126,8 +126,7 @@ export default function AuctionPay(){
 
                 if(result.data.tminus>0)
                 {
-                    alert('아직 진행중인 경매입니다.')
-                    document.location.replace('/auctiondata'+window.location.search)
+                    document.location.replace('/auctiondata?id='+query.id)
                 }
             })
             .catch((err)=>{
@@ -196,10 +195,10 @@ export default function AuctionPay(){
             if(result.data.success)
             {
                 alert('결제 완료. 보유 작품을 확인해주세요.');
-                window.location.replace("/myPage");
+                history.replace("/myPage");
             }
             else{
-                alert('server error')
+                alert('서버 오류')
             }
         })
         .catch((err)=>{

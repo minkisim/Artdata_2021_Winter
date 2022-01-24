@@ -2911,91 +2911,103 @@ app.post('/api/auctiondata/search',async (req,res)=>{
 })
 
 app.post('/api/auctiondata/submit',async (req,res)=>{
-    var date = moment().format("YYYY-MM-DD")
-    var connection = await openConnection()
-        //해당 경매 입찰 시도 시
-        //현재 해당 작품에 가장 높은 가격 제시한 사람 확인
-        var query = "select user_price from user_bid where art_id = ? order by user_price desc"
-        try{
-            await connection.beginTransaction()
-            var [result] = await connection.query(query,[req.body.art_id])
-                //현재 사용자가 해당 작품의 최대가 보다 작게 제시한 경우
-                if(result != undefined && result[0]!=undefined && result[0].user_price >= req.body.userprice)
-                {
-                    res.json({err : true})
-                }
-                else{
-                    //사용자가 이전에 해당 작품의 입찰에 참여한 적 있는지 확인
-                    query = "select * from user_bid where username = ? and art_id = ?"
-        
-                    var [result1] = await connection.query(query,[req.body.username, req.body.art_id])
-                     //이전에 해당 작품 경매에 참여한 적이 있을 경우   
-                    if(result1 != undefined && result1[0] != undefined)
+
+    if(req.session.user!=undefined && req.session.user.username != undefined && req.session.user.username.length>=1)
+    {
+        var date = moment().format("YYYY-MM-DD")
+        var connection = await openConnection()
+            //해당 경매 입찰 시도 시
+            //현재 해당 작품에 가장 높은 가격 제시한 사람 확인
+            var query = "select user_price, username from user_bid where art_id = ? order by user_price desc FOR UPDATE"
+            try{
+                await connection.query("start transaction")
+                var [result] = await connection.query(query,[req.body.art_id])
+                    //현재 사용자가 해당 작품의 최대가 보다 작게 제시한 경우
+                    console.log( result[0].username +" : "+  result[0].user_price )
+                    if(result != undefined && result[0]!=undefined && result[0].user_price >= req.body.userprice)
                     {
-                        //해당 입찰 정보의 가격과 입찰 날짜를 업데이트
-                        query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"                
-                             var [result2] = await connection.query(query,[req.body.userprice, date, req.body.username, req.body.art_id])
-                                if(result2 !=undefined && result2.affectedRows>=1)
-                                {
-                                    query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
-                                    var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
-
-                                    if(result3!=undefined )
-                                    {
-                                        await connection.commit()
-                                        res.json({success : true})
-                                    }
-                                    else
-                                    {
-                                        await connection.rollback()
-                                        res.json({err : true})
-                                    }
-
-                                    
-                                }
-                                else{
-                                    await connection.rollback()
-                                    res.json({err : true})
-                                }
-    
+                        res.json({denied : true})
                     }
-                    //해당 작품에 입찰한 적이 없을 경우
                     else{
-                       //새로운 입찰 튜플 생성
-                        query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
-                        var [result2] = await connection.query(query,[req.body.username, req.body.userprice, date, req.body.art_id])
-                                if(result2.affectedRows>=1)
-                                {
-                                    query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
-                                    var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.body.username])
-
-                                    if(result3!=undefined )
+                        //사용자가 이전에 해당 작품의 입찰에 참여한 적 있는지 확인
+                        query = "select * from user_bid where username = ? and art_id = ? FOR UPDATE"
+            
+                        var [result1] = await connection.query(query,[req.session.user.username, req.body.art_id])
+                         //이전에 해당 작품 경매에 참여한 적이 있을 경우   
+                        if(result1 != undefined && result1[0] != undefined)
+                        {
+                            //해당 입찰 정보의 가격과 입찰 날짜를 업데이트
+                            query = "update user_bid set user_price = ?, bid_date = DATE_FORMAT(?,'%Y-%m-%d')  where username = ? and art_id = ?"                
+                                 var [result2] = await connection.query(query,[req.body.userprice, date, req.session.user.username, req.body.art_id])
+                                    if(result2 !=undefined && result2.affectedRows>=1)
                                     {
-                                        await connection.commit()
-                                        res.json({success : true})
+                                        query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                        var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.session.user.username])
+    
+                                        if(result3!=undefined )
+                                        {
+                                            await connection.commit()
+                                            res.json({success : true})
+                                        }
+                                        else
+                                        {
+                                            await connection.rollback()
+                                            res.json({err : true})
+                                        }
+    
+                                        
                                     }
-                                    else
-                                    {
+                                    else{
                                         await connection.rollback()
                                         res.json({err : true})
                                     }
-                                }
-                                else{
-                                    await connection.rollback()
-                                    res.json({err : true})
-                                }
-                      }
-                }
-        }catch(err)
-        {
-            //db 에러시
-            await connection.rollback()
-            console.error(err); 
-            res.status(200).json({
-               success:false
-           })
-        }
-        await closeConnection(connection)
+        
+                        }
+                        //해당 작품에 입찰한 적이 없을 경우
+                        else{
+                           //새로운 입찰 튜플 생성
+                            query = "insert into user_bid values (?, ?, DATE_FORMAT(?, '%Y-%m-%d'), ?)"
+                            var [result2] = await connection.query(query,[req.session.user.username, req.body.userprice, date, req.body.art_id])
+                                    if(result2.affectedRows>=1)
+                                    {
+                                        query = "insert into user_inform select u.username, concat(a.art_name,' 작품에서 타인 상회 입찰이 발생하였습니다.') inform_text, date_format(now(),'%Y-%m-%d') inform_date, date_format(now(),'%H:%i:%s') inform_time, u.art_id, 1 auction_type, false comfirm from art a, user_bid u where a.art_id = u.art_id and u.art_id = ? and user_price in (select MAX(user_price) from user_bid where art_id = ? and username <> ?)"
+                                        var [result3] = await connection.query(query,[req.body.art_id,req.body.art_id,req.session.user.username])
+    
+                                        if(result3!=undefined )
+                                        {
+                                            await connection.commit()
+                                            res.json({success : true})
+                                        }
+                                        else
+                                        {
+                                            await connection.rollback()
+                                            res.json({err : true})
+                                        }
+                                    }
+                                    else{
+                                        await connection.rollback()
+                                        res.json({err : true})
+                                    }
+                          }
+                    }
+            }catch(err)
+            {
+                //db 에러시
+                await connection.rollback()
+                console.error(err); 
+                res.status(200).json({
+                   success:false
+               })
+            }
+            await closeConnection(connection)
+    }
+    else
+    {
+        res.json({login_required:true})
+    }
+
+
+
 })
 
 app.post('/api/auctiondata/isStarted',async (req,res)=>{
@@ -3215,7 +3227,6 @@ app.post('/api/deleteuser',async (req,res)=>{
 app.post('/api/mainsearch',async (req,res)=>{
     var connection = await openConnection()
     //메인 화면의 검색 기능
-    console.log(req.body.check)
             var query
             //작품명 검색
             if(req.body.check==1)
@@ -3377,7 +3388,7 @@ app.post('/api/board/upload',async (req,res)=>{
         //사용자마다 indices존재
         //사용자의 가장 큰 indices 반환하여 +1한 값을
         //현재 게시글의 indices로 설정
-        var query = "select tmp2.indices from (select t.*, @rownum := @rownum + 1 rownum  from (select indices from board where username = ? order by indices desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+        var query = "select tmp2.indices from (select t.*, @rownum := @rownum + 1 rownum  from (select indices from board where username = ? order by indices desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1 FOR UPDATE"
         try{
             await connection.beginTransaction()
             var [result] = await connection.query(query, req.session.user.username)
@@ -3528,7 +3539,7 @@ app.post('/api/notice/showpage',async (req,res)=>{
 app.post('/api/notice/showarticle',async (req,res)=>{
     var connection = await openConnection()
     //현재 선택한 공지 상세 정보 리턴
-    var query = "select id , title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, bodytext from notification where id = ?"
+    var query = "select id , title, DATE_FORMAT(uploaddate,'%Y-%m-%d') uploaddate, bodytext from notification where id = ? FOR UPDATE"
     try{
         await connection.beginTransaction()
         var [result] = await connection.query(query,req.body.id)
@@ -3640,7 +3651,7 @@ app.post('/api/notice/upload',async (req,res)=>{
         {
             //공지글 중에서 가장 큰 id를 선택하여
         //+1한 값을 현재 공지의 id로 설정
-        var query = "select tmp2.id from (select t.*, @rownum := @rownum + 1 rownum  from (select id from notification order by id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1"
+        var query = "select tmp2.id from (select t.*, @rownum := @rownum + 1 rownum  from (select id from notification order by id desc) t, (select @rownum := 0) tmp) tmp2 where tmp2.rownum <= 1 FOR UPDATE"
         try{
             await connection.beginTransaction()
             var [result] = await connection.query(query)
